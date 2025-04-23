@@ -1,0 +1,59 @@
+{
+  "pages": [
+    "pages/loan/loan",
+    "pages/login/login",
+    "pages/customer/customer",
+    "pages/customer/detail",
+    "pages/customer/add",
+    "pages/customer/transfer",
+    "pages/followup/followup",
+    "pages/followup/list",
+    "pages/dashboard/dashboard",
+    "pages/loan/detail",
+    "pages/loan/apply",
+    "pages/loan/overdue",
+    "pages/loan/status",
+    "pages/loan/create",
+    "pages/message/message"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "元圣行管理系统",
+    "navigationBarBackgroundColor": "#409EFF",
+    "backgroundColor": "#F5F7FA"
+  },
+  "tabBar": {
+    "color": "#909399",
+    "selectedColor": "#409EFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "首页",
+        "iconPath": "static/images/home.png",
+        "selectedIconPath": "static/images/home_active.png"
+      },
+      {
+        "pagePath": "pages/customer/customer",
+        "text": "客户",
+        "iconPath": "static/images/customer.png",
+        "selectedIconPath": "static/images/customer_active.png"
+      },
+      {
+        "pagePath": "pages/loan/loan",
+        "text": "贷款",
+        "iconPath": "static/images/loan.png",
+        "selectedIconPath": "static/images/loan_active.png"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "text": "消息",
+        "iconPath": "static/images/message.png",
+        "selectedIconPath": "static/images/message_active.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

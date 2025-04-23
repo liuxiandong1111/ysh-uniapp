@@ -1,0 +1,135 @@
+{
+	"pages": [
+		{
+			"path": "pages/loan/loan",
+			"style": {
+				"navigationBarTitleText": "贷款申请"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/customer/customer",
+			"style": {
+				"navigationBarTitleText": "客户管理"
+			}
+		},
+		{
+			"path": "pages/customer/detail",
+			"style": {
+				"navigationBarTitleText": "客户详情"
+			}
+		},
+		{
+			"path": "pages/customer/add",
+			"style": {
+				"navigationBarTitleText": "新增/编辑客户",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/customer/transfer",
+			"style": {
+				"navigationBarTitleText": "移交产品部"
+			}
+		},
+		{
+			"path": "pages/followup/followup",
+			"style": {
+				"navigationBarTitleText": "跟进记录"
+			}
+		},
+		{
+			"path": "pages/followup/list",
+			"style": {
+				"navigationBarTitleText": "跟进记录"
+			}
+		},
+		{
+			"path": "pages/dashboard/dashboard",
+			"style": {
+				"navigationBarTitleText": "数据仪表盘"
+			}
+		},
+		{
+			"path": "pages/loan/detail",
+			"style": {
+				"navigationBarTitleText": "贷款详情"
+			}
+		},
+		{
+			"path": "pages/loan/apply",
+			"style": {
+				"navigationBarTitleText": "贷款申请详情"
+			}
+		},
+		{
+			"path": "pages/loan/overdue",
+			"style": {
+				"navigationBarTitleText": "逾期处理"
+			}
+		},
+		{
+			"path": "pages/loan/status",
+			"style": {
+				"navigationBarTitleText": "更新贷款状态"
+			}
+		},
+		{
+			"path": "pages/loan/create",
+			"style": {
+				"navigationBarTitleText": "新增贷款"
+			}
+		},
+		{
+			"path": "pages/message/message",
+			"style": {
+				"navigationBarTitleText": "消息中心"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "元圣行管理系统",
+		"navigationBarBackgroundColor": "#409EFF",
+		"backgroundColor": "#F5F7FA"
+	},
+	"tabBar": {
+		"color": "#909399",
+		"selectedColor": "#409EFF",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/dashboard/dashboard",
+				"text": "首页",
+				"iconPath": "static/images/home.png",
+				"selectedIconPath": "static/images/home_active.png"
+			},
+			{
+				"pagePath": "pages/customer/customer",
+				"text": "客户",
+				"iconPath": "static/images/customer.png",
+				"selectedIconPath": "static/images/customer_active.png"
+			},
+			{
+				"pagePath": "pages/loan/loan",
+				"text": "贷款",
+				"iconPath": "static/images/loan.png",
+				"selectedIconPath": "static/images/loan_active.png"
+			},
+			{
+				"pagePath": "pages/message/message",
+				"text": "消息",
+				"iconPath": "static/images/message.png",
+				"selectedIconPath": "static/images/message_active.png"
+			}
+		]
+	},
+	"uniIdRouter": {}
+}

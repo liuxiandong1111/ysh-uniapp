@@ -1,0 +1,209 @@
+
+.container {
+	display: flex;
+	flex-direction: column;
+	background-color: #f5f7fa;
+	position: relative;
+	height: 100vh;
+}
+.tabs {
+	display: flex;
+	background-color: #fff;
+	border-bottom: 1px solid #eee;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+}
+.tab-item {
+	flex: 1;
+	height: 44px;
+	line-height: 44px;
+	text-align: center;
+	font-size: 14px;
+	color: #333;
+	position: relative;
+}
+.tab-item.active {
+	color: #409EFF;
+	font-weight: bold;
+}
+.tab-item.active:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	        transform: translateX(-50%);
+	width: 40px;
+	height: 2px;
+	background-color: #409EFF;
+}
+.content {
+	padding: 55px 15px 0;
+	box-sizing: border-box;
+}
+.tab-content {
+}
+.info-section {
+	background-color: #fff;
+	border-radius: 8px;
+	padding: 15px;
+	margin-bottom: 15px;
+}
+.section-title {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 15px;
+	color: #333;
+	border-left: 3px solid #409EFF;
+	padding-left: 10px;
+}
+.info-list {
+	display: flex;
+	flex-wrap: wrap;
+}
+.info-item {
+	width: 50%;
+	margin-bottom: 15px;
+}
+.info-item.full-width {
+	width: 100%;
+}
+.info-label {
+	display: block;
+	font-size: 14px;
+	color: #999;
+	margin-bottom: 5px;
+}
+.info-value {
+	font-size: 14px;
+	color: #333;
+	word-break: break-all;
+}
+.image-container {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 5px;
+}
+.license-image {
+	width: 80px;
+	height: 80px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	border-radius: 4px;
+	background-color: #f5f5f5;
+}
+.empty-tip {
+	text-align: center;
+	padding: 30px 0;
+	color: #999;
+	font-size: 14px;
+}
+.loan-list {
+}
+.loan-item {
+	background-color: #fff;
+	border-radius: 8px;
+	margin-bottom: 15px;
+	padding: 15px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+.loan-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #f5f5f5;
+}
+.loan-name {
+	font-size: 16px;
+	font-weight: bold;
+	color: #333;
+}
+.loan-status {
+	font-size: 12px;
+	padding: 2px 8px;
+	border-radius: 10px;
+	color: white;
+}
+.status-pending {
+	background-color: #909399;
+}
+.status-processing {
+	background-color: #E6A23C;
+}
+.status-approved {
+	background-color: #67C23A;
+}
+.status-rejected {
+	background-color: #F56C6C;
+}
+.loan-info {
+	display: flex;
+	flex-wrap: wrap;
+}
+.loan-info-item {
+	width: 50%;
+	margin-bottom: 10px;
+}
+.loan-info-label {
+	color: #999;
+	font-size: 14px;
+	margin-right: 5px;
+}
+.loan-info-value {
+	color: #333;
+	font-size: 14px;
+}
+.repay-normal {
+	color: #67C23A;
+}
+.repay-overdue {
+	color: #F56C6C;
+}
+.repay-completed {
+	color: #909399;
+}
+.repay-delayed {
+	color: #E6A23C;
+}
+.loan-action {
+	margin-top: 10px;
+	text-align: right;
+}
+.loan-detail-btn {
+	display: inline-block;
+	background-color: #409EFF;
+	color: white;
+	font-size: 14px;
+	border-radius: 4px;
+	border: none;
+}
+.footer {
+	padding: 10px 15px;
+	display: flex;
+	justify-content: space-between;
+	background-color: #fff;
+	border-top: 1px solid #eee;
+}
+.btn {
+	flex: 1;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	border-radius: 4px;
+	font-size: 16px;
+}
+.btn-default {
+	background-color: #f5f5f5;
+	color: #333;
+	margin-right: 10px;
+}
+.btn-primary {
+	background-color: #409EFF;
+	color: white;
+}
+

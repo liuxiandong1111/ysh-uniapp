@@ -1,0 +1,133 @@
+
+.container {
+		min-height: 100vh;
+		background-color: #f5f7fa;
+		padding: 15px;
+}
+.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 20px;
+}
+.header-title {
+		font-size: 18px;
+		font-weight: bold;
+		color: #303133;
+}
+.btn-create {
+		background-color: #409EFF;
+		color: white;
+		border-radius: 25px;
+		font-size: 28px;
+        position: fixed;
+        right: 15px;
+        bottom: 15px;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+}
+.loan-list {
+		margin-bottom: 20px;
+}
+.empty-tip {
+		background-color: #fff;
+		border-radius: 8px;
+		padding: 30px;
+		text-align: center;
+		color: #909399;
+		box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.loan-card {
+		background-color: #fff;
+		border-radius: 8px;
+		padding: 15px;
+		margin-bottom: 15px;
+		box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.loan-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 12px;
+}
+.loan-name {
+		font-size: 16px;
+		font-weight: bold;
+		color: #303133;
+}
+.loan-status {
+		font-size: 12px;
+		padding: 4px 8px;
+		border-radius: 4px;
+		color: white;
+}
+.status-pending {
+		background-color: #e6a23c;
+}
+.status-processing {
+		background-color: #409EFF;
+}
+.status-approved {
+		background-color: #67c23a;
+}
+.status-rejected {
+		background-color: #f56c6c;
+}
+.loan-info {
+		margin-bottom: 15px;
+}
+.info-row {
+		display: flex;
+		margin-bottom: 8px;
+		font-size: 14px;
+		align-items: center;
+}
+.info-label {
+		color: #909399;
+		width: 80px;
+		flex-shrink: 0;
+}
+.info-value {
+		color: #606266;
+		flex: 1;
+}
+.repayment-status {
+		padding: 2px 6px;
+		border-radius: 4px;
+		font-size: 12px;
+		display: inline-block;
+}
+.repayment-normal {
+		background-color: #f0f9eb;
+		color: #67c23a;
+}
+.repayment-cleared {
+		background-color: #ecf5ff;
+		color: #409EFF;
+}
+.repayment-overdue {
+		background-color: #fef0f0;
+		color: #f56c6c;
+}
+.repayment-unpaid {
+		background-color: #f4f4f5;
+		color: #909399;
+}
+.reject-reason {
+		color: #f56c6c;
+}
+.loan-actions {
+		display: flex;
+		border-top: 1px solid #ebeef5;
+		padding-top: 12px;
+}
+.action-btn {
+		flex: 1;
+		text-align: center;
+}
+.btn-text {
+		font-size: 14px;
+		color: #409EFF;
+}
+

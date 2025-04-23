@@ -1,0 +1,141 @@
+
+.container {
+	min-height: 100vh;
+	background-color: #f5f7fa;
+	padding: 15px;
+}
+.form-card {
+	background-color: #fff;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.form-title {
+	font-size: 18px;
+	font-weight: bold;
+	color: #303133;
+	margin-bottom: 20px;
+	position: relative;
+	padding-left: 12px;
+}
+.form-title::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 4px;
+	width: 4px;
+	height: 16px;
+	background-color: #409EFF;
+	border-radius: 2px;
+}
+.form-group {
+	margin-bottom: 20px;
+}
+.form-label {
+	font-size: 15px;
+	color: #606266;
+	margin-bottom: 10px;
+}
+.status-picker, .date-display {
+	height: 40px;
+	line-height: 40px;
+	padding: 0 12px;
+	border: 1px solid #dcdfe6;
+	border-radius: 4px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #fff;
+}
+.date-input {
+	width: 100%;
+}
+.picker-value {
+	font-size: 14px;
+	color: #606266;
+}
+.picker-arrow {
+	font-size: 12px;
+	color: #c0c4cc;
+}
+.form-input {
+	height: 40px;
+	padding: 0 12px;
+	font-size: 14px;
+	border: 1px solid #dcdfe6;
+	border-radius: 4px;
+	background-color: #fff;
+}
+.form-buttons {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 30px;
+}
+.btn-cancel {
+	background-color: #f5f7fa;
+	color: #606266;
+	border: 1px solid #dcdfe6;
+	border-radius: 4px;
+	font-size: 14px;
+	margin-right: 15px;
+}
+.btn-submit {
+	background-color: #409EFF;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+/* 弹窗样式 */
+.mask {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.picker-panel {
+	width: 80%;
+	background-color: #fff;
+	border-radius: 8px;
+	overflow: hidden;
+}
+.picker-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 15px;
+	border-bottom: 1px solid #ebeef5;
+}
+.picker-title {
+	font-size: 16px;
+	font-weight: bold;
+	color: #303133;
+}
+.picker-close {
+	font-size: 20px;
+	color: #909399;
+	padding: 5px;
+}
+.picker-options {
+	padding: 10px 0;
+	max-height: 300px;
+	overflow-y: auto;
+}
+.picker-option {
+	padding: 12px 15px;
+}
+.option-text {
+	font-size: 14px;
+	color: #606266;
+}
+.option-text.active {
+	color: #409EFF;
+}
+
