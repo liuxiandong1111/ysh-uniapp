@@ -8,7 +8,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(wx, createApp, uni) {
+/* WEBPACK VAR INJECTION */(function(wx, uni, createApp) {
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ 11));
@@ -23,21 +23,46 @@ wx.__webpack_require_UNI_MP_PLUGIN__ = __webpack_require__;
 _vue.default.config.productionTip = false;
 
 // 判断是否已登录，未登录则跳转到登录页
-// const isLoggedIn = uni.getStorageSync('isLoggedIn') || true;
-var isLoggedIn = true;
+var isLoggedIn = uni.getStorageSync('isLoggedIn') || false;
+var token = uni.getStorageSync('token') || '';
+
+// 添加全局方法
+_vue.default.prototype.checkLogin = function () {
+  var isLoggedIn = uni.getStorageSync('isLoggedIn');
+  var token = uni.getStorageSync('token');
+  var userInfo = uni.getStorageSync('userInfo');
+  if (!isLoggedIn || !token || !userInfo) {
+    console.log('未登录或token不存在，准备跳转到登录页');
+
+    // 显示提示
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none',
+      duration: 2000
+    });
+
+    // 直接跳转到登录页
+    uni.redirectTo({
+      url: '/pages/login/login'
+    });
+    return false;
+  }
+  return true;
+};
 _App.default.mpType = 'app';
 var app = new _vue.default(_objectSpread({}, _App.default));
 createApp(app).$mount();
 
 // 检查登录状态并跳转
-if (!isLoggedIn) {
-  setTimeout(function () {
-    uni.redirectTo({
-      url: '/pages/login/login'
-    });
-  }, 100);
+if (!isLoggedIn || !token) {
+  console.log('应用启动时检测到未登录，准备跳转到登录页');
+
+  // 直接跳转
+  uni.redirectTo({
+    url: '/pages/login/login'
+  });
 }
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["createApp"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"], __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["createApp"]))
 
 /***/ }),
 

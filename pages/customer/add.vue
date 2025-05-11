@@ -27,18 +27,8 @@
 				</view>
 				<view class="form-item">
 					<text class="form-label">婚姻状态</text>
-					<picker :range="maritalStatus" range-key="label" @change="handleMarriageChange" class="form-picker">
+					<picker :range="maritalStatusOptions" range-key="label" @change="handleMarriageChange" class="form-picker">
 						<view class="picker-value">{{ getMarriageText() }}</view>
-					</picker>
-				</view>
-				<view class="form-item">
-					<text class="form-label">业务负责人</text>
-					<input class="form-input" v-model="customerForm.manager" placeholder="请输入业务负责人" />
-				</view>
-				<view class="form-item">
-					<text class="form-label">所属部门</text>
-					<picker :range="departmentOptions" @change="handleDepartmentChange" class="form-picker">
-						<view class="picker-value">{{ customerForm.department || '请选择部门' }}</view>
 					</picker>
 				</view>
 			</view>
@@ -51,22 +41,22 @@
 						<view class="picker-value">{{ getCustomerGroupText() }}</view>
 					</picker>
 				</view>
-				<view class="form-item">
+				<view class="form-item" v-if="customerForm.client_type === 1 || customerForm.client_type === 3">
 					<text class="form-label">工作单位</text>
-					<input class="form-input" v-model="customerForm.workplace" placeholder="请输入工作单位" />
+					<input class="form-input" v-model="customerForm.work_unit" placeholder="请输入工作单位" />
 				</view>
-				<view class="form-item" v-if="customerForm.customerGroup === '经营'">
+				<view class="form-item" v-if="customerForm.client_type === 2 || customerForm.client_type === 3">
 					<text class="form-label">执照信息</text>
-					<input class="form-input" v-model="customerForm.licenseInfo" placeholder="请输入执照信息" />
+					<input class="form-input" v-model="customerForm.license_info" placeholder="请输入执照信息" />
 				</view>
-				<view class="form-item" v-if="customerForm.customerGroup === '经营'">
+				<view class="form-item" v-if="customerForm.client_type === 2 || customerForm.client_type === 3">
 					<text class="form-label">执照图片</text>
 					<view class="upload-area">
-						<view class="upload-item" v-for="(item, index) in licenseImages" :key="index">
+						<view class="upload-item" v-for="(item, index) in licenseImg" :key="index">
 							<image class="upload-image" :src="item" mode="aspectFill" @click="previewImage(item)"></image>
 							<text class="delete-icon" @click="deleteImage(index)">×</text>
 						</view>
-						<view class="upload-add" @click="chooseImage" v-if="licenseImages.length < 5">
+						<view class="upload-add" @click="chooseImage" v-if="licenseImg.length < 5">
 							<text class="iconfont icon-add"></text>
 						</view>
 						<view class="upload-tip">请上传营业执照、法人身份证等相关证件图片（最多5张）</view>
@@ -74,7 +64,7 @@
 				</view>
 				<view class="form-item">
 					<text class="form-label">资产状况</text>
-					<textarea class="form-textarea" v-model="customerForm.assets" placeholder="请输入资产状况"></textarea>
+					<textarea class="form-textarea" v-model="customerForm.asset_info" placeholder="请输入资产状况"></textarea>
 				</view>
 				<view class="form-item">
 					<text class="form-label">收入描述</text>
@@ -82,11 +72,11 @@
 				</view>
 				<view class="form-item">
 					<text class="form-label">征信描述</text>
-					<textarea class="form-textarea" v-model="customerForm.creditDescription" placeholder="请输入征信描述"></textarea>
+					<textarea class="form-textarea" v-model="customerForm.credit_investigation" placeholder="请输入征信描述"></textarea>
 				</view>
 				<view class="form-item">
 					<text class="form-label">备注信息</text>
-					<textarea class="form-textarea" v-model="customerForm.remarks" placeholder="请输入备注信息"></textarea>
+					<textarea class="form-textarea" v-model="customerForm.descr" placeholder="请输入备注信息"></textarea>
 				</view>
 			</view>
 		</view>
@@ -100,6 +90,9 @@
 </template>
 
 <script>
+	import customerApi from '@/api/customer.js';
+	import { dictMaps } from '@/utils/dict.js';
+	
 	export default {
 		data() {
 			return {
@@ -109,112 +102,166 @@
 					name: '',
 					phone: '',
 					age: '',
-					marriageStatus: 'single',
+					matrimony: 1,
 					manager: '',
 					department: '',
-					customerGroup: '消费',
-					workplace: '',
-					licenseInfo: '',
-					licenseImages: [],
-					assets: '',
+					client_type: 1,
+					work_unit: '',
+					license_info: '',
+					asset_info: '',
 					income: '',
-					creditDescription: '',
-					remarks: '',
-					status: 'new'
+					credit_investigation: '',
+					descr: '',
+					status: 1
 				},
-				maritalStatus: [
-					{ value: 'single', label: '未婚' },
-					{ value: 'married', label: '已婚' },
-					{ value: 'divorced', label: '离异' },
-					{ value: 'widowed', label: '丧偶' }
-				],
+				dictMaps: dictMaps,
+				maritalStatusOptions: [],
 				departmentOptions: ['消费信贷部', '小微信贷部'],
-				customerGroupOptions: [
-					{ value: '消费', label: '消费' },
-					{ value: '经营', label: '经营' }
-				],
-				licenseImages: []
+				customerGroupOptions: [],
+				licenseImg: []
 			}
 		},
+		created() {
+			this.initDictOptions();
+		},
 		onLoad(options) {
+			console.log('编辑页面接收到的参数:', options);
 			if (options.id) {
 				this.isEdit = true;
 				this.customerId = options.id;
-				this.loadCustomerData();
+				
+				// 检查是否从列表页面传递了客户数据
+				if (options.customerData) {
+					try {
+						// 解析客户数据
+						const customerData = JSON.parse(decodeURIComponent(options.customerData));
+						console.log('解析后的客户数据:', customerData);
+						
+						// 将数据映射到表单
+						this.customerForm = {
+							name: customerData.name || '',
+							phone: customerData.phone || '',
+							age: customerData.age || '',
+							matrimony: customerData.matrimony || 1,
+							manager: customerData.service_name || '',
+							department: customerData.branch_name || '',
+							client_type: customerData.client_type || 1,
+							work_unit: customerData.work_unit || '',
+							license_info: customerData.license_info || '',
+							asset_info: customerData.asset_info || '',
+							income: customerData.income || '',
+							credit_investigation: customerData.credit_investigation || '',
+							descr: customerData.descr || '',
+							status: customerData.status || 1
+						};
+						
+						// 处理执照图片 - 如果是字符串，则分割成数组
+						if (customerData.license_img) {
+							if (typeof customerData.license_img === 'string') {
+								this.licenseImg = customerData.license_img.split(',').filter(img => img);
+							} else if (Array.isArray(customerData.license_img)) {
+								this.licenseImg = customerData.license_img;
+							}
+							console.log('处理后的执照图片:', this.licenseImg);
+						} else {
+							this.licenseImg = [];
+						}
+						
+						console.log('已从列表数据加载客户信息');
+					} catch (e) {
+						console.error('解析客户数据失败', e);
+						// 解析失败时调用API获取详情
+						this.loadCustomerData();
+					}
+				} else {
+					// 如果没有传递客户数据，则调用API获取
+					this.loadCustomerData();
+				}
 			}
 		},
 		methods: {
-			loadCustomerData() {
-				// 模拟从API获取客户数据
-				setTimeout(() => {
-					// 如果是编辑模式，获取客户数据
-					if (this.isEdit) {
-						// 模拟数据
-						if (this.customerId === '1') {
-							this.customerForm = {
-								name: '张三',
-								phone: '13800138000',
-								age: 35,
-								marriageStatus: 'married',
-								manager: '王经理',
-								department: '消费信贷部',
-								customerGroup: '消费',
-								workplace: '北京科技有限公司',
-								licenseInfo: '',
-								licenseImages: [],
-								assets: '房产一套，车辆一台',
-								income: '20000元/月',
-								creditDescription: '信用良好，无逾期',
-								remarks: '客户对产品很感兴趣',
-								status: 'intention'
-							};
-						} else if (this.customerId === '2') {
-							this.customerForm = {
-								name: '李四',
-								phone: '13800138001',
-								age: 42,
-								marriageStatus: 'married',
-								manager: '赵经理',
-								department: '小微信贷部',
-								customerGroup: '经营',
-								workplace: '',
-								licenseInfo: '北京食品贸易有限公司',
-								licenseImages: ['https://example.com/license1.jpg'],
-								assets: '商铺两间，车辆一台',
-								income: '50000元/月',
-								creditDescription: '信用优良，历史贷款按时还款',
-								remarks: '老客户，已多次合作',
-								status: 'deal'
-							};
-							// 将远程图片URL转换为本地展示数据
-							this.licenseImages = this.customerForm.licenseImages;
-						}
-					}
-				}, 500);
+			initDictOptions() {
+				this.maritalStatusOptions = Object.keys(this.dictMaps.maritalStatus).map(key => {
+					return {
+						value: parseInt(key),
+						label: this.dictMaps.maritalStatus[key]
+					};
+				});
 				
-				// 实际项目中使用API调用
-				// uni.request({
-				//   url: 'your_api_endpoint/customer/' + this.customerId,
-				//   method: 'GET',
-				//   success: (res) => {
-				//     this.customerForm = res.data;
-				//     this.licenseImages = this.customerForm.licenseImages || [];
-				//   },
-				//   fail: () => {
-				//     uni.showToast({
-				//       title: '获取客户数据失败',
-				//       icon: 'none'
-				//     });
-				//   }
-				// });
+				this.customerGroupOptions = Object.keys(this.dictMaps.customerType).map(key => {
+					return {
+						value: parseInt(key),
+						label: this.dictMaps.customerType[key]
+					};
+				});
+			},
+			loadCustomerData() {
+				uni.showLoading({
+					title: '加载中...'
+				});
+				
+				// 从API获取客户数据
+				customerApi.getDetail(this.customerId)
+					.then(res => {
+						uni.hideLoading();
+						
+						if (res.success && res.retCode === 200 && res.data) {
+							const customerData = res.data;
+							console.log('API返回的客户数据:', customerData);
+							
+							this.customerForm = {
+								name: customerData.name || '',
+								phone: customerData.phone || '',
+								age: customerData.age || '',
+								matrimony: customerData.matrimony || 1,
+								manager: customerData.service_name || '',
+								department: customerData.branch_name || '',
+								client_type: customerData.client_type || 1,
+								work_unit: customerData.work_unit || '',
+								license_info: customerData.license_info || '',
+								asset_info: customerData.asset_info || '',
+								income: customerData.income || '',
+								credit_investigation: customerData.credit_investigation || '',
+								descr: customerData.descr || '',
+								status: customerData.status || 1
+							};
+							
+							// 处理执照图片
+							if (customerData.license_img) {
+								if (typeof customerData.license_img === 'string') {
+									this.licenseImg = customerData.license_img.split(',').filter(img => img);
+								} else if (Array.isArray(customerData.license_img)) {
+									this.licenseImg = customerData.license_img;
+								}
+								console.log('API返回的执照图片处理后:', this.licenseImg);
+							} else {
+								this.licenseImg = [];
+							}
+						} else {
+							uni.showToast({
+								title: res.message || '获取客户信息失败',
+								icon: 'none',
+								duration: 2000,
+							});
+						}
+					})
+					.catch(err => {
+						uni.hideLoading();
+						uni.showToast({
+							title: '获取客户信息失败',
+							icon: 'none',
+							duration: 2000,
+						});
+						console.error('获取客户信息失败', err);
+					});
 			},
 			handleMarriageChange(e) {
 				const index = e.detail.value;
-				this.customerForm.marriageStatus = this.maritalStatus[index].value;
+				this.customerForm.matrimony = this.maritalStatusOptions[index].value;
 			},
 			getMarriageText() {
-				const status = this.customerForm.marriageStatus;
-				const found = this.maritalStatus.find(item => item.value === status);
+				const status = this.customerForm.matrimony;
+				const found = this.maritalStatusOptions.find(item => item.value === status);
 				return found ? found.label : '请选择婚姻状态';
 			},
 			handleDepartmentChange(e) {
@@ -223,29 +270,29 @@
 			},
 			handleCustomerGroupChange(e) {
 				const index = e.detail.value;
-				this.customerForm.customerGroup = this.customerGroupOptions[index].value;
+				this.customerForm.client_type = this.customerGroupOptions[index].value;
 			},
 			getCustomerGroupText() {
-				const group = this.customerForm.customerGroup;
+				const group = this.customerForm.client_type;
 				const found = this.customerGroupOptions.find(item => item.value === group);
 				return found ? found.label : '请选择客群';
 			},
 			chooseImage() {
 				uni.chooseImage({
-					count: 5 - this.licenseImages.length,
+					count: 5 - this.licenseImg.length,
 					sizeType: ['compressed'],
 					sourceType: ['album', 'camera'],
 					success: (res) => {
-						this.licenseImages = [...this.licenseImages, ...res.tempFilePaths];
+						this.licenseImg = [...this.licenseImg, ...res.tempFilePaths];
 					}
 				});
 			},
 			deleteImage(index) {
-				this.licenseImages.splice(index, 1);
+				this.licenseImg.splice(index, 1);
 			},
 			previewImage(current) {
 				uni.previewImage({
-					urls: this.licenseImages,
+					urls: this.licenseImg,
 					current: current
 				});
 			},
@@ -253,28 +300,24 @@
 				if (!this.customerForm.name) {
 					uni.showToast({
 						title: '请输入客户姓名',
-						icon: 'none'
+						icon: 'none',
+						duration: 2000,
 					});
 					return false;
 				}
 				if (!this.customerForm.phone) {
 					uni.showToast({
 						title: '请输入手机号',
-						icon: 'none'
+						icon: 'none',
+						duration: 2000,
 					});
 					return false;
 				}
 				if (!/^1\d{10}$/.test(this.customerForm.phone)) {
 					uni.showToast({
 						title: '请输入正确的手机号格式',
-						icon: 'none'
-					});
-					return false;
-				}
-				if (!this.customerForm.department) {
-					uni.showToast({
-						title: '请选择所属部门',
-						icon: 'none'
+						icon: 'none',
+						duration: 2000,
 					});
 					return false;
 				}
@@ -285,60 +328,142 @@
 					return;
 				}
 				
-				// 准备提交的数据
-				const formData = {
-					...this.customerForm,
-					licenseImages: this.licenseImages
-				};
-				
-				// 模拟提交到API
 				uni.showLoading({
 					title: '提交中...'
 				});
 				
-				setTimeout(() => {
+				const formData = {
+					id: this.isEdit ? this.customerId : '',
+					name: this.customerForm.name,
+					phone: this.customerForm.phone,
+					age: this.customerForm.age,
+					matrimony: this.customerForm.matrimony,
+					branch_name: this.customerForm.department,
+					client_type: this.customerForm.client_type,
+					work_unit: this.customerForm.work_unit || '',
+					license_info: this.customerForm.license_info || '',
+					income: this.customerForm.income || '',
+					credit_investigation: this.customerForm.credit_investigation || '',
+					asset_info: this.customerForm.asset_info || '',
+					descr: this.customerForm.descr || '',
+					status: 1,
+				};
+				
+				const uploadImages = () => {
+					// 如果没有图片，直接提交表单
+					if (this.licenseImg.length === 0) {
+						formData.license_img = '';
+						this.submitToServer(formData);
+						return;
+					}
+					
+					let uploadedCount = 0;
+					let uploadedImages = [];
+					
+					// 逐个上传图片
+					this.licenseImg.forEach((path, index) => {
+						// 如果图片路径已经是网络URL，直接添加到上传列表
+						if (path.startsWith('http')) {
+							uploadedCount++;
+							uploadedImages.push(path);
+							
+							// 所有图片处理完毕后提交表单
+							if (uploadedCount === this.licenseImg.length) {
+								// 将图片路径数组转换为逗号分隔的字符串
+								formData.license_img = uploadedImages.join(',');
+								this.submitToServer(formData);
+							}
+							return;
+						}
+						
+						// 否则上传新图片
+						uni.uploadFile({
+							url: '/doc/upload',
+							filePath: path,
+							name: 'file',
+							success: (res) => {
+								try {
+									const response = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+									if (response.success && response.retCode === 200) {
+										uploadedImages.push(response.data);
+									} else {
+										uni.showToast({
+											title: response.message || '图片上传失败',
+											icon: 'none',
+											duration: 2000,
+										});
+									}
+								} catch (e) {
+									console.error('解析上传响应失败', e);
+									uni.showToast({
+										title: '图片上传失败',
+										icon: 'none',
+										duration: 2000,
+									});
+								}
+							},
+							fail: (err) => {
+								console.error('图片上传请求失败', err);
+								uni.showToast({
+									title: '图片上传失败',
+									icon: 'none',
+									duration: 2000,
+								});
+							},
+							complete: () => {
+								uploadedCount++;
+								
+								// 所有图片处理完毕后提交表单
+								if (uploadedCount === this.licenseImg.length) {
+									// 将图片路径数组转换为逗号分隔的字符串
+									formData.license_img = uploadedImages.join(',');
+									this.submitToServer(formData);
+								}
+							}
+						});
+					});
+				};
+				
+				uploadImages();
+			},
+			
+			submitToServer(formData) {
+				const apiCall = this.isEdit ? 
+					customerApi.update(formData) : 
+					customerApi.add(formData);
+					
+				apiCall.then(res => {
+					uni.hideLoading();
+					
+					if (res.success && res.retCode === 200) {
+						uni.showToast({
+							title: this.isEdit ? '客户信息更新成功' : '客户添加成功',
+							icon: 'success',
+							duration: 2000,
+						});
+						
+						setTimeout(() => {
+							uni.navigateBack();
+						}, 1500);
+					} else {
+						uni.showToast({
+							title: res.message || '提交失败',
+							icon: 'none',
+							duration: 2000,
+						});
+						uni.hideLoading();
+					}
+				}).catch(err => {
 					uni.hideLoading();
 					uni.showToast({
-						title: this.isEdit ? '客户信息更新成功' : '客户添加成功',
-						icon: 'success'
+						title: '网络错误，请重试',
+						icon: 'none',
+						duration: 2000,
 					});
-					
-					// 返回上一页
-					setTimeout(() => {
-						uni.navigateBack();
-					}, 1500);
-				}, 1000);
-				
-				// 实际项目中使用API调用
-				// const url = this.isEdit 
-				//   ? 'your_api_endpoint/customer/' + this.customerId
-				//   : 'your_api_endpoint/customer';
-				// const method = this.isEdit ? 'PUT' : 'POST';
-				
-				// uni.request({
-				//   url: url,
-				//   method: method,
-				//   data: formData,
-				//   success: (res) => {
-				//     uni.showToast({
-				//       title: this.isEdit ? '客户信息更新成功' : '客户添加成功',
-				//       icon: 'success'
-				//     });
-				//     setTimeout(() => {
-				//       uni.navigateBack();
-				//     }, 1500);
-				//   },
-				//   fail: (err) => {
-				//     uni.showToast({
-				//       title: '提交失败，请重试',
-				//       icon: 'none'
-				//     });
-				//   },
-				//   complete: () => {
-				//     uni.hideLoading();
-				//   }
-				// });
+					console.error(err);
+				});
 			},
+			
 			goBack() {
 				uni.navigateBack();
 			}

@@ -137,10 +137,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _user = _interopRequireDefault(__webpack_require__(/*! @/api/user.js */ 156));
 //
 //
 //
@@ -206,16 +208,39 @@ var _default = {
     },
     handleLogin: function handleLogin() {
       if (this.validateForm()) {
-        // 模拟登录成功
-        uni.showLoading({
-          title: '登录中...'
-        });
-        setTimeout(function () {
-          uni.hideLoading();
-          uni.switchTab({
-            url: '/pages/dashboard/dashboard'
+        // 调用登录API
+        _user.default.login({
+          phone: this.phone,
+          password: this.password
+        }).then(function (res) {
+          console.log('登录成功', res);
+
+          // 根据实际返回结构处理登录结果
+          if (res.success && res.retCode === 200 && res.data) {
+            // 存储登录状态和token
+            uni.setStorageSync('isLoggedIn', true);
+            uni.setStorageSync('token', res.data.token);
+            uni.setStorageSync('userInfo', res.data);
+
+            // 登录成功后跳转到主页
+            uni.switchTab({
+              url: '/pages/dashboard/dashboard'
+            });
+          } else {
+            uni.showToast({
+              title: res.message || '登录失败',
+              icon: 'none',
+              duration: 2000
+            });
+          }
+        }).catch(function (err) {
+          console.error('登录失败', err);
+          uni.showToast({
+            title: err.message || '登录失败，请检查账号密码',
+            icon: 'none',
+            duration: 2000
           });
-        }, 1500);
+        });
       }
     }
   }

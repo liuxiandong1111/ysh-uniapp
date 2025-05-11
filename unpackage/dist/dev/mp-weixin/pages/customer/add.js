@@ -105,7 +105,9 @@ var render = function () {
   var m0 = _vm.getMarriageText()
   var m1 = _vm.getCustomerGroupText()
   var g0 =
-    _vm.customerForm.customerGroup === "经营" ? _vm.licenseImages.length : null
+    _vm.customerForm.client_type === 2 || _vm.customerForm.client_type === 3
+      ? _vm.licenseImg.length
+      : null
   _vm.$mp.data = Object.assign(
     {},
     {
@@ -156,20 +158,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ 11));
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ 18));
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+var _customer = _interopRequireDefault(__webpack_require__(/*! @/api/customer.js */ 172));
+var _dict = __webpack_require__(/*! @/utils/dict.js */ 173);
 //
 //
 //
@@ -270,123 +261,166 @@ var _default = {
         name: '',
         phone: '',
         age: '',
-        marriageStatus: 'single',
+        matrimony: 1,
         manager: '',
         department: '',
-        customerGroup: '消费',
-        workplace: '',
-        licenseInfo: '',
-        licenseImages: [],
-        assets: '',
+        client_type: 1,
+        work_unit: '',
+        license_info: '',
+        asset_info: '',
         income: '',
-        creditDescription: '',
-        remarks: '',
-        status: 'new'
+        credit_investigation: '',
+        descr: '',
+        status: 1
       },
-      maritalStatus: [{
-        value: 'single',
-        label: '未婚'
-      }, {
-        value: 'married',
-        label: '已婚'
-      }, {
-        value: 'divorced',
-        label: '离异'
-      }, {
-        value: 'widowed',
-        label: '丧偶'
-      }],
+      dictMaps: _dict.dictMaps,
+      maritalStatusOptions: [],
       departmentOptions: ['消费信贷部', '小微信贷部'],
-      customerGroupOptions: [{
-        value: '消费',
-        label: '消费'
-      }, {
-        value: '经营',
-        label: '经营'
-      }],
-      licenseImages: []
+      customerGroupOptions: [],
+      licenseImg: []
     };
   },
+  created: function created() {
+    this.initDictOptions();
+  },
   onLoad: function onLoad(options) {
+    console.log('编辑页面接收到的参数:', options);
     if (options.id) {
       this.isEdit = true;
       this.customerId = options.id;
-      this.loadCustomerData();
+
+      // 检查是否从列表页面传递了客户数据
+      if (options.customerData) {
+        try {
+          // 解析客户数据
+          var customerData = JSON.parse(decodeURIComponent(options.customerData));
+          console.log('解析后的客户数据:', customerData);
+
+          // 将数据映射到表单
+          this.customerForm = {
+            name: customerData.name || '',
+            phone: customerData.phone || '',
+            age: customerData.age || '',
+            matrimony: customerData.matrimony || 1,
+            manager: customerData.service_name || '',
+            department: customerData.branch_name || '',
+            client_type: customerData.client_type || 1,
+            work_unit: customerData.work_unit || '',
+            license_info: customerData.license_info || '',
+            asset_info: customerData.asset_info || '',
+            income: customerData.income || '',
+            credit_investigation: customerData.credit_investigation || '',
+            descr: customerData.descr || '',
+            status: customerData.status || 1
+          };
+
+          // 处理执照图片 - 如果是字符串，则分割成数组
+          if (customerData.license_img) {
+            if (typeof customerData.license_img === 'string') {
+              this.licenseImg = customerData.license_img.split(',').filter(function (img) {
+                return img;
+              });
+            } else if (Array.isArray(customerData.license_img)) {
+              this.licenseImg = customerData.license_img;
+            }
+            console.log('处理后的执照图片:', this.licenseImg);
+          } else {
+            this.licenseImg = [];
+          }
+          console.log('已从列表数据加载客户信息');
+        } catch (e) {
+          console.error('解析客户数据失败', e);
+          // 解析失败时调用API获取详情
+          this.loadCustomerData();
+        }
+      } else {
+        // 如果没有传递客户数据，则调用API获取
+        this.loadCustomerData();
+      }
     }
   },
   methods: {
-    loadCustomerData: function loadCustomerData() {
+    initDictOptions: function initDictOptions() {
       var _this = this;
-      // 模拟从API获取客户数据
-      setTimeout(function () {
-        // 如果是编辑模式，获取客户数据
-        if (_this.isEdit) {
-          // 模拟数据
-          if (_this.customerId === '1') {
-            _this.customerForm = {
-              name: '张三',
-              phone: '13800138000',
-              age: 35,
-              marriageStatus: 'married',
-              manager: '王经理',
-              department: '消费信贷部',
-              customerGroup: '消费',
-              workplace: '北京科技有限公司',
-              licenseInfo: '',
-              licenseImages: [],
-              assets: '房产一套，车辆一台',
-              income: '20000元/月',
-              creditDescription: '信用良好，无逾期',
-              remarks: '客户对产品很感兴趣',
-              status: 'intention'
-            };
-          } else if (_this.customerId === '2') {
-            _this.customerForm = {
-              name: '李四',
-              phone: '13800138001',
-              age: 42,
-              marriageStatus: 'married',
-              manager: '赵经理',
-              department: '小微信贷部',
-              customerGroup: '经营',
-              workplace: '',
-              licenseInfo: '北京食品贸易有限公司',
-              licenseImages: ['https://example.com/license1.jpg'],
-              assets: '商铺两间，车辆一台',
-              income: '50000元/月',
-              creditDescription: '信用优良，历史贷款按时还款',
-              remarks: '老客户，已多次合作',
-              status: 'deal'
-            };
-            // 将远程图片URL转换为本地展示数据
-            _this.licenseImages = _this.customerForm.licenseImages;
-          }
-        }
-      }, 500);
+      this.maritalStatusOptions = Object.keys(this.dictMaps.maritalStatus).map(function (key) {
+        return {
+          value: parseInt(key),
+          label: _this.dictMaps.maritalStatus[key]
+        };
+      });
+      this.customerGroupOptions = Object.keys(this.dictMaps.customerType).map(function (key) {
+        return {
+          value: parseInt(key),
+          label: _this.dictMaps.customerType[key]
+        };
+      });
+    },
+    loadCustomerData: function loadCustomerData() {
+      var _this2 = this;
+      uni.showLoading({
+        title: '加载中...'
+      });
 
-      // 实际项目中使用API调用
-      // uni.request({
-      //   url: 'your_api_endpoint/customer/' + this.customerId,
-      //   method: 'GET',
-      //   success: (res) => {
-      //     this.customerForm = res.data;
-      //     this.licenseImages = this.customerForm.licenseImages || [];
-      //   },
-      //   fail: () => {
-      //     uni.showToast({
-      //       title: '获取客户数据失败',
-      //       icon: 'none'
-      //     });
-      //   }
-      // });
+      // 从API获取客户数据
+      _customer.default.getDetail(this.customerId).then(function (res) {
+        uni.hideLoading();
+        if (res.success && res.retCode === 200 && res.data) {
+          var customerData = res.data;
+          console.log('API返回的客户数据:', customerData);
+          _this2.customerForm = {
+            name: customerData.name || '',
+            phone: customerData.phone || '',
+            age: customerData.age || '',
+            matrimony: customerData.matrimony || 1,
+            manager: customerData.service_name || '',
+            department: customerData.branch_name || '',
+            client_type: customerData.client_type || 1,
+            work_unit: customerData.work_unit || '',
+            license_info: customerData.license_info || '',
+            asset_info: customerData.asset_info || '',
+            income: customerData.income || '',
+            credit_investigation: customerData.credit_investigation || '',
+            descr: customerData.descr || '',
+            status: customerData.status || 1
+          };
+
+          // 处理执照图片
+          if (customerData.license_img) {
+            if (typeof customerData.license_img === 'string') {
+              _this2.licenseImg = customerData.license_img.split(',').filter(function (img) {
+                return img;
+              });
+            } else if (Array.isArray(customerData.license_img)) {
+              _this2.licenseImg = customerData.license_img;
+            }
+            console.log('API返回的执照图片处理后:', _this2.licenseImg);
+          } else {
+            _this2.licenseImg = [];
+          }
+        } else {
+          uni.showToast({
+            title: res.message || '获取客户信息失败',
+            icon: 'none',
+            duration: 2000
+          });
+        }
+      }).catch(function (err) {
+        uni.hideLoading();
+        uni.showToast({
+          title: '获取客户信息失败',
+          icon: 'none',
+          duration: 2000
+        });
+        console.error('获取客户信息失败', err);
+      });
     },
     handleMarriageChange: function handleMarriageChange(e) {
       var index = e.detail.value;
-      this.customerForm.marriageStatus = this.maritalStatus[index].value;
+      this.customerForm.matrimony = this.maritalStatusOptions[index].value;
     },
     getMarriageText: function getMarriageText() {
-      var status = this.customerForm.marriageStatus;
-      var found = this.maritalStatus.find(function (item) {
+      var status = this.customerForm.matrimony;
+      var found = this.maritalStatusOptions.find(function (item) {
         return item.value === status;
       });
       return found ? found.label : '请选择婚姻状态';
@@ -397,32 +431,32 @@ var _default = {
     },
     handleCustomerGroupChange: function handleCustomerGroupChange(e) {
       var index = e.detail.value;
-      this.customerForm.customerGroup = this.customerGroupOptions[index].value;
+      this.customerForm.client_type = this.customerGroupOptions[index].value;
     },
     getCustomerGroupText: function getCustomerGroupText() {
-      var group = this.customerForm.customerGroup;
+      var group = this.customerForm.client_type;
       var found = this.customerGroupOptions.find(function (item) {
         return item.value === group;
       });
       return found ? found.label : '请选择客群';
     },
     chooseImage: function chooseImage() {
-      var _this2 = this;
+      var _this3 = this;
       uni.chooseImage({
-        count: 5 - this.licenseImages.length,
+        count: 5 - this.licenseImg.length,
         sizeType: ['compressed'],
         sourceType: ['album', 'camera'],
         success: function success(res) {
-          _this2.licenseImages = [].concat((0, _toConsumableArray2.default)(_this2.licenseImages), (0, _toConsumableArray2.default)(res.tempFilePaths));
+          _this3.licenseImg = [].concat((0, _toConsumableArray2.default)(_this3.licenseImg), (0, _toConsumableArray2.default)(res.tempFilePaths));
         }
       });
     },
     deleteImage: function deleteImage(index) {
-      this.licenseImages.splice(index, 1);
+      this.licenseImg.splice(index, 1);
     },
     previewImage: function previewImage(current) {
       uni.previewImage({
-        urls: this.licenseImages,
+        urls: this.licenseImg,
         current: current
       });
     },
@@ -430,90 +464,159 @@ var _default = {
       if (!this.customerForm.name) {
         uni.showToast({
           title: '请输入客户姓名',
-          icon: 'none'
+          icon: 'none',
+          duration: 2000
         });
         return false;
       }
       if (!this.customerForm.phone) {
         uni.showToast({
           title: '请输入手机号',
-          icon: 'none'
+          icon: 'none',
+          duration: 2000
         });
         return false;
       }
       if (!/^1\d{10}$/.test(this.customerForm.phone)) {
         uni.showToast({
           title: '请输入正确的手机号格式',
-          icon: 'none'
-        });
-        return false;
-      }
-      if (!this.customerForm.department) {
-        uni.showToast({
-          title: '请选择所属部门',
-          icon: 'none'
+          icon: 'none',
+          duration: 2000
         });
         return false;
       }
       return true;
     },
     submitForm: function submitForm() {
-      var _this3 = this;
+      var _this4 = this;
       if (!this.validateForm()) {
         return;
       }
-
-      // 准备提交的数据
-      var formData = _objectSpread(_objectSpread({}, this.customerForm), {}, {
-        licenseImages: this.licenseImages
-      });
-
-      // 模拟提交到API
       uni.showLoading({
         title: '提交中...'
       });
-      setTimeout(function () {
+      var formData = {
+        id: this.isEdit ? this.customerId : '',
+        name: this.customerForm.name,
+        phone: this.customerForm.phone,
+        age: this.customerForm.age,
+        matrimony: this.customerForm.matrimony,
+        branch_name: this.customerForm.department,
+        client_type: this.customerForm.client_type,
+        work_unit: this.customerForm.work_unit || '',
+        license_info: this.customerForm.license_info || '',
+        income: this.customerForm.income || '',
+        credit_investigation: this.customerForm.credit_investigation || '',
+        asset_info: this.customerForm.asset_info || '',
+        descr: this.customerForm.descr || '',
+        status: 1
+      };
+      var uploadImages = function uploadImages() {
+        // 如果没有图片，直接提交表单
+        if (_this4.licenseImg.length === 0) {
+          formData.license_img = '';
+          _this4.submitToServer(formData);
+          return;
+        }
+        var uploadedCount = 0;
+        var uploadedImages = [];
+
+        // 逐个上传图片
+        _this4.licenseImg.forEach(function (path, index) {
+          // 如果图片路径已经是网络URL，直接添加到上传列表
+          if (path.startsWith('http')) {
+            uploadedCount++;
+            uploadedImages.push(path);
+
+            // 所有图片处理完毕后提交表单
+            if (uploadedCount === _this4.licenseImg.length) {
+              // 将图片路径数组转换为逗号分隔的字符串
+              formData.license_img = uploadedImages.join(',');
+              _this4.submitToServer(formData);
+            }
+            return;
+          }
+
+          // 否则上传新图片
+          uni.uploadFile({
+            url: '/doc/upload',
+            filePath: path,
+            name: 'file',
+            success: function success(res) {
+              try {
+                var response = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+                if (response.success && response.retCode === 200) {
+                  uploadedImages.push(response.data);
+                } else {
+                  uni.showToast({
+                    title: response.message || '图片上传失败',
+                    icon: 'none',
+                    duration: 2000
+                  });
+                }
+              } catch (e) {
+                console.error('解析上传响应失败', e);
+                uni.showToast({
+                  title: '图片上传失败',
+                  icon: 'none',
+                  duration: 2000
+                });
+              }
+            },
+            fail: function fail(err) {
+              console.error('图片上传请求失败', err);
+              uni.showToast({
+                title: '图片上传失败',
+                icon: 'none',
+                duration: 2000
+              });
+            },
+            complete: function complete() {
+              uploadedCount++;
+
+              // 所有图片处理完毕后提交表单
+              if (uploadedCount === _this4.licenseImg.length) {
+                // 将图片路径数组转换为逗号分隔的字符串
+                formData.license_img = uploadedImages.join(',');
+                _this4.submitToServer(formData);
+              }
+            }
+          });
+        });
+      };
+      uploadImages();
+    },
+    submitToServer: function submitToServer(formData) {
+      var _this5 = this;
+      var apiCall = this.isEdit ? _customer.default.update(formData) : _customer.default.add(formData);
+      apiCall.then(function (res) {
+        uni.hideLoading();
+        if (res.success && res.retCode === 200) {
+          uni.showToast({
+            title: _this5.isEdit ? '客户信息更新成功' : '客户添加成功',
+            icon: 'success',
+            duration: 2000
+          });
+          setTimeout(function () {
+            uni.navigateBack();
+          }, 1500);
+        } else {
+          uni.showToast({
+            title: res.message || '提交失败',
+            icon: 'none',
+            duration: 2000
+          });
+          uni.hideLoading();
+        }
+      }).catch(function (err) {
         uni.hideLoading();
         uni.showToast({
-          title: _this3.isEdit ? '客户信息更新成功' : '客户添加成功',
-          icon: 'success'
+          title: '网络错误，请重试',
+          icon: 'none',
+          duration: 2000
         });
-
-        // 返回上一页
-        setTimeout(function () {
-          uni.navigateBack();
-        }, 1500);
-      }, 1000);
-
-      // 实际项目中使用API调用
-      // const url = this.isEdit 
-      //   ? 'your_api_endpoint/customer/' + this.customerId
-      //   : 'your_api_endpoint/customer';
-      // const method = this.isEdit ? 'PUT' : 'POST';
-
-      // uni.request({
-      //   url: url,
-      //   method: method,
-      //   data: formData,
-      //   success: (res) => {
-      //     uni.showToast({
-      //       title: this.isEdit ? '客户信息更新成功' : '客户添加成功',
-      //       icon: 'success'
-      //     });
-      //     setTimeout(() => {
-      //       uni.navigateBack();
-      //     }, 1500);
-      //   },
-      //   fail: (err) => {
-      //     uni.showToast({
-      //       title: '提交失败，请重试',
-      //       icon: 'none'
-      //     });
-      //   },
-      //   complete: () => {
-      //     uni.hideLoading();
-      //   }
-      // });
+        console.error(err);
+      });
     },
     goBack: function goBack() {
       uni.navigateBack();

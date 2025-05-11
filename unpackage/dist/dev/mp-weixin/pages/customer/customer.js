@@ -104,23 +104,23 @@ var render = function () {
   var _c = _vm._self._c || _h
   var l0 = _vm.__map(_vm.customerList, function (item, index) {
     var $orig = _vm.__get_orig(item)
-    var m0 = _vm.getStatusText(item.status)
-    var m1 = _vm.formatDate(item.createTime)
-    var m2 = item.jindu ? _vm.getJinduText(item.jindu) : null
+    var m0 = _vm.formatDate(item.ctime)
     return {
       $orig: $orig,
       m0: m0,
-      m1: m1,
-      m2: m2,
     }
   })
   var g0 = _vm.customerList.length
+  var g1 = _vm.totalCount > 0 ? Math.ceil(_vm.totalCount / _vm.pageSize) : null
+  var g2 = _vm.totalCount > 0 ? Math.ceil(_vm.totalCount / _vm.pageSize) : null
   _vm.$mp.data = Object.assign(
     {},
     {
       $root: {
         l0: l0,
         g0: g0,
+        g1: g1,
+        g2: g2,
       },
     }
   )
@@ -159,10 +159,29 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _customer = _interopRequireDefault(__webpack_require__(/*! @/api/customer.js */ 172));
+var _dict = __webpack_require__(/*! @/utils/dict.js */ 173);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -294,163 +313,124 @@ var _default = {
   data: function data() {
     return {
       searchKey: '',
+      phone: '',
       statusFilter: 'all',
       customerList: [],
       showFilterForm: false,
       departmentOptions: ['全部', '消费信贷部', '小微信贷部'],
       currentDepartment: 0,
-      statusOptions: ['全部', '新客户', '意向客户', '已成交', '已流失'],
+      statusOptions: ['全部', '未联系', '电话联系', '客户到访', '提交材料', '完成'],
       currentStatus: 0,
-      approvalOptions: ['全部', '待审批', '审批中', '已通过', '已拒绝'],
+      approvalOptions: ['全部', '未审批', '审批中', '已通过', '已拒绝'],
       currentApproval: 0,
-      customerGroupOptions: ['全部', '消费', '经营'],
+      customerGroupOptions: ['全部', '消费', '经营', '消费经营'],
       currentCustomerGroup: 0,
       filterParams: {
         department: '',
         status: '',
         approvalStatus: '',
         customerGroup: ''
-      }
+      },
+      page: 1,
+      pageSize: 20,
+      totalCount: 0,
+      dictMaps: _dict.dictMaps
     };
   },
   onLoad: function onLoad() {
-    this.loadCustomerList();
+    // 检查登录状态
+    this.checkLogin();
+  },
+  onShow: function onShow() {
+    // 在页面显示时也检查登录状态
+    if (this.checkLogin()) {
+      this.loadCustomerList();
+    }
   },
   methods: {
+    // 检查登录状态
+    checkLogin: function checkLogin() {
+      var isLoggedIn = uni.getStorageSync('isLoggedIn');
+      var token = uni.getStorageSync('token');
+      var userInfo = uni.getStorageSync('userInfo');
+      if (!isLoggedIn || !token || !userInfo) {
+        console.log('customer页面检测到未登录，准备跳转到登录页');
+        uni.showToast({
+          title: '请先登录',
+          icon: 'none',
+          duration: 2000
+        });
+
+        // 直接跳转到登录页
+        uni.redirectTo({
+          url: '/pages/login/login'
+        });
+        return false;
+      }
+      return true;
+    },
     loadCustomerList: function loadCustomerList() {
       var _this = this;
-      // 从API获取客户列表数据
-      // 模拟筛选逻辑
-      var filteredList = [];
-
-      // 获取原始数据
-      var rawData = [{
-        id: 1,
-        name: '张三',
-        phone: '13800138000',
-        manager: '王经理',
-        department: '消费信贷部',
-        product: '个人消费贷',
-        loanStatus: '批款',
-        amount: '10万',
-        rejectReason: '',
-        age: 35,
-        marriageStatus: 'married',
-        customerGroup: '消费',
-        workplace: '北京科技有限公司',
-        income: '20000元/月',
-        jindu: 'pending',
-        status: 'intention',
-        // 意向客户
-        creditDescription: '信用良好，无逾期',
-        remarks: '客户对产品很感兴趣',
-        createTime: '2024-03-14 10:25:36',
-        updateTime: '2024-03-15 15:42:18'
-      }, {
-        id: 2,
-        name: '李四',
-        phone: '13800138001',
-        manager: '赵经理',
-        department: '小微信贷部',
-        product: '小微企业贷',
-        loanStatus: '放款',
-        amount: '20万',
-        rejectReason: '',
-        age: 42,
-        marriageStatus: 'married',
-        customerGroup: '经营',
-        licenseInfo: '北京食品贸易有限公司',
-        licenseImages: ['https://example.com/license1.jpg'],
-        income: '50000元/月',
-        creditDescription: '信用优良，历史贷款按时还款',
-        jindu: 'approved',
-        status: 'deal',
-        // 已成交
-        remarks: '老客户，已多次合作',
-        createTime: '2024-03-10 09:15:22',
-        updateTime: '2024-03-13 17:30:45'
-      }, {
-        id: 3,
-        name: '王五',
-        phone: '13800138002',
-        manager: '刘经理',
-        department: '消费信贷部',
-        product: '个人消费贷',
-        loanStatus: '拒绝',
-        amount: '',
-        rejectReason: '征信不良',
-        age: 28,
-        marriageStatus: 'single',
-        customerGroup: '消费',
-        workplace: '上海贸易有限公司',
-        income: '15000元/月',
-        jindu: 'rejected',
-        status: 'new',
-        // 新客户
-        creditDescription: '有多次信用卡逾期记录',
-        remarks: '需要补充征信资料',
-        createTime: '2024-03-12 14:20:33',
-        updateTime: '2024-03-14 11:05:27'
-      }];
-
-      // 应用筛选条件
-      filteredList = rawData.filter(function (item) {
-        // 关键词搜索
-        if (_this.searchKey && !(item.name.includes(_this.searchKey) || item.phone.includes(_this.searchKey))) {
-          return false;
-        }
-
-        // 部门筛选
-        if (_this.filterParams.department && item.department !== _this.filterParams.department) {
-          return false;
-        }
-
-        // 状态筛选
-        if (_this.filterParams.status) {
-          var statusMap = {
-            '新客户': 'new',
-            '意向客户': 'intention',
-            '已成交': 'deal',
-            '已流失': 'lost'
-          };
-          if (item.status !== statusMap[_this.filterParams.status]) {
-            return false;
-          }
-        }
-
-        // 审批状态筛选
-        if (_this.filterParams.approvalStatus) {
-          var approvalMap = {
-            '待审批': 'pending',
-            '审批中': 'processing',
-            '已通过': 'approved',
-            '已拒绝': 'rejected'
-          };
-          if (item.jindu !== approvalMap[_this.filterParams.approvalStatus]) {
-            return false;
-          }
-        }
-
-        // 客群筛选
-        if (_this.filterParams.customerGroup && item.customerGroup !== _this.filterParams.customerGroup) {
-          return false;
-        }
-        return true;
+      // 显示加载中提示
+      uni.showLoading({
+        title: '加载中...'
       });
-      this.customerList = filteredList;
 
-      // 实际项目中使用API调用代替
-      // this.$api.customer.getList({
-      //   keyword: this.searchKey,
-      //   ...this.filterParams
-      // }).then(res => {
-      //   this.customerList = res.data || [];
-      // }).catch(err => {
-      //   uni.showToast({
-      //     title: '获取客户列表失败',
-      //     icon: 'none'
-      //   });
-      // });
+      // 构建请求参数
+      var params = {
+        page: this.page,
+        pageSize: this.pageSize,
+        phone: this.phone || '',
+        name: this.searchKey || ''
+      };
+
+      // 如果有筛选条件，添加到请求参数中
+      if (this.filterParams.department) {
+        params.branch_id = this.getDepartmentId(this.filterParams.department);
+      }
+
+      // 调用API获取客户列表
+      _customer.default.getList(params).then(function (res) {
+        // 隐藏加载提示
+        uni.hideLoading();
+        if (res.success && res.retCode === 200 && res.data) {
+          // 处理返回的数据
+          _this.customerList = res.data.list || [];
+          _this.totalCount = res.data.total || 0;
+
+          // 如果列表为空，显示提示
+          if (_this.customerList.length === 0) {
+            uni.showToast({
+              title: '暂无客户数据',
+              icon: 'none'
+            });
+          }
+        } else {
+          // 显示错误信息
+          uni.showToast({
+            title: res.message || '获取客户列表失败',
+            icon: 'none'
+          });
+        }
+      }).catch(function (err) {
+        // 隐藏加载提示
+        uni.hideLoading();
+
+        // 显示错误信息
+        uni.showToast({
+          title: '获取客户列表失败',
+          icon: 'none'
+        });
+        console.error('获取客户列表失败', err);
+      });
+    },
+    // 获取部门ID
+    getDepartmentId: function getDepartmentId(departmentName) {
+      var departmentMap = {
+        '消费信贷部': '1',
+        '小微信贷部': '2'
+      };
+      return departmentMap[departmentName] || '';
     },
     handleSearch: function handleSearch() {
       this.loadCustomerList();
@@ -459,35 +439,67 @@ var _default = {
       this.statusFilter = status;
       this.loadCustomerList();
     },
-    getStatusText: function getStatusText(status) {
-      var map = {
-        'new': '电话联系',
-        'intention': '未联系',
-        'deal': '客户到访'
-      };
-      return map[status] || status;
-    },
-    getJinduText: function getJinduText(jindu) {
-      var map = {
-        'pending': '待审批',
-        'approved': '已通过',
-        'rejected': '已拒绝'
-      };
-      return map[jindu] || jindu;
-    },
     formatDate: function formatDate(timestamp) {
       if (!timestamp) return '';
       var date = new Date(timestamp);
       return "".concat(date.getFullYear(), "-").concat(String(date.getMonth() + 1).padStart(2, '0'), "-").concat(String(date.getDate()).padStart(2, '0'));
     },
+    getStatusText: function getStatusText(status) {
+      var map = {
+        '1': '新客户',
+        '2': '意向客户',
+        '3': '已成交',
+        '4': '已流失',
+        '5': '已移交',
+        'new': '新客户',
+        'intention': '意向客户',
+        'deal': '已成交',
+        'lost': '已流失'
+      };
+      return map[status] || status || '未知';
+    },
+    getClientType: function getClientType(type) {
+      var map = {
+        '1': '个人客户',
+        '2': '企业客户',
+        '3': '个体工商户'
+      };
+      return map[type] || '未知类型';
+    },
+    getDealStatus: function getDealStatus(status) {
+      var map = {
+        '1': '未审批',
+        '2': '审批中',
+        '3': '已通过',
+        '4': '已拒绝'
+      };
+      return map[status] || '未知状态';
+    },
+    getJinduText: function getJinduText(jindu) {
+      var map = {
+        '1': '待审批',
+        '2': '审批中',
+        '3': '已通过',
+        '4': '已拒绝',
+        'pending': '待审批',
+        'processing': '审批中',
+        'approved': '已通过',
+        'rejected': '已拒绝'
+      };
+      return map[jindu] || jindu || '未知';
+    },
     goDetail: function goDetail(item) {
+      // 将客户数据编码为URL参数
+      var customerData = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: "/pages/customer/detail?id=".concat(item.id)
+        url: "/pages/customer/detail?id=".concat(item.id, "&customerData=").concat(customerData)
       });
     },
     goEdit: function goEdit(item) {
+      // 将客户数据编码为URL参数
+      var customerData = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: "/pages/customer/add?id=".concat(item.id)
+        url: "/pages/customer/add?id=".concat(item.id, "&customerData=").concat(customerData)
       });
     },
     goFollowup: function goFollowup(item) {
@@ -557,6 +569,18 @@ var _default = {
         icon: 'none'
       });
       this.showFilterForm = false;
+    },
+    prevPage: function prevPage() {
+      if (this.page > 1) {
+        this.page--;
+        this.loadCustomerList();
+      }
+    },
+    nextPage: function nextPage() {
+      if (this.page < Math.ceil(this.totalCount / this.pageSize)) {
+        this.page++;
+        this.loadCustomerList();
+      }
     }
   }
 };

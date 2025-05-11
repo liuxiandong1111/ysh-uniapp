@@ -174,17 +174,20 @@
 	border-radius: 10px;
 	color: white;
 }
-.statusClass-new {
-	background-color: #5ac8fa;
+.statusClass-1 {
+	background-color: #5ac8fa; /* 新客户 - 蓝色 */
 }
-.statusClass-intention {
-	background-color: #ff9500;
+.statusClass-2 {
+	background-color: #ff9500; /* 意向客户 - 橙色 */
 }
-.statusClass-deal {
-	background-color: #4cd964;
+.statusClass-3 {
+	background-color: #4cd964; /* 已成交 - 绿色 */
 }
-.statusClass-lost {
-	background-color: #8e8e93;
+.statusClass-4 {
+	background-color: #8e8e93; /* 已流失 - 灰色 */
+}
+.statusClass-5 {
+	background-color: #007AFF; /* 已移交 - 深蓝色 */
 }
 .phone,
 .dept,
@@ -272,6 +275,35 @@
 	color: white;
 }
 
+/* 分页样式 */
+.pagination {
+	margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.pagination-info {
+	font-size: 14px;
+	color: #606266;
+	margin-bottom: 10px;
+}
+.pagination-btn-group {
+	display: flex;
+	justify-content: center;
+}
+.pagination-btn {
+	padding: 8px 15px;
+	margin: 0 5px;
+	background-color: #409EFF;
+	color: white;
+	border-radius: 4px;
+	font-size: 14px;
+}
+.pagination-btn.disabled {
+	background-color: #c0c4cc;
+	cursor: not-allowed;
+}
+
 /* 图标样式 */
 .icon-add:before {
 	content: "\e6da";
@@ -284,5 +316,31 @@
 }
 .icon-filter:before {
 	content: "\e6dd";
+}
+.dealClass-1 {
+	background-color: #909399; /* 未审批 - 灰色 */
+}
+.dealClass-2 {
+	background-color: #ff9500; /* 审批中 - 橙色 */
+}
+.dealClass-3 {
+	background-color: #4cd964; /* 已通过 - 绿色 */
+}
+.dealClass-4 {
+	background-color: #ff3b30; /* 已拒绝 - 红色 */
+}
+.client-age {
+	font-size: 16px;
+	font-weight: bold;
+	color: #606266;
+	margin-top: 5px;
+}
+.marital-status {
+	font-size: 14px;
+	color: #606266;
+	margin-top: 5px;
+	padding: 2px 8px;
+	background-color: #f0f2f5;
+	border-radius: 10px;
 }
 

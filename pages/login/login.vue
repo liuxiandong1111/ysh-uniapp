@@ -30,6 +30,8 @@
 </template>
 
 <script>
+	import userApi from '@/api/user.js';
+	
 	export default {
 		data() {
 			return {
@@ -65,17 +67,39 @@
 			},
 			handleLogin() {
 				if (this.validateForm()) {
-					// 模拟登录成功
-					uni.showLoading({
-						title: '登录中...'
-					});
-					
-					setTimeout(() => {
-						uni.hideLoading();
-						uni.switchTab({
-							url: '/pages/dashboard/dashboard'
+					// 调用登录API
+					userApi.login({
+						phone: this.phone,
+						password: this.password
+					}).then(res => {
+						console.log('登录成功', res);
+						
+						// 根据实际返回结构处理登录结果
+						if (res.success && res.retCode === 200 && res.data) {
+							// 存储登录状态和token
+							uni.setStorageSync('isLoggedIn', true);
+							uni.setStorageSync('token', res.data.token);
+							uni.setStorageSync('userInfo', res.data);
+							
+							// 登录成功后跳转到主页
+							uni.switchTab({
+								url: '/pages/dashboard/dashboard'
+							});
+						} else {
+							uni.showToast({
+								title: res.message || '登录失败',
+								icon: 'none',
+								duration: 2000
+							});
+						}
+					}).catch(err => {
+						console.error('登录失败', err);
+						uni.showToast({
+							title: err.message || '登录失败，请检查账号密码',
+							icon: 'none',
+							duration: 2000
 						});
-					}, 1500);
+					});
 				}
 			}
 		}

@@ -57,16 +57,16 @@
 							<text class="info-value">{{ customerInfo.workplace }}</text>
 						</view>
 						
-						<view class="info-item full-width" v-if="customerInfo.licenseInfo">
+						<view class="info-item full-width" v-if="customerInfo.license_info">
 							<text class="info-label">执照信息</text>
-							<text class="info-value">{{ customerInfo.licenseInfo }}</text>
+							<text class="info-value">{{ customerInfo.license_info }}</text>
 						</view>
 						
-						<view class="info-item full-width" v-if="customerInfo.licenseImages && customerInfo.licenseImages.length">
+						<view class="info-item full-width" v-if="customerInfo.license_img">
 							<text class="info-label">执照图片</text>
 							<view class="image-container">
 								<image 
-									v-for="(img, imgIndex) in customerInfo.licenseImages" 
+									v-for="(img, imgIndex) in licenseImgList" 
 									:key="imgIndex" 
 									:src="img" 
 									class="license-image"
@@ -77,7 +77,7 @@
 						
 						<view class="info-item full-width">
 							<text class="info-label">资产状况</text>
-							<text class="info-value">{{ customerInfo.assetStatus || '未填写' }}</text>
+							<text class="info-value">{{ customerInfo.asset_info || '未填写' }}</text>
 						</view>
 						
 						<view class="info-item full-width">
@@ -87,12 +87,12 @@
 						
 						<view class="info-item full-width">
 							<text class="info-label">征信描述</text>
-							<text class="info-value">{{ customerInfo.creditDescription }}</text>
+							<text class="info-value">{{ customerInfo.credit_investigation }}</text>
 						</view>
 						
 						<view class="info-item full-width">
 							<text class="info-label">备注信息</text>
-							<text class="info-value">{{ customerInfo.remarks }}</text>
+							<text class="info-value">{{ customerInfo.descr }}</text>
 						</view>
 					</view>
 				</view>
@@ -152,6 +152,8 @@
 </template>
 
 <script>
+	import { dictMaps } from '@/utils/dict.js';
+
 	export default {
 		data() {
 			return {
@@ -163,14 +165,54 @@
 				],
 				customerInfo: {},
 				loanList: [],
-				type: ''
+				type: '',
+				dictMaps: dictMaps
 			}
 		},
 		onLoad(options) {
+			console.log('detail页面接收到的参数:', options);
 			if (options.id) {
 				this.customerId = options.id;
-				this.type = options.type;
-				this.loadCustomerDetail();
+				this.type = options.type || '';
+				
+				// 解析从列表页传递过来的客户数据
+				if (options.customerData) {
+					try {
+						const customerData = JSON.parse(decodeURIComponent(options.customerData));
+						console.log('解析后的客户数据:', customerData);
+						this.customerInfo = {
+							id: customerData.id,
+							name: customerData.name || '未知',
+							phone: customerData.phone || '未填写',
+							age: customerData.age || '',
+							marriageStatus: customerData.matrimony || '', // 婚姻状态
+							manager: customerData.service_name || '未分配', // 业务员
+							department: customerData.branch_name || '未分配', // 所属部门
+							customerGroup: this.getClientType(customerData.client_type),
+							workplace: customerData.work_unit || '',
+							license_info: customerData.license_info || '',
+							license_img: customerData.license_img || '',
+							asset_info: customerData.asset_info || '',
+							income: customerData.income || '未填写',
+							credit_investigation: customerData.credit_investigation || '未填写',
+							descr: customerData.descr || '',
+							createTime: this.formatDate(customerData.ctime),
+							updateTime: this.formatDate(customerData.utime)
+						};
+						
+						console.log('处理后的客户信息:', this.customerInfo);
+						
+						// 加载贷款信息
+						this.loadLoanList();
+					} catch (e) {
+						console.error('解析客户数据失败', e);
+						// 解析失败时调用API获取详情
+						this.loadCustomerDetail();
+					}
+				} else {
+					// 如果没有传递数据，则调用API获取
+					this.loadCustomerDetail();
+				}
 			}
 		},
 		methods: {
@@ -188,11 +230,12 @@
 						department: '消费信贷部',
 						customerGroup: '消费',
 						workplace: '北京科技有限公司',
-						licenseInfo: '',
-						licenseImages: [],
+						license_info: '',
+						license_img: '',
+						asset_info: '',
 						income: '20000元/月',
-						creditDescription: '信用良好，无逾期',
-						remarks: '客户对产品很感兴趣',
+						credit_investigation: '信用良好，无逾期',
+						descr: '客户对产品很感兴趣',
 						createTime: '2024-03-14 10:25:36',
 						updateTime: '2024-03-15 15:42:18'
 					};
@@ -255,8 +298,8 @@
 					// 如果是客户群体是经营，添加执照信息
 					if (this.customerId === '2') {
 						this.customerInfo.customerGroup = '经营';
-						this.customerInfo.licenseInfo = '北京食品贸易有限公司';
-						this.customerInfo.licenseImages = ['https://example.com/license1.jpg'];
+						this.customerInfo.license_info = '北京食品贸易有限公司';
+						this.customerInfo.license_img = 'https://example.com/license1.jpg';
 						this.loanList[0].name = '小微企业贷';
 						this.loanList[0].type = '经营贷款';
 						this.loanList[0].amount = '20万';
@@ -294,13 +337,7 @@
 				// });
 			},
 			getMarriageStatusText(status) {
-				const map = {
-					'single': '未婚',
-					'married': '已婚',
-					'divorced': '离异',
-					'widowed': '丧偶'
-				};
-				return map[status] || '未知';
+				return this.dictMaps.maritalStatus[status] || '未知';
 			},
 			getApprovalStatusText(status) {
 				const map = {
@@ -322,7 +359,7 @@
 			},
 			previewImage(img) {
 				uni.previewImage({
-					urls: this.customerInfo.licenseImages,
+					urls: this.licenseImgList,
 					current: img
 				});
 			},
@@ -338,6 +375,58 @@
 				uni.navigateTo({
 					url: `/pages/customer/edit?id=${this.customerId}`
 				});
+			},
+			getClientType(type) {
+				const map = {
+					'1': '个人客户',
+					'2': '企业客户',
+					'3': '个体工商户'
+				};
+				return map[type] || '未知类型';
+			},
+			formatDate(timestamp) {
+				if (!timestamp) return '';
+				const date = new Date(timestamp);
+				return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+			},
+			loadLoanList() {
+				// 调用API获取贷款列表
+				// 暂时使用模拟数据
+				this.loanList = [
+					{
+						id: 1,
+						name: '个人消费贷',
+						type: '消费贷款',
+						term: 3,
+						repaymentMethod: '等额本息',
+						disbursementDate: '2024-03-20',
+						channel: '直销',
+						status: 'approved',
+						amount: '10万',
+						repaymentStatus: 'normal',
+						rejectReason: ''
+					}
+				];
+				
+				// 根据客户类型调整贷款信息
+				if (this.customerInfo.customerGroup === '企业客户' || this.customerInfo.customerGroup === '个体工商户') {
+					this.loanList[0].name = '小微企业贷';
+					this.loanList[0].type = '经营贷款';
+				}
+			}
+		},
+		computed: {
+			licenseImgList() {
+				// 如果license_img是字符串，则按逗号分隔；如果已经是数组，则直接返回
+				if (typeof this.customerInfo.license_img === 'string' && this.customerInfo.license_img) {
+					console.log('处理执照图片字符串:', this.customerInfo.license_img);
+					return this.customerInfo.license_img.split(',').filter(img => img);
+				} else if (Array.isArray(this.customerInfo.license_img)) {
+					console.log('执照图片已是数组:', this.customerInfo.license_img);
+					return this.customerInfo.license_img;
+				}
+				console.log('没有执照图片');
+				return [];
 			}
 		}
 	}
