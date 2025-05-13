@@ -134,6 +134,29 @@
 				</view>
 			</view>
 
+			<!-- 状态更新对话框 -->
+			<uni-popup ref="statusPopup" type="dialog">
+				<uni-popup-dialog
+					type="info"
+					cancelText="取消"
+					confirmText="确认更新"
+					title="更新客户状态"
+					:content="dialogContent"
+					:before-close="true"
+					@confirm="confirmStatusUpdate"
+					@close="closeStatusDialog"
+				>
+					<view class="status-form">
+						<view class="form-item">
+							<view class="form-label">客户状态</view>
+							<picker :range="customerStatusOptions" range-key="label" @change="onStatusChange" class="form-picker">
+								<view class="picker-value">{{ statusForm.status ? dictMaps.customerStatus[statusForm.status] : '请选择客户状态' }}</view>
+							</picker>
+						</view>
+					</view>
+				</uni-popup-dialog>
+			</uni-popup>
+
 			<view class="add-fab" @click="goAdd">
 				<text class="iconfont icon-add"></text>
 			</view>
@@ -170,7 +193,22 @@ export default {
 			page: 1,
 			pageSize: 20,
 			totalCount: 0,
-			dictMaps: dictMaps
+			dictMaps: dictMaps,
+			
+			// 状态更新对话框相关
+			currentCustomer: null,
+			statusForm: {
+				id: '',
+				status: ''
+			},
+			customerStatusOptions: [
+				{ value: '1', label: '新客户' },
+				{ value: '2', label: '意向客户' },
+				{ value: '3', label: '已成交' },
+				{ value: '4', label: '已流失' },
+				{ value: '5', label: '已移交' }
+			],
+			dialogContent: '请选择新的客户状态'
 		}
 	},
 	onLoad() {
@@ -346,14 +384,25 @@ export default {
 			});
 		},
 		goFollowup(item) {
+			// 将客户数据编码为URL参数
+			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
-				url: `/pages/followup/followup?id=${item.id}`
+				url: `/pages/followup/followup?id=${item.id}&customerData=${customerData}`
 			});
 		},
 		updateStatus(item) {
-			uni.navigateTo({
-				url: `/pages/customer/status?id=${item.id}`
-			});
+			// 存储当前选中的客户
+			this.currentCustomer = item;
+			
+			// 设置状态表单的初始值
+			this.statusForm.id = item.id;
+			this.statusForm.status = item.status || '';
+			
+			// 设置对话框内容
+			this.dialogContent = `请选择客户 ${item.name} 的新状态：`;
+			
+			// 打开状态更新对话框
+			this.$refs.statusPopup.open();
 		},
 		transferCustomer(item) {
 			uni.navigateTo({
@@ -424,6 +473,69 @@ export default {
 				this.page++;
 				this.loadCustomerList();
 			}
+		},
+		// 状态选择变更
+		onStatusChange(e) {
+			const index = e.detail.value;
+			this.statusForm.status = this.customerStatusOptions[index].value;
+		},
+		
+		// 确认状态更新
+		confirmStatusUpdate() {
+			if (!this.statusForm.status) {
+				uni.showToast({
+					title: '请选择客户状态',
+					icon: 'none'
+				});
+				return;
+			}
+			
+			// 显示加载提示
+			uni.showLoading({
+				title: '更新中...'
+			});
+			
+			// 调用API更新客户状态
+			customerApi.updateStatus({
+				id: this.statusForm.id,
+				status: this.statusForm.status
+			}).then(res => {
+				uni.hideLoading();
+				
+				if (res.success && res.retCode === 200) {
+					uni.showToast({
+						title: '状态更新成功',
+						icon: 'success'
+					});
+					
+					// 刷新客户列表
+					this.loadCustomerList();
+				} else {
+					uni.showToast({
+						title: res.message || '状态更新失败',
+						icon: 'none'
+					});
+				}
+			}).catch(err => {
+				uni.hideLoading();
+				
+				uni.showToast({
+					title: '状态更新失败',
+					icon: 'none'
+				});
+				
+				console.error('更新客户状态失败', err);
+			});
+		},
+		
+		// 关闭状态对话框
+		closeStatusDialog() {
+			this.$refs.statusPopup.close();
+			
+			// 重置表单数据
+			this.statusForm.id = '';
+			this.statusForm.status = '';
+			this.currentCustomer = null;
 		}
 	}
 }
@@ -829,5 +941,38 @@ export default {
 	padding: 2px 8px;
 	background-color: #f0f2f5;
 	border-radius: 10px;
+}
+
+/* 状态更新对话框样式 */
+.status-form {
+	padding: 10px 0;
+}
+
+.form-item {
+	margin-bottom: 15px;
+}
+
+.form-label {
+	font-size: 14px;
+	color: #333;
+	margin-bottom: 8px;
+}
+
+.form-picker {
+	width: 100%;
+	border: 1px solid #eee;
+	border-radius: 4px;
+	background-color: #f8f8f8;
+}
+
+.picker-value {
+	padding: 10px;
+	font-size: 14px;
+	color: #333;
+}
+
+.customer-name {
+	font-weight: bold;
+	color: #409EFF;
 }
 </style>

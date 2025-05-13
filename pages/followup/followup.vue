@@ -14,16 +14,19 @@
         <uni-icons type="chatbubble" size="18"></uni-icons>
         <text>跟进记录</text>
       </view>
-      <view class="timeline">
+      <view class="timeline" v-if="followupList.length > 0">
         <view class="timeline-item" v-for="(item, index) in followupList" :key="index">
           <view class="timeline-item-dot"></view>
           <view class="timeline-item-content">
-            {{ item.content }}
+            {{ item.info }}
             <view class="timeline-item-header">
-              <view class="timeline-item-time">{{item.createTime}}</view>
+              <view class="timeline-item-time">{{item.ctime}}</view>
             </view>
           </view>
         </view>
+      </view>
+      <view class="empty-records" v-else>
+        <text>暂无跟进记录</text>
       </view>
     </view>
     
@@ -44,6 +47,8 @@
 </template>
 
 <script>
+import customerApi from '@/api/customer.js';
+
 export default {
   data() {
     return {
@@ -51,65 +56,75 @@ export default {
       customerInfo: {
         name: '',
         phone: '',
-        status: 'new'
+        status: ''
       },
       followupList: [],
       formData: {
-        content: '',
-        nextTime: ''
-      }
+        content: ''
+      },
+      loading: false
     }
   },
   onLoad(options) {
     if (options && options.id) {
       this.customerId = options.id;
-      this.loadCustomerInfo();
+      
+      // 尝试解析传入的客户数据
+      if (options.customerData) {
+        try {
+          const customerData = JSON.parse(decodeURIComponent(options.customerData));
+          this.customerInfo = customerData;
+          console.log('使用传入的客户数据:', this.customerInfo);
+        } catch (error) {
+          console.error('解析客户数据失败:', error);
+        }
+      }
+      
+      // 获取跟进记录
       this.loadFollowupList();
     }
   },
   methods: {
-    // 获取客户信息
-    loadCustomerInfo() {
-      // 模拟从服务器获取客户信息
-      // 实际项目中应该从API获取
-      this.customerInfo = {
-        id: this.customerId,
-        name: '张三',
-        phone: '13800138000',
-        status: 'intention'
-      };
-    },
-    
     // 获取跟进记录列表
     loadFollowupList() {
-      // 模拟从服务器获取跟进记录
-      // 实际项目中应该从API获取
-      this.followupList = [
-        {
-          id: '1',
-          content: '客户对我们的产品表示很感兴趣，计划下周再次沟通细节',
-          createTime: '2025-04-15 14:30',
-          creatorName: '李四',
-          nextTime: '2025-04-22'
-        },
-        {
-          id: '2',
-          content: '已与客户确认了产品配置和价格，客户考虑中',
-          createTime: '2025-04-10 10:15',
-          creatorName: '王五',
-          nextTime: '2025-04-15'
+      if (!this.customerId) return;
+      
+      this.loading = true;
+      
+      // 调用API获取跟进记录
+      customerApi.getCustomerRecords(this.customerId).then(res => {
+        this.loading = false;
+        if (res.success && res.retCode === 200) {
+          // 数据可能是空数组，这是正常情况
+          this.followupList = Array.isArray(res.data) ? res.data : [];
+          
+          if (this.followupList.length === 0) {
+            console.log('暂无跟进记录');
+          }
+        } else {
+          uni.showToast({
+            title: res.message || '获取跟进记录失败',
+            icon: 'none'
+          });
         }
-      ];
+      }).catch(err => {
+        this.loading = false;
+        uni.showToast({
+          title: '获取跟进记录失败',
+          icon: 'none'
+        });
+        console.error('获取跟进记录失败', err);
+      });
     },
     
     // 获取状态文本
     getStatusText(status) {
       const statusMap = {
-        'new': '新客户',
-        'intention': '意向客户',
-        'signed': '已签约',
-        'lost': '已流失',
-        'public': '公海客户'
+        '1': '新客户',
+        '2': '意向客户',
+        '3': '已签约',
+        '4': '已流失',
+        '5': '公海客户'
       };
       return statusMap[status] || status;
     },
@@ -129,32 +144,40 @@ export default {
         return;
       }
       
-      // 模拟提交到服务器
-      // 实际项目中应该调用API提交
-      console.log('提交跟进记录', {
-        customerId: this.customerId,
-        content: this.formData.content,
-        nextTime: this.formData.nextTime
-      });
+      // 防止重复提交
+      if (this.loading) return;
+      this.loading = true;
       
-      // 提交成功后重新加载列表并清空表单
-      const newRecord = {
-        id: Date.now().toString(),
-        content: this.formData.content,
-        createTime: new Date().toLocaleString(),
-        creatorName: '当前用户',
-        nextTime: this.formData.nextTime
-      };
-      
-      this.followupList.unshift(newRecord);
-      this.formData = {
-        content: '',
-        nextTime: ''
-      };
-      
-      uni.showToast({
-        title: '添加成功',
-        icon: 'success'
+      // 调用API提交跟进记录
+      customerApi.addCustomerRecord({
+        id: this.customerId,
+        info: this.formData.content
+      }).then(res => {
+        this.loading = false;
+        if (res.success && res.retCode === 200) {
+          uni.showToast({
+            title: '添加成功',
+            icon: 'success'
+          });
+          
+          // 清空表单
+          this.formData.content = '';
+          
+          // 重新加载跟进记录
+          this.loadFollowupList();
+        } else {
+          uni.showToast({
+            title: res.message || '添加失败',
+            icon: 'none'
+          });
+        }
+      }).catch(err => {
+        this.loading = false;
+        uni.showToast({
+          title: '添加失败',
+          icon: 'none'
+        });
+        console.error('添加跟进记录失败', err);
       });
     },
     
@@ -204,27 +227,27 @@ export default {
   top: 20rpx;
 }
 
-.statusClass-new {
+.statusClass-1 {
   background-color: #e6f7ff;
   color: #1890ff;
 }
 
-.statusClass-intention {
+.statusClass-2 {
   background-color: #fff7e6;
   color: #fa8c16;
 }
 
-.statusClass-signed {
+.statusClass-3 {
   background-color: #f6ffed;
   color: #52c41a;
 }
 
-.statusClass-lost {
+.statusClass-4 {
   background-color: #fff1f0;
   color: #f5222d;
 }
 
-.statusClass-public {
+.statusClass-5 {
   background-color: #f5f5f5;
   color: #8c8c8c;
 }
@@ -270,7 +293,7 @@ export default {
   top: 0;
   width: 16rpx;
   height: 16rpx;
-  background-color: #1890ff;
+  background-color: #409EFF;
   border-radius: 50%;
 }
 
@@ -278,12 +301,14 @@ export default {
   background-color: #f9f9f9;
   border-radius: 8rpx;
   padding: 16rpx;
+  line-height: 1.5;
+  font-size: 28rpx;
 }
 
 .timeline-item-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10rpx;
+  margin-top: 10rpx;
 }
 
 .timeline-item-time {
@@ -360,6 +385,9 @@ export default {
   font-size: 28rpx;
   border-radius: 6rpx;
   margin-left: 20rpx;
+  padding: 0 30rpx;
+  height: 70rpx;
+  line-height: 70rpx;
 }
 
 .btn-cancel {
@@ -368,7 +396,16 @@ export default {
 }
 
 .btn-submit {
-  background-color: #1890ff;
+  background-color: #409EFF;
   color: #fff;
+}
+
+.empty-records {
+  padding: 40rpx 0;
+  text-align: center;
+  color: #909399;
+  font-size: 28rpx;
+  background-color: #f9f9f9;
+  border-radius: 8rpx;
 }
 </style> 

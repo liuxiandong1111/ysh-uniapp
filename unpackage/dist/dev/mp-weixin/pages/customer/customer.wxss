@@ -344,3 +344,31 @@
 	border-radius: 10px;
 }
 
+/* 状态更新对话框样式 */
+.status-form {
+	padding: 10px 0;
+}
+.form-item {
+	margin-bottom: 15px;
+}
+.form-label {
+	font-size: 14px;
+	color: #333;
+	margin-bottom: 8px;
+}
+.form-picker {
+	width: 100%;
+	border: 1px solid #eee;
+	border-radius: 4px;
+	background-color: #f8f8f8;
+}
+.picker-value {
+	padding: 10px;
+	font-size: 14px;
+	color: #333;
+}
+.customer-name {
+	font-weight: bold;
+	color: #409EFF;
+}
+

@@ -25,5 +25,35 @@ export default {
   // 更新客户状态
   updateStatus(data) {
     return request.post('/client/update-client-status', data);
+  },
+
+  // 删除客户
+  deleteCustomer (id) {
+    return request.delete(`/api/customers/${id}`)
+  },
+
+  // 获取客户跟进记录
+  getCustomerRecords(id) {
+    return request.post(`/client/get-client-log`, {id})
+  },
+
+  // 添加客户跟进记录
+  addCustomerRecord(data) {
+    return request.post(`/client/add-client-log`, data)
+  },
+
+  // 移交产品部
+  clientTurnOverProduct (data) {
+    return request.post(`/client/turn-over-product`, data)
+  },
+
+  // 更新客户状态
+  clientSaveClientStatus (data) {
+    return request.post(`/client/save-client-status`, data)
+  },
+
+  // 获取贷款信息
+  getloanList(data) {
+    return request.post('/finance/get-loan-list', data)
   }
 }; 
