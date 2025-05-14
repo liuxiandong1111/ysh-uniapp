@@ -275,33 +275,11 @@
 	color: white;
 }
 
-/* 分页样式 */
-.pagination {
-	margin-top: 20px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-.pagination-info {
-	font-size: 14px;
-	color: #606266;
-	margin-bottom: 10px;
-}
-.pagination-btn-group {
-	display: flex;
-	justify-content: center;
-}
-.pagination-btn {
-	padding: 8px 15px;
-	margin: 0 5px;
-	background-color: #409EFF;
-	color: white;
-	border-radius: 4px;
-	font-size: 14px;
-}
-.pagination-btn.disabled {
-	background-color: #c0c4cc;
-	cursor: not-allowed;
+/* 加载更多提示 */
+.loading-more {
+	text-align: center;
+	padding: 10px;
+	color: #909399;
 }
 
 /* 图标样式 */
@@ -342,33 +320,5 @@
 	padding: 2px 8px;
 	background-color: #f0f2f5;
 	border-radius: 10px;
-}
-
-/* 状态更新对话框样式 */
-.status-form {
-	padding: 10px 0;
-}
-.form-item {
-	margin-bottom: 15px;
-}
-.form-label {
-	font-size: 14px;
-	color: #333;
-	margin-bottom: 8px;
-}
-.form-picker {
-	width: 100%;
-	border: 1px solid #eee;
-	border-radius: 4px;
-	background-color: #f8f8f8;
-}
-.picker-value {
-	padding: 10px;
-	font-size: 14px;
-	color: #333;
-}
-.customer-name {
-	font-weight: bold;
-	color: #409EFF;
 }
 

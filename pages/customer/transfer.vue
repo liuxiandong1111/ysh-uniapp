@@ -9,8 +9,9 @@
 				
 				<view class="form-item">
 					<text class="form-label">产品经理</text>
-					<picker :range="productManagers" range-key="name" @change="handleManagerChange" class="form-picker">
-						<view class="picker-value">{{ selectedManager ? selectedManager.name : '请选择产品经理' }}</view>
+					<picker :range="productManagers" range-key="name" @change="handleManagerChange" class="form-picker" :disabled="isLoading">
+						<view class="picker-value" v-if="!isLoading">{{ selectedManager ? selectedManager.name : '请选择产品经理' }}</view>
+						<view class="picker-value" v-else>加载中...</view>
 					</picker>
 				</view>
 				
@@ -30,26 +31,44 @@
 </template>
 
 <script>
+	import { employee } from '@/api/organization.js';
+	import customerApi from '@/api/customer.js';
+	
 	export default {
 		data() {
 			return {
 				customerId: '',
 				customerName: '',
-				productManagers: [
-					{ id: 1, name: '张产品' },
-					{ id: 2, name: '李产品' },
-					{ id: 3, name: '王产品' }
-				],
+				productManagers: [],
 				selectedManagerId: null,
 				selectedManager: null,
-				remark: ''
+				remark: '',
+				isLoading: false,
+				isSubmitting: false
 			}
 		},
 		onLoad(options) {
 			if (options.id) {
 				this.customerId = options.id;
-				// 获取客户信息
-				this.loadCustomerInfo();
+				
+				// 尝试解析传入的客户数据
+				if (options.customerData) {
+					try {
+						const customerData = JSON.parse(decodeURIComponent(options.customerData));
+						this.customerName = customerData.name || '未知客户';
+						console.log('使用传入的客户数据:', customerData.name);
+					} catch (error) {
+						console.error('解析客户数据失败:', error);
+						// 解析失败时通过模拟或API获取
+						this.loadCustomerInfo();
+					}
+				} else {
+					// 没有传入客户数据，则通过模拟或API获取
+					this.loadCustomerInfo();
+				}
+				
+				// 加载产品经理列表
+				this.loadProductManagers();
 			} else {
 				uni.showToast({
 					title: '客户ID不能为空',
@@ -93,16 +112,38 @@
 				//     }, 1500);
 				//   }
 				// });
-				
-				// 实际项目中还需加载产品经理列表
-				// uni.request({
-				//   url: 'your_api_endpoint/product-managers',
-				//   method: 'GET',
-				//   success: (res) => {
-				//     this.productManagers = res.data;
-				//   }
-				// });
 			},
+			
+			// 获取产品经理列表
+			async loadProductManagers() {
+				this.isLoading = true;
+				try {
+					const res = await employee.getList({
+						rule_id: 2,
+						page: 1,
+						pageSize: 100
+					});
+					
+					if (res && res.data && res.data.list) {
+						this.productManagers = res.data.list;
+					} else {
+						this.productManagers = [];
+						uni.showToast({
+							title: '获取产品经理列表为空',
+							icon: 'none'
+						});
+					}
+				} catch (error) {
+					this.productManagers = [];
+					uni.showToast({
+						title: '获取产品经理列表失败',
+						icon: 'none'
+					});
+				} finally {
+					this.isLoading = false;
+				}
+			},
+			
 			handleManagerChange(e) {
 				const index = e.detail.value;
 				this.selectedManager = this.productManagers[index];
@@ -118,60 +159,51 @@
 				}
 				return true;
 			},
-			submitTransfer() {
+			async submitTransfer() {
 				if (!this.validateForm()) {
 					return;
 				}
 				
 				// 准备提交的数据
 				const formData = {
-					customerId: this.customerId,
-					productManagerId: this.selectedManagerId,
-					remark: this.remark
+					id: this.customerId,
+					deal_id: this.selectedManagerId.toString(),
+					descr: this.remark
 				};
 				
-				// 模拟提交到API
+				this.isSubmitting = true;
 				uni.showLoading({
 					title: '处理中...'
 				});
 				
-				setTimeout(() => {
-					uni.hideLoading();
-					uni.showToast({
-						title: '移交成功',
-						icon: 'success'
-					});
+				try {
+					const res = await customerApi.clientTurnOverProduct(formData);
 					
-					// 返回上一页
-					setTimeout(() => {
-						uni.navigateBack();
-					}, 1500);
-				}, 1000);
-				
-				// 实际项目中使用API调用
-				// uni.request({
-				//   url: 'your_api_endpoint/customer/transfer',
-				//   method: 'POST',
-				//   data: formData,
-				//   success: (res) => {
-				//     uni.showToast({
-				//       title: '移交成功',
-				//       icon: 'success'
-				//     });
-				//     setTimeout(() => {
-				//       uni.navigateBack();
-				//     }, 1500);
-				//   },
-				//   fail: (err) => {
-				//     uni.showToast({
-				//       title: '移交失败，请重试',
-				//       icon: 'none'
-				//     });
-				//   },
-				//   complete: () => {
-				//     uni.hideLoading();
-				//   }
-				// });
+					if (res && res.retCode === 200) {
+						uni.showToast({
+							title: `客户${this.customerName}移交成功`,
+							icon: 'success'
+						});
+						
+						// 返回上一页
+						setTimeout(() => {
+							uni.navigateBack();
+						}, 1500);
+					} else {
+						uni.showToast({
+							title: res.retMsg || '移交失败，请重试',
+							icon: 'none'
+						});
+					}
+				} catch (error) {
+					uni.showToast({
+						title: '移交失败，请重试',
+						icon: 'none'
+					});
+				} finally {
+					uni.hideLoading();
+					this.isSubmitting = false;
+				}
 			},
 			goBack() {
 				uni.navigateBack();

@@ -6,17 +6,17 @@
 			<view class="form-group">
 				<view class="form-label">审批状态</view>
 				<view class="status-picker" @click="showStatusPicker = true">
-					<text class="picker-value">{{ updateStatusForm.status || '请选择贷款进度' }}</text>
+					<text class="picker-value">{{ updateStatusForm.statusLabel || '请选择贷款进度' }}</text>
 					<text class="picker-arrow">▼</text>
 				</view>
 			</view>
 			
-			<view class="form-group" v-if="updateStatusForm.status === '拒绝'">
+			<view class="form-group" v-if="updateStatusForm.statusLabel === '拒绝'">
 				<view class="form-label">拒绝原因</view>
 				<input class="form-input" type="text" v-model="updateStatusForm.rejectReason" placeholder="请输入拒绝原因" />
 			</view>
 			
-			<view class="form-group" v-if="updateStatusForm.status === '放款'">
+			<view class="form-group" v-if="updateStatusForm.statusLabel === '放款'">
 				<view class="form-label">放款时间</view>
 				<picker mode="date" :value="updateStatusForm.disbursementDate" @change="onDateChange" class="date-input">
 					<view class="date-display">
@@ -44,7 +44,7 @@
 						v-for="(option, index) in statusOptions" 
 						:key="index" 
 						@click="selectStatus(option)">
-						<text class="option-text" :class="{ active: updateStatusForm.status === option }">{{ option }}</text>
+						<text class="option-text" :class="{ active: updateStatusForm.status === option.value }">{{ option.label }}</text>
 					</view>
 				</view>
 			</view>
@@ -59,9 +59,14 @@
 				loanId: null,
 				loanInfo: null,
 				showStatusPicker: false,
-				statusOptions: ['批款', '放款', '拒绝'],
+				statusOptions: [
+					{ label: '批款', value: '1' },
+					{ label: '放款', value: '2' },
+					{ label: '拒绝', value: '3' }
+				],
 				updateStatusForm: {
 					status: '',
+					statusLabel: '',
 					rejectReason: '',
 					disbursementDate: ''
 				}
@@ -87,8 +92,9 @@
 			},
 			
 			// 选择状态
-			selectStatus(status) {
-				this.updateStatusForm.status = status;
+			selectStatus(option) {
+				this.updateStatusForm.status = option.value;
+				this.updateStatusForm.statusLabel = option.label;
 				this.showStatusPicker = false;
 			},
 			
@@ -113,7 +119,7 @@
 					return;
 				}
 				
-				if (this.updateStatusForm.status === '拒绝' && !this.updateStatusForm.rejectReason) {
+				if (this.updateStatusForm.statusLabel === '拒绝' && !this.updateStatusForm.rejectReason) {
 					uni.showToast({
 						title: '请输入拒绝原因',
 						icon: 'none'
@@ -121,7 +127,7 @@
 					return;
 				}
 				
-				if (this.updateStatusForm.status === '放款' && !this.updateStatusForm.disbursementDate) {
+				if (this.updateStatusForm.statusLabel === '放款' && !this.updateStatusForm.disbursementDate) {
 					uni.showToast({
 						title: '请选择放款时间',
 						icon: 'none'

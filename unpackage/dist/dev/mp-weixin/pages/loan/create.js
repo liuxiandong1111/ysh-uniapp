@@ -102,6 +102,15 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var m0 = _vm.getClientType(_vm.customerData.client_type)
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        m0: m0,
+      },
+    }
+  )
 }
 var recyclableRender = false
 var staticRenderFns = []
@@ -215,54 +224,64 @@ exports.default = void 0;
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 var _default = {
   data: function data() {
     return {
       isEdit: false,
       loanId: null,
+      customerData: null,
       hasPermission: true,
       // 可根据实际权限控制
-      loanTypes: ['消费', '经营'],
-      loanTerms: ['1年', '3年', '5年'],
-      repaymentMethods: ['等额本息', '先息后本', '随借随还'],
-      loanStatuses: ['批款', '放款', '拒绝'],
+      loanTypes: [{
+        label: '消费',
+        value: '1'
+      }, {
+        label: '经营',
+        value: '2'
+      }],
+      loanTerms: [{
+        label: '1年',
+        value: '1'
+      }, {
+        label: '3年',
+        value: '3'
+      }, {
+        label: '5年',
+        value: '5'
+      }],
+      repaymentMethods: [{
+        label: '等额本息',
+        value: '1'
+      }, {
+        label: '先息后本',
+        value: '2'
+      }, {
+        label: '随借随还',
+        value: '3'
+      }],
+      loanStatuses: [{
+        label: '批款',
+        value: '1'
+      }, {
+        label: '放款',
+        value: '2'
+      }, {
+        label: '拒绝',
+        value: '3'
+      }],
       loanForm: {
         customerName: '',
         customerGroup: '',
         name: '',
         type: '',
+        typeLabel: '',
         term: null,
+        termLabel: '',
         repaymentMethod: '',
+        repaymentMethodLabel: '',
         channel: '',
         status: '',
+        statusLabel: '',
         amount: '',
         rejectReason: '',
         disbursementDate: ''
@@ -270,6 +289,8 @@ var _default = {
     };
   },
   onLoad: function onLoad(options) {
+    var customerData = JSON.parse(decodeURIComponent(options.customerData));
+    this.customerData = customerData;
     if (options.id) {
       // 编辑模式
       this.loanId = options.id;
@@ -281,26 +302,38 @@ var _default = {
     }
   },
   methods: {
+    getClientType: function getClientType(type) {
+      var map = {
+        '1': '消费',
+        '2': '经营',
+        '3': '消费经营'
+      };
+      return map[type] || '未知类型';
+    },
     // 加载客户数据
     loadCustomerData: function loadCustomerData(customerId) {
       // 模拟获取客户数据
       // 实际项目中应该调用API获取
-      this.loanForm.customerName = '张三';
-      this.loanForm.customerGroup = '个人客户';
+      this.loanForm.customerName = this.customerData.name;
+      this.loanForm.customerGroup = this.customerData.group;
     },
     // 加载贷款数据（编辑模式）
     loadLoanData: function loadLoanData() {
       // 模拟获取贷款数据
       // 实际项目中应该调用API获取
       this.loanForm = {
-        customerName: '张三',
-        customerGroup: '个人客户',
+        customerName: this.customerData.name,
+        customerGroup: this.customerData.group,
         name: '个人消费贷款',
         type: '消费',
+        typeLabel: '消费',
         term: 1,
+        termLabel: '1年',
         repaymentMethod: '等额本息',
+        repaymentMethodLabel: '等额本息',
         channel: '线上申请',
         status: '批款',
+        statusLabel: '批款',
         amount: '50000',
         rejectReason: '',
         disbursementDate: ''
@@ -308,20 +341,24 @@ var _default = {
     },
     // 贷款类型选择
     onLoanTypeChange: function onLoanTypeChange(e) {
-      this.loanForm.type = this.loanTypes[e.detail.value];
+      this.loanForm.type = this.loanTypes[e.detail.value].value;
+      this.loanForm.typeLabel = this.loanTypes[e.detail.value].label;
     },
     // 贷款期限选择
     onLoanTermChange: function onLoanTermChange(e) {
-      var termText = this.loanTerms[e.detail.value];
-      this.loanForm.term = parseInt(termText.replace('年', ''));
+      var term = this.loanTerms[e.detail.value];
+      this.loanForm.term = term.value;
+      this.loanForm.termLabel = term.label;
     },
     // 还款方式选择
     onRepaymentMethodChange: function onRepaymentMethodChange(e) {
-      this.loanForm.repaymentMethod = this.repaymentMethods[e.detail.value];
+      this.loanForm.repaymentMethod = this.repaymentMethods[e.detail.value].value;
+      this.loanForm.repaymentMethodLabel = this.repaymentMethods[e.detail.value].label;
     },
     // 贷款状态选择
     onLoanStatusChange: function onLoanStatusChange(e) {
-      this.loanForm.status = this.loanStatuses[e.detail.value];
+      this.loanForm.status = this.loanStatuses[e.detail.value].value;
+      this.loanForm.statusLabel = this.loanStatuses[e.detail.value].label;
     },
     // 放款日期选择
     onDateChange: function onDateChange(e) {

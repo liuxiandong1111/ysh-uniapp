@@ -2,7 +2,16 @@
 	<view class="container">
         <button class="btn-create" @click="handleCreate">+</button>
 		<view class="loan-list">
-			<view v-if="loanList.length === 0" class="empty-tip">
+			<view v-if="isLoading" class="loading-container">
+				<text>加载中...</text>
+			</view>
+			
+			<view v-else-if="hasError" class="error-container">
+				<text>{{ errorMsg }}</text>
+				<button class="retry-btn" @click="loadLoanList">重试</button>
+			</view>
+			
+			<view v-else-if="loanList.length === 0" class="empty-tip">
 				<text>暂无贷款记录</text>
 			</view>
 			
@@ -10,44 +19,44 @@
 				<view class="loan-header">
 					<text class="loan-name">{{ item.name }}</text>
 					<view class="loan-status" :class="'status-' + getStatusClass(item.status)">
-						<text>{{ item.status }}</text>
+						<text>{{ getLoanStatus(item.status) }}</text>
 					</view>
 				</view>
 				
 				<view class="loan-info">
 					<view class="info-row">
 						<text class="info-label">贷款类型:</text>
-						<text class="info-value">{{ item.type }}</text>
+						<text class="info-value">{{ item.type == 1 ? '消费' : '经营' }}</text>
 					</view>
 					<view class="info-row">
 						<text class="info-label">期限(年):</text>
-						<text class="info-value">{{ item.term }}</text>
-					</view>
-					<view class="info-row">
-						<text class="info-label">额度:</text>
-						<text class="info-value">{{ item.amount }}</text>
+						<text class="info-value">{{ item.age_limit }}</text>
 					</view>
 					<view class="info-row">
 						<text class="info-label">还款方式:</text>
-						<text class="info-value">{{ item.repaymentMethod }}</text>
+						<text class="info-value">{{ getDueType(item.due_type)}}</text>
 					</view>
 					<view class="info-row">
 						<text class="info-label">放款时间:</text>
-						<text class="info-value">{{ item.disbursementDate }}</text>
+						<text class="info-value">{{ item.loan_date }}</text>
 					</view>
 					<view class="info-row">
 						<text class="info-label">渠道:</text>
 						<text class="info-value">{{ item.channel }}</text>
 					</view>
 					<view class="info-row">
+						<text class="info-label">额度:</text>
+						<text class="info-value">{{ item.quota }}</text>
+					</view>
+					<view class="info-row">
 						<text class="info-label">还款状态:</text>
-						<view class="repayment-status" :class="'repayment-' + getRepaymentClass(item.repaymentStatus)">
-							<text>{{ item.repaymentStatus }}</text>
+						<view class="repayment-status" :class="'repayment-' + getRepaymentClass(item.is_yu)">
+							<text>{{ item.is_yu == 0 ? '正常' : '逾期' }}</text>
 						</view>
 					</view>
-					<view class="info-row" v-if="item.rejectReason">
+					<view class="info-row" v-if="item.cause">
 						<text class="info-label">拒绝原因:</text>
-						<text class="info-value reject-reason">{{ item.rejectReason }}</text>
+						<text class="info-value reject-reason">{{ item.cause }}</text>
 					</view>
 				</view>
 				
@@ -68,77 +77,88 @@
 </template>
 
 <script>
+	import financeApi from '@/api/finance.js';
+	
 	export default {
 		data() {
 			return {
 				customerId: null,
+				customerData: null,
 				customerName: '',
-				loanList: []
+				loanList: [],
+				isLoading: false,
+				hasError: false,
+				errorMsg: ''
 			}
 		},
 		onLoad(options) {
 			if (options.id) {
 				this.customerId = options.id;
-				this.loadCustomerInfo();
+				const customerData = JSON.parse(decodeURIComponent(options.customerData));
+				this.customerData = customerData;
 				this.loadLoanList();
 			}
 		},
 		methods: {
-			// 加载客户信息
-			loadCustomerInfo() {
-				// 模拟获取客户信息
-				// 实际项目中应该调用API获取
-				if (this.customerId) {
-					// 模拟数据
-					this.customerName = '张三';
-				}
-			},
-			
 			// 加载贷款列表
-			loadLoanList() {
-				// 模拟加载贷款列表
-				// 实际项目中应该调用API获取
-				this.loanList = [
-					{
-						id: 1,
-						name: '个人消费贷款',
-						type: '消费贷',
-						term: 3,
-						repaymentMethod: '等额本息',
-						disbursementDate: '2024-03-15',
-						channel: '线上申请',
-						status: '审批中',
-						amount: '50,000元',
-						repaymentStatus: '正常',
-						rejectReason: ''
-					},
-					{
-						id: 2,
-						name: '小微企业贷款',
-						type: '经营贷',
-						term: 5,
-						repaymentMethod: '先息后本',
-						disbursementDate: '2024-02-20',
-						channel: '网点申请',
-						status: '已通过',
-						amount: '200,000元',
-						repaymentStatus: '已结清',
-						rejectReason: ''
-					},
-					{
-						id: 3,
-						name: '住房装修贷款',
-						type: '消费贷',
-						term: 2,
-						repaymentMethod: '等额本息',
-						disbursementDate: '',
-						channel: '线上申请',
-						status: '已拒绝',
-						amount: '100,000元',
-						repaymentStatus: '未放款',
-						rejectReason: '征信不符合要求'
+			async loadLoanList() {
+				// 设置加载状态
+				this.isLoading = true;
+				this.hasError = false;
+				this.errorMsg = '';
+				
+				// 显示加载提示
+				uni.showLoading({
+					title: '加载中...'
+				});
+				
+				try {
+					const params = {
+						client_id: this.customerId,
+						page: 1,
+						page_size: 30
+					};
+					
+					// 调用API获取贷款列表
+					const res = await financeApi.getLoanList(params);
+					
+					// 隐藏加载提示
+					uni.hideLoading();
+					
+					if (res && res.retCode === 200) {
+						this.loanList = res.data.list || [];
+						
+						if (this.loanList.length === 0) {
+							uni.showToast({
+								title: '暂无贷款记录',
+								icon: 'none'
+							});
+						}
+					} else {
+						this.hasError = true;
+						this.errorMsg = res.retMsg || '获取贷款列表失败';
+						
+						uni.showToast({
+							title: this.errorMsg,
+							icon: 'none'
+						});
 					}
-				];
+				} catch (error) {
+					// 隐藏加载提示
+					uni.hideLoading();
+					
+					this.hasError = true;
+					this.errorMsg = '获取贷款列表失败';
+					
+					uni.showToast({
+						title: this.errorMsg,
+						icon: 'none'
+					});
+					
+					console.error('获取贷款列表失败:', error);
+				} finally {
+					this.isLoading = false;
+				}
 			},
 			
 			// 获取状态样式类
@@ -147,18 +167,29 @@
 					'待审批': 'pending',
 					'审批中': 'processing',
 					'已通过': 'approved',
-					'已拒绝': 'rejected'
+					'已拒绝': 'rejected',
+					'1': 'pending',
+					'2': 'processing',
+					'3': 'approved',
+					'4': 'rejected'
 				};
 				return statusMap[status] || 'pending';
+			},
+
+			getLoanStatus (status) {
+				switch (Number(status)) {
+					case 0: return '审批中'
+					case 1: return '已批准'
+					case 2: return '已拒绝'
+					default: return '未知'
+				}
 			},
 			
 			// 获取还款状态样式类
 			getRepaymentClass(status) {
 				const statusMap = {
-					'正常': 'normal',
-					'已结清': 'cleared',
-					'逾期': 'overdue',
-					'未放款': 'unpaid'
+					'0': 'normal',
+					'1': 'overdue'
 				};
 				return statusMap[status] || 'normal';
 			},
@@ -166,8 +197,9 @@
 			// 处理创建贷款
 			handleCreate() {
 				// 跳转到贷款创建页面
+				const customerData = encodeURIComponent(JSON.stringify(this.customerData));
 				uni.navigateTo({
-					url: '/pages/loan/create'
+					url: `/pages/loan/create?customerData=${customerData}`
 				});
 			},
 			
@@ -190,6 +222,15 @@
 				uni.navigateTo({
 					url: `/pages/loan/status?id=${item.id}`
 				});
+			},
+
+			getDueType(type) {
+				switch (Number(type)) {
+					case 1: return '等额本息'
+					case 2: return '先息后本'
+					case 3: return '随借随还'
+					default: return '未知'
+				}
 			}
 		}
 	}
@@ -239,6 +280,36 @@
 		text-align: center;
 		color: #909399;
 		box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+	}
+	
+	.loading-container {
+		background-color: #fff;
+		border-radius: 8px;
+		padding: 30px;
+		text-align: center;
+		color: #409EFF;
+		box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+	}
+	
+	.error-container {
+		background-color: #fff;
+		border-radius: 8px;
+		padding: 30px;
+		text-align: center;
+		color: #f56c6c;
+		box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	
+	.retry-btn {
+		margin-top: 15px;
+		background-color: #409EFF;
+		color: white;
+		border-radius: 4px;
+		padding: 6px 15px;
+		font-size: 14px;
 	}
 	
 	.loan-card {

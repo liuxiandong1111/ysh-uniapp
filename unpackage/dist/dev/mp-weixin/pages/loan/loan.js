@@ -104,19 +104,25 @@ var render = function () {
   var _c = _vm._self._c || _h
   var l0 = _vm.__map(_vm.pendingCustomerList, function (item, index) {
     var $orig = _vm.__get_orig(item)
-    var m0 = _vm.getStatusClass(item.status)
+    var m0 = _vm.getStatusClass(item.deal_status)
+    var m1 = _vm.getDealStatus(item.deal_status)
+    var m2 = _vm.getClientType(item.client_type)
     return {
       $orig: $orig,
       m0: m0,
+      m1: m1,
+      m2: m2,
     }
   })
-  var g0 = _vm.pendingCustomerList.length
+  var g0 = _vm.pendingCustomerList.length === 0 && !_vm.isLoading
+  var g1 = _vm.pendingCustomerList.length
   _vm.$mp.data = Object.assign(
     {},
     {
       $root: {
         l0: l0,
         g0: g0,
+        g1: g1,
       },
     }
   )
@@ -155,10 +161,21 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 174));
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ 18));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 176));
+var _finance = _interopRequireDefault(__webpack_require__(/*! @/api/finance.js */ 187));
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -251,7 +268,13 @@ var _default = {
         label: '收入证明',
         path: ''
       }],
-      pendingCustomerList: []
+      pendingCustomerList: [],
+      // 分页相关状态
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
+      isLoading: false,
+      hasMore: true
     };
   },
   onLoad: function onLoad(option) {
@@ -261,79 +284,165 @@ var _default = {
     }
 
     // 加载待处理客户列表
-    this.loadPendingCustomers();
+    this.loadPendingCustomers(true);
+  },
+  // 上拉触底事件
+  onReachBottom: function onReachBottom() {
+    if (this.hasMore && !this.isLoading) {
+      this.loadMore();
+    }
   },
   methods: {
     // 切换标签
     switchTab: function switchTab(index) {
       this.activeTab = index;
       if (index === 1) {
-        this.loadPendingCustomers();
+        this.loadPendingCustomers(true);
+      }
+    },
+    // 加载更多数据
+    loadMore: function loadMore() {
+      if (this.hasMore && !this.isLoading) {
+        this.currentPage++;
+        this.loadPendingCustomers(false);
       }
     },
     // 加载待处理客户列表
     loadPendingCustomers: function loadPendingCustomers() {
-      var _this = this;
-      // 模拟从服务器获取数据
-      this.pendingCustomerList = [{
-        id: 1,
-        name: '张三',
-        phone: '13800138000',
-        manager: '王经理',
-        customerGroup: '消费',
-        status: '待审批',
-        assignedBy: '李产品'
-      }, {
-        id: 2,
-        name: '李四',
-        phone: '13800138001',
-        manager: '赵经理',
-        customerGroup: '经营',
-        status: '审批中',
-        assignedBy: '王产品'
-      }, {
-        id: 3,
-        name: '王五',
-        phone: '13800138002',
-        manager: '刘经理',
-        customerGroup: '消费',
-        status: '已拒绝',
-        assignedBy: '张产品'
-      }];
+      var _arguments = arguments,
+        _this = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+        var isReset, response, newList;
+        return _regenerator.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                isReset = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : true;
+                // 如果是重置，则清空列表并回到第一页
+                if (isReset) {
+                  _this.currentPage = 1;
+                  _this.pendingCustomerList = [];
+                  _this.hasMore = true;
+                }
 
-      // 应用搜索过滤
-      if (this.searchKey) {
-        this.pendingCustomerList = this.pendingCustomerList.filter(function (item) {
-          return item.name.includes(_this.searchKey) || item.phone.includes(_this.searchKey);
-        });
-      }
+                // 已无更多数据时不再请求
+                if (_this.hasMore) {
+                  _context.next = 4;
+                  break;
+                }
+                return _context.abrupt("return");
+              case 4:
+                _this.isLoading = true;
+                if (isReset) {
+                  uni.showLoading({
+                    title: '加载中...'
+                  });
+                }
+                _context.prev = 6;
+                _context.next = 9;
+                return _finance.default.getFinanceList({
+                  name: _this.searchKey,
+                  page: _this.currentPage,
+                  page_size: _this.pageSize
+                });
+              case 9:
+                response = _context.sent;
+                if (response && response.retCode === 200) {
+                  newList = response.data.list || []; // 追加数据而非替换
+                  if (isReset) {
+                    _this.pendingCustomerList = newList;
+                  } else {
+                    _this.pendingCustomerList = [].concat((0, _toConsumableArray2.default)(_this.pendingCustomerList), (0, _toConsumableArray2.default)(newList));
+                  }
+                  _this.total = response.data.total || 0;
+
+                  // 判断是否还有更多数据
+                  _this.hasMore = newList.length >= _this.pageSize && _this.pendingCustomerList.length < _this.total;
+                  if (isReset && _this.pendingCustomerList.length === 0) {
+                    uni.showToast({
+                      title: '暂无贷款数据',
+                      icon: 'none'
+                    });
+                  }
+                } else {
+                  uni.showToast({
+                    title: response.retMsg || '获取贷款列表失败',
+                    icon: 'none'
+                  });
+                }
+                _context.next = 17;
+                break;
+              case 13:
+                _context.prev = 13;
+                _context.t0 = _context["catch"](6);
+                console.error('获取贷款列表失败:', _context.t0);
+                uni.showToast({
+                  title: '获取贷款列表失败',
+                  icon: 'none'
+                });
+              case 17:
+                _context.prev = 17;
+                if (isReset) {
+                  uni.hideLoading();
+                }
+                _this.isLoading = false;
+                return _context.finish(17);
+              case 21:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[6, 13, 17, 21]]);
+      }))();
     },
     // 搜索客户
     searchCustomers: function searchCustomers() {
-      this.loadPendingCustomers();
+      // 重置并搜索
+      this.loadPendingCustomers(true);
     },
     // 获取状态样式类
     getStatusClass: function getStatusClass(status) {
       if (!status) return 'pending';
       var statusMap = {
-        '待审批': 'pending',
-        '审批中': 'processing',
-        '已通过': 'approved',
-        '已拒绝': 'rejected'
+        '1': 'pending',
+        '2': 'processing',
+        '3': 'approved',
+        '4': 'rejected'
       };
       return statusMap[status] || 'pending';
     },
+    // 审批状态文本转换
+    getDealStatus: function getDealStatus(status) {
+      var statusMap = {
+        1: '待处理',
+        2: '审批中',
+        3: '已审批',
+        4: '已拒绝'
+      };
+      return statusMap[status] || '未知';
+    },
+    // 客户类型转换
+    getClientType: function getClientType(type) {
+      var typeMap = {
+        1: '消费',
+        2: '经营',
+        3: '消费经营'
+      };
+      return typeMap[type] || '未知';
+    },
     // 查看客户详情
     handleViewCustomer: function handleViewCustomer(item) {
+      var customerData = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: "/pages/customer/detail?id=".concat(item.id, "&type=loan")
+        url: "/pages/customer/detail?id=".concat(item.id, "&customerData=").concat(customerData, "&type=loan")
       });
     },
     // 为客户创建贷款
     handleCreateLoan: function handleCreateLoan(item) {
       // 跳转到贷款申请页面，并传递客户ID
+      var customerData = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: "/pages/loan/apply?id=".concat(item.id)
+        url: "/pages/loan/apply?id=".concat(item.id, "&customerData=").concat(customerData)
       });
     },
     marriageChange: function marriageChange(e) {

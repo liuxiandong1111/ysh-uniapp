@@ -166,7 +166,8 @@
 				customerInfo: {},
 				loanList: [],
 				type: '',
-				dictMaps: dictMaps
+				dictMaps: dictMaps,
+				pageType: ''
 			}
 		},
 		onLoad(options) {
@@ -378,9 +379,9 @@
 			},
 			getClientType(type) {
 				const map = {
-					'1': '个人客户',
-					'2': '企业客户',
-					'3': '个体工商户'
+					'1': '消费',
+					'2': '经营',
+					'3': '消费经营'
 				};
 				return map[type] || '未知类型';
 			},

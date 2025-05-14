@@ -110,9 +110,8 @@ var render = function () {
       m0: m0,
     }
   })
-  var g0 = _vm.customerList.length
-  var g1 = _vm.totalCount > 0 ? Math.ceil(_vm.totalCount / _vm.pageSize) : null
-  var g2 = _vm.totalCount > 0 ? Math.ceil(_vm.totalCount / _vm.pageSize) : null
+  var g0 = _vm.customerList.length === 0 && !_vm.isLoading
+  var g1 = _vm.customerList.length
   _vm.$mp.data = Object.assign(
     {},
     {
@@ -120,7 +119,6 @@ var render = function () {
         l0: l0,
         g0: g0,
         g1: g1,
-        g2: g2,
       },
     }
   )
@@ -164,39 +162,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ 18));
 var _customer = _interopRequireDefault(__webpack_require__(/*! @/api/customer.js */ 58));
 var _dict = __webpack_require__(/*! @/utils/dict.js */ 59);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -355,45 +323,47 @@ var _default = {
         customerGroup: ''
       },
       page: 1,
-      pageSize: 20,
+      pageSize: 10,
       totalCount: 0,
       dictMaps: _dict.dictMaps,
-      // 状态更新对话框相关
-      currentCustomer: null,
-      statusForm: {
-        id: '',
-        status: ''
-      },
-      customerStatusOptions: [{
-        value: '1',
-        label: '新客户'
-      }, {
-        value: '2',
-        label: '意向客户'
-      }, {
-        value: '3',
-        label: '已成交'
-      }, {
-        value: '4',
-        label: '已流失'
-      }, {
-        value: '5',
-        label: '已移交'
-      }],
-      dialogContent: '请选择新的客户状态'
+      isLoading: false,
+      hasMore: true
     };
   },
   onLoad: function onLoad() {
     // 检查登录状态
     this.checkLogin();
+
+    // 监听刷新列表事件
+    uni.$on('refreshCustomerList', this.refreshCustomerList);
   },
   onShow: function onShow() {
     // 在页面显示时也检查登录状态
     if (this.checkLogin()) {
-      this.loadCustomerList();
+      this.loadCustomerList(true);
     }
   },
+  onReachBottom: function onReachBottom() {
+    if (this.hasMore && !this.isLoading) {
+      this.loadMore();
+    }
+  },
+  onUnload: function onUnload() {
+    // 页面卸载时移除事件监听
+    uni.$off('refreshCustomerList', this.refreshCustomerList);
+  },
   methods: {
+    // 刷新客户列表（用于事件监听）
+    refreshCustomerList: function refreshCustomerList() {
+      this.loadCustomerList(true);
+    },
+    // 加载更多数据
+    loadMore: function loadMore() {
+      if (this.hasMore && !this.isLoading) {
+        this.page++;
+        this.loadCustomerList(false);
+      }
+    },
     // 检查登录状态
     checkLogin: function checkLogin() {
       var isLoggedIn = uni.getStorageSync('isLoggedIn');
@@ -417,15 +387,33 @@ var _default = {
     },
     loadCustomerList: function loadCustomerList() {
       var _this = this;
-      // 显示加载中提示
-      uni.showLoading({
-        title: '加载中...'
-      });
+      var isReset = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      // 如果是重置，则清空列表并回到第一页
+      if (isReset) {
+        this.page = 1;
+        this.customerList = [];
+        this.hasMore = true;
+      }
+
+      // 已无更多数据时不再请求
+      if (!this.hasMore) {
+        return;
+      }
+
+      // 设置加载状态
+      this.isLoading = true;
+
+      // 仅在重置时显示加载提示
+      if (isReset) {
+        uni.showLoading({
+          title: '加载中...'
+        });
+      }
 
       // 构建请求参数
       var params = {
         page: this.page,
-        pageSize: this.pageSize,
+        page_size: this.pageSize,
         phone: this.phone || '',
         name: this.searchKey || ''
       };
@@ -437,15 +425,29 @@ var _default = {
 
       // 调用API获取客户列表
       _customer.default.getList(params).then(function (res) {
-        // 隐藏加载提示
-        uni.hideLoading();
+        // 只在重置时隐藏加载提示
+        if (isReset) {
+          uni.hideLoading();
+        }
         if (res.success && res.retCode === 200 && res.data) {
-          // 处理返回的数据
-          _this.customerList = res.data.list || [];
+          // 获取新数据
+          var newList = res.data.list || [];
+
+          // 更新总数量
           _this.totalCount = res.data.total || 0;
 
-          // 如果列表为空，显示提示
-          if (_this.customerList.length === 0) {
+          // 追加或替换数据
+          if (isReset) {
+            _this.customerList = newList;
+          } else {
+            _this.customerList = [].concat((0, _toConsumableArray2.default)(_this.customerList), (0, _toConsumableArray2.default)(newList));
+          }
+
+          // 判断是否还有更多数据
+          _this.hasMore = newList.length >= _this.pageSize && _this.customerList.length < _this.totalCount;
+
+          // 列表为空时显示提示
+          if (isReset && _this.customerList.length === 0) {
             uni.showToast({
               title: '暂无客户数据',
               icon: 'none'
@@ -458,9 +460,14 @@ var _default = {
             icon: 'none'
           });
         }
+
+        // 设置加载状态为false
+        _this.isLoading = false;
       }).catch(function (err) {
-        // 隐藏加载提示
-        uni.hideLoading();
+        // 只在重置时隐藏加载提示
+        if (isReset) {
+          uni.hideLoading();
+        }
 
         // 显示错误信息
         uni.showToast({
@@ -468,6 +475,9 @@ var _default = {
           icon: 'none'
         });
         console.error('获取客户列表失败', err);
+
+        // 设置加载状态为false
+        _this.isLoading = false;
       });
     },
     // 获取部门ID
@@ -479,11 +489,11 @@ var _default = {
       return departmentMap[departmentName] || '';
     },
     handleSearch: function handleSearch() {
-      this.loadCustomerList();
+      this.loadCustomerList(true);
     },
     changeStatusFilter: function changeStatusFilter(status) {
       this.statusFilter = status;
-      this.loadCustomerList();
+      this.loadCustomerList(true);
     },
     formatDate: function formatDate(timestamp) {
       if (!timestamp) return '';
@@ -506,9 +516,9 @@ var _default = {
     },
     getClientType: function getClientType(type) {
       var map = {
-        '1': '个人客户',
-        '2': '企业客户',
-        '3': '个体工商户'
+        1: '消费',
+        2: '经营',
+        3: '消费经营'
       };
       return map[type] || '未知类型';
     },
@@ -556,22 +566,17 @@ var _default = {
       });
     },
     updateStatus: function updateStatus(item) {
-      // 存储当前选中的客户
-      this.currentCustomer = item;
-
-      // 设置状态表单的初始值
-      this.statusForm.id = item.id;
-      this.statusForm.status = item.status || '';
-
-      // 设置对话框内容
-      this.dialogContent = "\u8BF7\u9009\u62E9\u5BA2\u6237 ".concat(item.name, " \u7684\u65B0\u72B6\u6001\uFF1A");
-
-      // 打开状态更新对话框
-      this.$refs.statusPopup.open();
+      // 将客户数据编码为URL参数
+      var customerData = encodeURIComponent(JSON.stringify(item));
+      console.log('updateStatus');
+      uni.navigateTo({
+        url: "/pages/customer/status?id=".concat(item.id, "&customerData=").concat(customerData)
+      });
     },
     transferCustomer: function transferCustomer(item) {
+      var customerData = encodeURIComponent(JSON.stringify(item));
       uni.navigateTo({
-        url: "/pages/customer/transfer?id=".concat(item.id)
+        url: "/pages/customer/transfer?id=".concat(item.id, "&customerData=").concat(customerData)
       });
     },
     createLoan: function createLoan(item) {
@@ -620,83 +625,12 @@ var _default = {
       });
     },
     applyFilters: function applyFilters() {
-      this.loadCustomerList();
+      this.loadCustomerList(true);
       uni.showToast({
         title: '筛选条件已应用',
         icon: 'none'
       });
       this.showFilterForm = false;
-    },
-    prevPage: function prevPage() {
-      if (this.page > 1) {
-        this.page--;
-        this.loadCustomerList();
-      }
-    },
-    nextPage: function nextPage() {
-      if (this.page < Math.ceil(this.totalCount / this.pageSize)) {
-        this.page++;
-        this.loadCustomerList();
-      }
-    },
-    // 状态选择变更
-    onStatusChange: function onStatusChange(e) {
-      var index = e.detail.value;
-      this.statusForm.status = this.customerStatusOptions[index].value;
-    },
-    // 确认状态更新
-    confirmStatusUpdate: function confirmStatusUpdate() {
-      var _this2 = this;
-      if (!this.statusForm.status) {
-        uni.showToast({
-          title: '请选择客户状态',
-          icon: 'none'
-        });
-        return;
-      }
-
-      // 显示加载提示
-      uni.showLoading({
-        title: '更新中...'
-      });
-
-      // 调用API更新客户状态
-      _customer.default.updateStatus({
-        id: this.statusForm.id,
-        status: this.statusForm.status
-      }).then(function (res) {
-        uni.hideLoading();
-        if (res.success && res.retCode === 200) {
-          uni.showToast({
-            title: '状态更新成功',
-            icon: 'success'
-          });
-
-          // 刷新客户列表
-          _this2.loadCustomerList();
-        } else {
-          uni.showToast({
-            title: res.message || '状态更新失败',
-            icon: 'none'
-          });
-        }
-      }).catch(function (err) {
-        uni.hideLoading();
-        uni.showToast({
-          title: '状态更新失败',
-          icon: 'none'
-        });
-        console.error('更新客户状态失败', err);
-      });
-    },
-    // 关闭状态对话框
-    closeStatusDialog: function closeStatusDialog() {
-      this.$refs.statusPopup.close();
-
-      // 重置表单数据
-      this.statusForm.id = '';
-      this.statusForm.status = '';
-      this.currentCustomer = null;
     }
   }
 };

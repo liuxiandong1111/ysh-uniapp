@@ -212,9 +212,19 @@ var _default = {
       loanId: null,
       loanInfo: null,
       showStatusPicker: false,
-      statusOptions: ['批款', '放款', '拒绝'],
+      statusOptions: [{
+        label: '批款',
+        value: '1'
+      }, {
+        label: '放款',
+        value: '2'
+      }, {
+        label: '拒绝',
+        value: '3'
+      }],
       updateStatusForm: {
         status: '',
+        statusLabel: '',
         rejectReason: '',
         disbursementDate: ''
       }
@@ -239,8 +249,9 @@ var _default = {
       };
     },
     // 选择状态
-    selectStatus: function selectStatus(status) {
-      this.updateStatusForm.status = status;
+    selectStatus: function selectStatus(option) {
+      this.updateStatusForm.status = option.value;
+      this.updateStatusForm.statusLabel = option.label;
       this.showStatusPicker = false;
     },
     // 日期变更
@@ -261,14 +272,14 @@ var _default = {
         });
         return;
       }
-      if (this.updateStatusForm.status === '拒绝' && !this.updateStatusForm.rejectReason) {
+      if (this.updateStatusForm.statusLabel === '拒绝' && !this.updateStatusForm.rejectReason) {
         uni.showToast({
           title: '请输入拒绝原因',
           icon: 'none'
         });
         return;
       }
-      if (this.updateStatusForm.status === '放款' && !this.updateStatusForm.disbursementDate) {
+      if (this.updateStatusForm.statusLabel === '放款' && !this.updateStatusForm.disbursementDate) {
         uni.showToast({
           title: '请选择放款时间',
           icon: 'none'

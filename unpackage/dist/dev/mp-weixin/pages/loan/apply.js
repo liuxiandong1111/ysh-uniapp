@@ -102,19 +102,24 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  var g0 = _vm.loanList.length
-  var l0 = !(g0 === 0)
-    ? _vm.__map(_vm.loanList, function (item, index) {
-        var $orig = _vm.__get_orig(item)
-        var m0 = _vm.getStatusClass(item.status)
-        var m1 = _vm.getRepaymentClass(item.repaymentStatus)
-        return {
-          $orig: $orig,
-          m0: m0,
-          m1: m1,
-        }
-      })
-    : null
+  var g0 = !_vm.isLoading && !_vm.hasError ? _vm.loanList.length : null
+  var l0 =
+    !_vm.isLoading && !_vm.hasError && !(g0 === 0)
+      ? _vm.__map(_vm.loanList, function (item, index) {
+          var $orig = _vm.__get_orig(item)
+          var m0 = _vm.getStatusClass(item.status)
+          var m1 = _vm.getLoanStatus(item.status)
+          var m2 = _vm.getDueType(item.due_type)
+          var m3 = _vm.getRepaymentClass(item.is_yu)
+          return {
+            $orig: $orig,
+            m0: m0,
+            m1: m1,
+            m2: m2,
+            m3: m3,
+          }
+        })
+      : null
   _vm.$mp.data = Object.assign(
     {},
     {
@@ -159,10 +164,23 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 174));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 176));
+var _finance = _interopRequireDefault(__webpack_require__(/*! @/api/finance.js */ 187));
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -236,68 +254,94 @@ var _default = {
   data: function data() {
     return {
       customerId: null,
+      customerData: null,
       customerName: '',
-      loanList: []
+      loanList: [],
+      isLoading: false,
+      hasError: false,
+      errorMsg: ''
     };
   },
   onLoad: function onLoad(options) {
     if (options.id) {
       this.customerId = options.id;
-      this.loadCustomerInfo();
+      var customerData = JSON.parse(decodeURIComponent(options.customerData));
+      this.customerData = customerData;
       this.loadLoanList();
     }
   },
   methods: {
-    // 加载客户信息
-    loadCustomerInfo: function loadCustomerInfo() {
-      // 模拟获取客户信息
-      // 实际项目中应该调用API获取
-      if (this.customerId) {
-        // 模拟数据
-        this.customerName = '张三';
-      }
-    },
     // 加载贷款列表
     loadLoanList: function loadLoanList() {
-      // 模拟加载贷款列表
-      // 实际项目中应该调用API获取
-      this.loanList = [{
-        id: 1,
-        name: '个人消费贷款',
-        type: '消费贷',
-        term: 3,
-        repaymentMethod: '等额本息',
-        disbursementDate: '2024-03-15',
-        channel: '线上申请',
-        status: '审批中',
-        amount: '50,000元',
-        repaymentStatus: '正常',
-        rejectReason: ''
-      }, {
-        id: 2,
-        name: '小微企业贷款',
-        type: '经营贷',
-        term: 5,
-        repaymentMethod: '先息后本',
-        disbursementDate: '2024-02-20',
-        channel: '网点申请',
-        status: '已通过',
-        amount: '200,000元',
-        repaymentStatus: '已结清',
-        rejectReason: ''
-      }, {
-        id: 3,
-        name: '住房装修贷款',
-        type: '消费贷',
-        term: 2,
-        repaymentMethod: '等额本息',
-        disbursementDate: '',
-        channel: '线上申请',
-        status: '已拒绝',
-        amount: '100,000元',
-        repaymentStatus: '未放款',
-        rejectReason: '征信不符合要求'
-      }];
+      var _this = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+        var params, res;
+        return _regenerator.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                // 设置加载状态
+                _this.isLoading = true;
+                _this.hasError = false;
+                _this.errorMsg = '';
+
+                // 显示加载提示
+                uni.showLoading({
+                  title: '加载中...'
+                });
+                _context.prev = 4;
+                params = {
+                  client_id: _this.customerId,
+                  page: 1,
+                  page_size: 30
+                }; // 调用API获取贷款列表
+                _context.next = 8;
+                return _finance.default.getLoanList(params);
+              case 8:
+                res = _context.sent;
+                // 隐藏加载提示
+                uni.hideLoading();
+                if (res && res.retCode === 200) {
+                  _this.loanList = res.data.list || [];
+                  if (_this.loanList.length === 0) {
+                    uni.showToast({
+                      title: '暂无贷款记录',
+                      icon: 'none'
+                    });
+                  }
+                } else {
+                  _this.hasError = true;
+                  _this.errorMsg = res.retMsg || '获取贷款列表失败';
+                  uni.showToast({
+                    title: _this.errorMsg,
+                    icon: 'none'
+                  });
+                }
+                _context.next = 20;
+                break;
+              case 13:
+                _context.prev = 13;
+                _context.t0 = _context["catch"](4);
+                // 隐藏加载提示
+                uni.hideLoading();
+                _this.hasError = true;
+                _this.errorMsg = '获取贷款列表失败';
+                uni.showToast({
+                  title: _this.errorMsg,
+                  icon: 'none'
+                });
+                console.error('获取贷款列表失败:', _context.t0);
+              case 20:
+                _context.prev = 20;
+                _this.isLoading = false;
+                return _context.finish(20);
+              case 23:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[4, 13, 20, 23]]);
+      }))();
     },
     // 获取状态样式类
     getStatusClass: function getStatusClass(status) {
@@ -305,25 +349,40 @@ var _default = {
         '待审批': 'pending',
         '审批中': 'processing',
         '已通过': 'approved',
-        '已拒绝': 'rejected'
+        '已拒绝': 'rejected',
+        '1': 'pending',
+        '2': 'processing',
+        '3': 'approved',
+        '4': 'rejected'
       };
       return statusMap[status] || 'pending';
+    },
+    getLoanStatus: function getLoanStatus(status) {
+      switch (Number(status)) {
+        case 0:
+          return '审批中';
+        case 1:
+          return '已批准';
+        case 2:
+          return '已拒绝';
+        default:
+          return '未知';
+      }
     },
     // 获取还款状态样式类
     getRepaymentClass: function getRepaymentClass(status) {
       var statusMap = {
-        '正常': 'normal',
-        '已结清': 'cleared',
-        '逾期': 'overdue',
-        '未放款': 'unpaid'
+        '0': 'normal',
+        '1': 'overdue'
       };
       return statusMap[status] || 'normal';
     },
     // 处理创建贷款
     handleCreate: function handleCreate() {
       // 跳转到贷款创建页面
+      var customerData = encodeURIComponent(JSON.stringify(this.customerData));
       uni.navigateTo({
-        url: '/pages/loan/create'
+        url: "/pages/loan/create?customerData=".concat(customerData)
       });
     },
     // 查看贷款详情
@@ -343,6 +402,18 @@ var _default = {
       uni.navigateTo({
         url: "/pages/loan/status?id=".concat(item.id)
       });
+    },
+    getDueType: function getDueType(type) {
+      switch (Number(type)) {
+        case 1:
+          return '等额本息';
+        case 2:
+          return '先息后本';
+        case 3:
+          return '随借随还';
+        default:
+          return '未知';
+      }
     }
   }
 };

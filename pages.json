@@ -39,6 +39,12 @@
 			}
 		},
 		{
+			"path": "pages/customer/status",
+			"style": {
+				"navigationBarTitleText": "更新客户状态"
+			}
+		},
+		{
 			"path": "pages/followup/followup",
 			"style": {
 				"navigationBarTitleText": "跟进记录"

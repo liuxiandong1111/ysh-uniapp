@@ -7,17 +7,17 @@
 				<view class="section-title">客户信息</view>
 				<view class="form-group">
 					<view class="form-label">客户姓名</view>
-					<input class="form-input" type="text" v-model="loanForm.customerName" disabled />
+					<view class="form-value">{{ customerData.name }}</view>
 				</view>
 				
 				<view class="form-group">
 					<view class="form-label">客户类型</view>
-					<input class="form-input" type="text" v-model="loanForm.customerGroup" disabled />
+					<view class="form-value">{{ getClientType(customerData.client_type) }}</view>
 				</view>
 			</view>
 			
 			<view class="form-section">
-				<view class="section-title">基本信息</view>
+				<view class="section-title">贷款信息</view>
 				<view class="form-group">
 					<view class="form-label">贷款名称</view>
 					<input class="form-input" type="text" v-model="loanForm.name" placeholder="请输入贷款名称" />
@@ -25,9 +25,9 @@
 				
 				<view class="form-group">
 					<view class="form-label">贷款类型</view>
-					<picker mode="selector" :range="loanTypes" @change="onLoanTypeChange" class="picker-input">
+					<picker mode="selector" :range="loanTypes" range-key="label" @change="onLoanTypeChange" class="picker-input">
 						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.type || '请选择贷款类型' }}</text>
+							<text class="picker-value">{{ loanForm.typeLabel || '请选择贷款类型' }}</text>
 							<text class="picker-arrow">▼</text>
 						</view>
 					</picker>
@@ -35,9 +35,9 @@
 				
 				<view class="form-group">
 					<view class="form-label">贷款期限</view>
-					<picker mode="selector" :range="loanTerms" @change="onLoanTermChange" class="picker-input">
+					<picker mode="selector" :range="loanTerms" range-key="label" @change="onLoanTermChange" class="picker-input">
 						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.term ? loanForm.term + '年' : '请选择贷款期限' }}</text>
+							<text class="picker-value">{{ loanForm.termLabel || '请选择贷款期限' }}</text>
 							<text class="picker-arrow">▼</text>
 						</view>
 					</picker>
@@ -45,50 +45,22 @@
 				
 				<view class="form-group">
 					<view class="form-label">还款方式</view>
-					<picker mode="selector" :range="repaymentMethods" @change="onRepaymentMethodChange" class="picker-input">
+					<picker mode="selector" :range="repaymentMethods" range-key="label" @change="onRepaymentMethodChange" class="picker-input">
 						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.repaymentMethod || '请选择还款方式' }}</text>
+							<text class="picker-value">{{ loanForm.repaymentMethodLabel || '请选择还款方式' }}</text>
 							<text class="picker-arrow">▼</text>
 						</view>
 					</picker>
+				</view>
+
+				<view class="form-group">
+					<view class="form-label">额度</view>
+					<input class="form-input" type="text" v-model="loanForm.amount" placeholder="请输入额度" />
 				</view>
 				
 				<view class="form-group" v-if="hasPermission">
 					<view class="form-label">渠道</view>
 					<input class="form-input" type="text" v-model="loanForm.channel" placeholder="请输入渠道" />
-				</view>
-			</view>
-			
-			<view class="form-section">
-				<view class="section-title">审批信息</view>
-				<view class="form-group">
-					<view class="form-label">贷款进度</view>
-					<picker mode="selector" :range="loanStatuses" @change="onLoanStatusChange" class="picker-input">
-						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.status || '请选择贷款进度' }}</text>
-							<text class="picker-arrow">▼</text>
-						</view>
-					</picker>
-				</view>
-				
-				<view class="form-group" v-if="loanForm.status !== '拒绝'">
-					<view class="form-label">额度</view>
-					<input class="form-input" type="text" v-model="loanForm.amount" placeholder="请输入额度" />
-				</view>
-				
-				<view class="form-group" v-if="loanForm.status === '拒绝'">
-					<view class="form-label">拒绝原因</view>
-					<input class="form-input" type="text" v-model="loanForm.rejectReason" placeholder="请输入拒绝原因" />
-				</view>
-				
-				<view class="form-group" v-if="loanForm.status === '放款'">
-					<view class="form-label">放款时间</view>
-					<picker mode="date" :value="loanForm.disbursementDate" @change="onDateChange" class="picker-input">
-						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.disbursementDate || '请选择放款时间' }}</text>
-							<text class="picker-arrow">▼</text>
-						</view>
-					</picker>
 				</view>
 			</view>
 			
@@ -106,20 +78,25 @@
 			return {
 				isEdit: false,
 				loanId: null,
+				customerData: null,
 				hasPermission: true, // 可根据实际权限控制
-				loanTypes: ['消费', '经营'],
-				loanTerms: ['1年', '3年', '5年'],
-				repaymentMethods: ['等额本息', '先息后本', '随借随还'],
-				loanStatuses: ['批款', '放款', '拒绝'],
+				loanTypes: [{label: '消费', value: '1'}, {label: '经营', value: '2'}],
+				loanTerms: [{label: '1年', value: '1'}, {label: '3年', value: '3'}, {label: '5年', value: '5'}],
+				repaymentMethods: [{label: '等额本息', value: '1'}, {label: '先息后本', value: '2'}, {label: '随借随还', value: '3'}],
+				loanStatuses: [{label: '批款', value: '1'}, {label: '放款', value: '2'}, {label: '拒绝', value: '3'}],
 				loanForm: {
 					customerName: '',
 					customerGroup: '',
 					name: '',
 					type: '',
+					typeLabel: '',
 					term: null,
+					termLabel: '',
 					repaymentMethod: '',
+					repaymentMethodLabel: '',
 					channel: '',
 					status: '',
+					statusLabel: '',
 					amount: '',
 					rejectReason: '',
 					disbursementDate: ''
@@ -127,6 +104,8 @@
 			}
 		},
 		onLoad(options) {
+			const customerData = JSON.parse(decodeURIComponent(options.customerData));
+			this.customerData = customerData;
 			if (options.id) {
 				// 编辑模式
 				this.loanId = options.id;
@@ -138,12 +117,20 @@
 			}
 		},
 		methods: {
+			getClientType(type) {
+				const map = {
+					'1': '消费',
+					'2': '经营',
+					'3': '消费经营'
+				};
+				return map[type] || '未知类型';
+			},
 			// 加载客户数据
 			loadCustomerData(customerId) {
 				// 模拟获取客户数据
 				// 实际项目中应该调用API获取
-				this.loanForm.customerName = '张三';
-				this.loanForm.customerGroup = '个人客户';
+				this.loanForm.customerName = this.customerData.name;
+				this.loanForm.customerGroup = this.customerData.group;
 			},
 			
 			// 加载贷款数据（编辑模式）
@@ -151,14 +138,18 @@
 				// 模拟获取贷款数据
 				// 实际项目中应该调用API获取
 				this.loanForm = {
-					customerName: '张三',
-					customerGroup: '个人客户',
+					customerName: this.customerData.name,
+					customerGroup: this.customerData.group,
 					name: '个人消费贷款',
 					type: '消费',
+					typeLabel: '消费',
 					term: 1,
+					termLabel: '1年',
 					repaymentMethod: '等额本息',
+					repaymentMethodLabel: '等额本息',
 					channel: '线上申请',
 					status: '批款',
+					statusLabel: '批款',
 					amount: '50000',
 					rejectReason: '',
 					disbursementDate: ''
@@ -167,23 +158,27 @@
 			
 			// 贷款类型选择
 			onLoanTypeChange(e) {
-				this.loanForm.type = this.loanTypes[e.detail.value];
+				this.loanForm.type = this.loanTypes[e.detail.value].value;
+				this.loanForm.typeLabel = this.loanTypes[e.detail.value].label;
 			},
 			
 			// 贷款期限选择
 			onLoanTermChange(e) {
-				const termText = this.loanTerms[e.detail.value];
-				this.loanForm.term = parseInt(termText.replace('年', ''));
+				const term = this.loanTerms[e.detail.value];
+				this.loanForm.term = term.value;
+				this.loanForm.termLabel = term.label;
 			},
 			
 			// 还款方式选择
 			onRepaymentMethodChange(e) {
-				this.loanForm.repaymentMethod = this.repaymentMethods[e.detail.value];
+				this.loanForm.repaymentMethod = this.repaymentMethods[e.detail.value].value;
+				this.loanForm.repaymentMethodLabel = this.repaymentMethods[e.detail.value].label;
 			},
 			
 			// 贷款状态选择
 			onLoanStatusChange(e) {
-				this.loanForm.status = this.loanStatuses[e.detail.value];
+				this.loanForm.status = this.loanStatuses[e.detail.value].value;
+				this.loanForm.statusLabel = this.loanStatuses[e.detail.value].label;
 			},
 			
 			// 放款日期选择
@@ -333,6 +328,12 @@
 		font-size: 15px;
 		color: #606266;
 		margin-bottom: 8px;
+	}
+
+	.form-value {
+		font-size: 14px;
+		color: #333;
+		word-break: break-all;
 	}
 	
 	.form-input {

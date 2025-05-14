@@ -6,7 +6,7 @@
 					<view class="search-icon">
 						<text class="iconfont">🔍</text>
 					</view>
-					<input class="search-input" type="text" v-model="searchKey" placeholder="搜索客户姓名或手机号" />
+					<input class="search-input" type="text" v-model="searchKey" placeholder="搜索客户姓名或手机号" @confirm="searchCustomers" />
 				</view>
 				<view class="search-btn" @click="searchCustomers">搜索</view>
 			</view>
@@ -16,8 +16,7 @@
 					<view class="customer-info">
 						<view class="customer-header">
 							<text class="customer-name">{{ item.name }}</text>
-							<text class="customer-status" :class="'status-' + getStatusClass(item.status)">{{ item.status
-								|| '待审批'}}</text>
+							<text class="customer-status" :class="'status-' + getStatusClass(item.deal_status)">{{ getDealStatus(item.deal_status) }}</text>
 						</view>
 						<view class="info-row">
 							<text class="info-label">手机号:</text>
@@ -25,15 +24,15 @@
 						</view>
 						<view class="info-row">
 							<text class="info-label">所属客群:</text>
-							<text class="info-value">{{ item.customerGroup }}</text>
+							<text class="info-value">{{ getClientType(item.client_type) }}</text>
 						</view>
 						<view class="info-row">
 							<text class="info-label">业务员:</text>
-							<text class="info-value">{{ item.manager }}</text>
+							<text class="info-value">{{ item.service_name }}</text>
 						</view>
 						<view class="info-row">
 							<text class="info-label">产品员:</text>
-							<text class="info-value">{{ item.assignedBy || '未分配' }}</text>
+							<text class="info-value">{{ item.product_name || '未分配' }}</text>
 						</view>
 					</view>
 					<view class="customer-actions">
@@ -46,8 +45,15 @@
 					</view>
 				</view>
 
-				<view class="empty-tip" v-if="pendingCustomerList.length === 0">
+				<view class="empty-tip" v-if="pendingCustomerList.length === 0 && !isLoading">
 					暂无待处理客户数据
+				</view>
+				
+				<!-- 加载更多提示 -->
+				<view class="loading-more" v-if="pendingCustomerList.length > 0">
+					<text v-if="isLoading">加载中...</text>
+					<text v-else-if="hasMore">上拉加载更多</text>
+					<text v-else>没有更多数据了</text>
 				</view>
 			</view>
 		</view>
@@ -55,6 +61,8 @@
 </template>
 
 <script>
+import financeApi from '@/api/finance.js';
+
 export default {
 	data() {
 		return {
@@ -96,7 +104,13 @@ export default {
 					path: ''
 				}
 			],
-			pendingCustomerList: []
+			pendingCustomerList: [],
+			// 分页相关状态
+			currentPage: 1,
+			pageSize: 10,
+			total: 0,
+			isLoading: false,
+			hasMore: true
 		}
 	},
 	onLoad(option) {
@@ -106,62 +120,105 @@ export default {
 		}
 
 		// 加载待处理客户列表
-		this.loadPendingCustomers();
+		this.loadPendingCustomers(true);
+	},
+	// 上拉触底事件
+	onReachBottom() {
+		if (this.hasMore && !this.isLoading) {
+			this.loadMore();
+		}
 	},
 	methods: {
 		// 切换标签
 		switchTab(index) {
 			this.activeTab = index;
 			if (index === 1) {
-				this.loadPendingCustomers();
+				this.loadPendingCustomers(true);
+			}
+		},
+
+		// 加载更多数据
+		loadMore() {
+			if (this.hasMore && !this.isLoading) {
+				this.currentPage++;
+				this.loadPendingCustomers(false);
 			}
 		},
 
 		// 加载待处理客户列表
-		loadPendingCustomers() {
-			// 模拟从服务器获取数据
-			this.pendingCustomerList = [
-				{
-					id: 1,
-					name: '张三',
-					phone: '13800138000',
-					manager: '王经理',
-					customerGroup: '消费',
-					status: '待审批',
-					assignedBy: '李产品'
-				},
-				{
-					id: 2,
-					name: '李四',
-					phone: '13800138001',
-					manager: '赵经理',
-					customerGroup: '经营',
-					status: '审批中',
-					assignedBy: '王产品'
-				},
-				{
-					id: 3,
-					name: '王五',
-					phone: '13800138002',
-					manager: '刘经理',
-					customerGroup: '消费',
-					status: '已拒绝',
-					assignedBy: '张产品'
+		async loadPendingCustomers(isReset = true) {
+			// 如果是重置，则清空列表并回到第一页
+			if (isReset) {
+				this.currentPage = 1;
+				this.pendingCustomerList = [];
+				this.hasMore = true;
+			}
+			
+			// 已无更多数据时不再请求
+			if (!this.hasMore) {
+				return;
+			}
+			
+			this.isLoading = true;
+			
+			if (isReset) {
+				uni.showLoading({
+					title: '加载中...'
+				});
+			}
+			
+			try {
+				const response = await financeApi.getFinanceList({
+					name: this.searchKey,
+					page: this.currentPage,
+					page_size: this.pageSize
+				});
+				
+				if (response && response.retCode === 200) {
+					const newList = response.data.list || [];
+					
+					// 追加数据而非替换
+					if (isReset) {
+						this.pendingCustomerList = newList;
+					} else {
+						this.pendingCustomerList = [...this.pendingCustomerList, ...newList];
+					}
+					
+					this.total = response.data.total || 0;
+					
+					// 判断是否还有更多数据
+					this.hasMore = newList.length >= this.pageSize && this.pendingCustomerList.length < this.total;
+					
+					if (isReset && this.pendingCustomerList.length === 0) {
+						uni.showToast({
+							title: '暂无贷款数据',
+							icon: 'none'
+						});
+					}
+				} else {
+					uni.showToast({
+						title: response.retMsg || '获取贷款列表失败',
+						icon: 'none'
+					});
 				}
-			];
-
-			// 应用搜索过滤
-			if (this.searchKey) {
-				this.pendingCustomerList = this.pendingCustomerList.filter(item =>
-					item.name.includes(this.searchKey) ||
-					item.phone.includes(this.searchKey)
-				);
+			} catch (error) {
+				console.error('获取贷款列表失败:', error);
+				uni.showToast({
+					title: '获取贷款列表失败',
+					icon: 'none'
+				});
+			} finally {
+				if (isReset) {
+					uni.hideLoading();
+				}
+				this.isLoading = false;
 			}
 		},
 
 		// 搜索客户
 		searchCustomers() {
-			this.loadPendingCustomers();
+			// 重置并搜索
+			this.loadPendingCustomers(true);
 		},
 
 		// 获取状态样式类
@@ -169,27 +226,49 @@ export default {
 			if (!status) return 'pending';
 
 			const statusMap = {
-				'待审批': 'pending',
-				'审批中': 'processing',
-				'已通过': 'approved',
-				'已拒绝': 'rejected'
+				'1': 'pending',
+				'2': 'processing',
+				'3': 'approved',
+				'4': 'rejected'
 			};
 
 			return statusMap[status] || 'pending';
 		},
+		// 审批状态文本转换
+		getDealStatus(status) {
+			const statusMap = {
+				1: '待处理',
+				2: '审批中',
+				3: '已审批',
+				4: '已拒绝'
+			}
+			return statusMap[status] || '未知'
+		},	
+
+		// 客户类型转换
+		getClientType (type) {
+			const typeMap = {
+				1: '消费',
+				2: '经营',
+				3: '消费经营'
+			}
+			return typeMap[type] || '未知'
+		},
 
 		// 查看客户详情
 		handleViewCustomer(item) {
+			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
-				url: `/pages/customer/detail?id=${item.id}&type=loan`
+				url: `/pages/customer/detail?id=${item.id}&customerData=${customerData}&type=loan`
 			});
 		},
 
 		// 为客户创建贷款
 		handleCreateLoan(item) {
 			// 跳转到贷款申请页面，并传递客户ID
+			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
-				url: `/pages/loan/apply?id=${item.id}`
+				url: `/pages/loan/apply?id=${item.id}&customerData=${customerData}`
 			});
 		},
 
@@ -600,6 +679,14 @@ export default {
 	color: #909399;
 	padding: 20px;
 	background-color: #fff;
+	border-radius: 8px;
+}
+
+/* 加载更多提示样式 */
+.loading-more {
+	text-align: center;
+	color: #909399;
+	padding: 10px;
 	border-radius: 8px;
 }
 </style>

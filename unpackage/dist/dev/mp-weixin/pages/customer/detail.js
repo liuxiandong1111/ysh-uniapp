@@ -350,7 +350,8 @@ var _default = {
       customerInfo: {},
       loanList: [],
       type: '',
-      dictMaps: _dict.dictMaps
+      dictMaps: _dict.dictMaps,
+      pageType: ''
     };
   },
   onLoad: function onLoad(options) {
@@ -559,9 +560,9 @@ var _default = {
     },
     getClientType: function getClientType(type) {
       var map = {
-        '1': '个人客户',
-        '2': '企业客户',
-        '3': '个体工商户'
+        '1': '消费',
+        '2': '经营',
+        '3': '消费经营'
       };
       return map[type] || '未知类型';
     },

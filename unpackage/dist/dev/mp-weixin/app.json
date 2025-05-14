@@ -6,6 +6,7 @@
     "pages/customer/detail",
     "pages/customer/add",
     "pages/customer/transfer",
+    "pages/customer/status",
     "pages/followup/followup",
     "pages/followup/list",
     "pages/dashboard/dashboard",

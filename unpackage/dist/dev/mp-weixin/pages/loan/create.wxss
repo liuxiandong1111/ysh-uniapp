@@ -46,6 +46,11 @@
 	color: #606266;
 	margin-bottom: 8px;
 }
+.form-value {
+	font-size: 14px;
+	color: #333;
+	word-break: break-all;
+}
 .form-input {
 	height: 40px;
 	padding: 0 12px;

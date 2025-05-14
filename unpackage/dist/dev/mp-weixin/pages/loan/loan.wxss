@@ -263,3 +263,11 @@
 	border-radius: 8px;
 }
 
+/* 加载更多提示样式 */
+.loading-more {
+	text-align: center;
+	color: #909399;
+	padding: 10px;
+	border-radius: 8px;
+}
+
