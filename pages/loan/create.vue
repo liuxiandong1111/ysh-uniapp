@@ -37,7 +37,7 @@
 					<view class="form-label">贷款期限</view>
 					<picker mode="selector" :range="loanTerms" range-key="label" @change="onLoanTermChange" class="picker-input">
 						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.termLabel || '请选择贷款期限' }}</text>
+							<text class="picker-value">{{ loanForm.age_limitLabel || '请选择贷款期限' }}</text>
 							<text class="picker-arrow">▼</text>
 						</view>
 					</picker>
@@ -47,7 +47,7 @@
 					<view class="form-label">还款方式</view>
 					<picker mode="selector" :range="repaymentMethods" range-key="label" @change="onRepaymentMethodChange" class="picker-input">
 						<view class="picker-display">
-							<text class="picker-value">{{ loanForm.repaymentMethodLabel || '请选择还款方式' }}</text>
+							<text class="picker-value">{{ loanForm.due_typeLabel || '请选择还款方式' }}</text>
 							<text class="picker-arrow">▼</text>
 						</view>
 					</picker>
@@ -55,7 +55,7 @@
 
 				<view class="form-group">
 					<view class="form-label">额度</view>
-					<input class="form-input" type="text" v-model="loanForm.amount" placeholder="请输入额度" />
+					<input class="form-input" type="text" v-model="loanForm.quota" placeholder="请输入额度" />
 				</view>
 				
 				<view class="form-group" v-if="hasPermission">
@@ -73,6 +73,8 @@
 </template>
 
 <script>
+	import { belongingCustomerGroup, loanTerm, repaymentMethod, loanStatus } from '@/utils/dict.js';
+  import financeApi from '@/api/finance.js';
 	export default {
 		data() {
 			return {
@@ -80,24 +82,24 @@
 				loanId: null,
 				customerData: null,
 				hasPermission: true, // 可根据实际权限控制
-				loanTypes: [{label: '消费', value: '1'}, {label: '经营', value: '2'}],
+				loanTypes: belongingCustomerGroup,
 				loanTerms: [{label: '1年', value: '1'}, {label: '3年', value: '3'}, {label: '5年', value: '5'}],
-				repaymentMethods: [{label: '等额本息', value: '1'}, {label: '先息后本', value: '2'}, {label: '随借随还', value: '3'}],
-				loanStatuses: [{label: '批款', value: '1'}, {label: '放款', value: '2'}, {label: '拒绝', value: '3'}],
+        repaymentMethods: [{label: '等额本息', value: '1'}, {label: '先息后本', value: '2'}, {label: '随借随还', value: '3'}],
+				loanStatuses: loanStatus,
 				loanForm: {
 					customerName: '',
 					customerGroup: '',
 					name: '',
 					type: '',
 					typeLabel: '',
-					term: null,
-					termLabel: '',
-					repaymentMethod: '',
-					repaymentMethodLabel: '',
+          age_limit: null,
+          age_limitLabel: '',
+          due_type: '',
+          due_typeLabel: '',
 					channel: '',
 					status: '',
 					statusLabel: '',
-					amount: '',
+          quota: '',
 					rejectReason: '',
 					disbursementDate: ''
 				}
@@ -105,6 +107,7 @@
 		},
 		onLoad(options) {
 			const customerData = JSON.parse(decodeURIComponent(options.customerData));
+      console.log(customerData, 'customerData')
 			this.customerData = customerData;
 			if (options.id) {
 				// 编辑模式
@@ -118,12 +121,7 @@
 		},
 		methods: {
 			getClientType(type) {
-				const map = {
-					'1': '消费',
-					'2': '经营',
-					'3': '消费经营'
-				};
-				return map[type] || '未知类型';
+				return this.loanTypes.find(item => item.value == type)?.label || '';
 			},
 			// 加载客户数据
 			loadCustomerData(customerId) {
@@ -143,14 +141,14 @@
 					name: '个人消费贷款',
 					type: '消费',
 					typeLabel: '消费',
-					term: 1,
-					termLabel: '1年',
-					repaymentMethod: '等额本息',
-					repaymentMethodLabel: '等额本息',
+          age_limit: 1,
+          age_limitLabel: '1年',
+          due_type: '等额本息',
+          due_typeLabel: '等额本息',
 					channel: '线上申请',
 					status: '批款',
 					statusLabel: '批款',
-					amount: '50000',
+          quota: '50000',
 					rejectReason: '',
 					disbursementDate: ''
 				};
@@ -165,14 +163,14 @@
 			// 贷款期限选择
 			onLoanTermChange(e) {
 				const term = this.loanTerms[e.detail.value];
-				this.loanForm.term = term.value;
-				this.loanForm.termLabel = term.label;
+				this.loanForm.age_limit = term.value;
+				this.loanForm.age_limitLabel = term.label;
 			},
 			
 			// 还款方式选择
 			onRepaymentMethodChange(e) {
-				this.loanForm.repaymentMethod = this.repaymentMethods[e.detail.value].value;
-				this.loanForm.repaymentMethodLabel = this.repaymentMethods[e.detail.value].label;
+				this.loanForm.due_type = this.repaymentMethods[e.detail.value].value;
+				this.loanForm.due_typeLabel = this.repaymentMethods[e.detail.value].label;
 			},
 			
 			// 贷款状态选择
@@ -210,7 +208,7 @@
 					return;
 				}
 				
-				if (!this.loanForm.term) {
+				if (!this.loanForm.age_limit) {
 					uni.showToast({
 						title: '请选择贷款期限',
 						icon: 'none'
@@ -218,57 +216,49 @@
 					return;
 				}
 				
-				if (!this.loanForm.repaymentMethod) {
+				if (!this.loanForm.due_type) {
 					uni.showToast({
 						title: '请选择还款方式',
 						icon: 'none'
 					});
 					return;
 				}
-				
-				if (this.loanForm.status) {
-					if (this.loanForm.status !== '拒绝' && !this.loanForm.amount) {
-						uni.showToast({
-							title: '请输入额度',
-							icon: 'none'
-						});
-						return;
-					}
-					
-					if (this.loanForm.status === '拒绝' && !this.loanForm.rejectReason) {
-						uni.showToast({
-							title: '请输入拒绝原因',
-							icon: 'none'
-						});
-						return;
-					}
-					
-					if (this.loanForm.status === '放款' && !this.loanForm.disbursementDate) {
-						uni.showToast({
-							title: '请选择放款时间',
-							icon: 'none'
-						});
-						return;
-					}
-				}
-				
-				// 提交数据
+
+        // 提交数据
 				uni.showLoading({
 					title: '提交中...'
 				});
-				
-				setTimeout(() => {
-					uni.hideLoading();
-					uni.showToast({
-						title: '提交成功',
-						icon: 'success'
-					});
-					
-					// 提交成功后返回上一页
-					setTimeout(() => {
-						uni.navigateBack();
-					}, 1500);
-				}, 1000);
+
+        const params = {
+          client_id: this.customerData.id,
+          name: this.loanForm.name,
+          type: this.loanForm.type,
+          age_limit: this.loanForm.age_limit,
+          due_type: this.loanForm.due_type,
+          channel: this.loanForm.channel,
+          quota: this.loanForm.quota
+        }
+        financeApi.addLoan(params).then(res => {
+          console.log(res);
+          if (res.retCode == 200) {
+            uni.showToast({
+              title: res.message,
+              icon: 'success',
+              duration: 1000
+            });
+
+            // 提交成功后返回上一页
+            setTimeout(() => {
+              uni.navigateBack();
+            }, 1000);
+          } else {
+            uni.showToast({
+              title: res.message,
+              icon: 'none',
+              duration: 2000,
+            });
+          }
+        })
 			}
 		}
 	}

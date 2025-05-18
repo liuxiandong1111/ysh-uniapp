@@ -6,7 +6,7 @@
 					<view class="search-icon">
 						<text class="iconfont">🔍</text>
 					</view>
-				<input class="search-input" type="text" @confirm="handleSearch" placeholder="搜索客户姓名或手机号"
+				<input class="search-input" type="text" @confirm="handleSearch" placeholder="搜索客户姓名"
 					v-model="searchKey" />
 			</view>
 			<view class="search-btn" @click="handleSearch">搜索</view>
@@ -128,33 +128,45 @@
 		</view>
 
 		<view class="add-fab" @click="goAdd">
-			<text class="iconfont icon-add"></text>
+			<text style="transform: translateY(-2px);">+</text>
 		</view>
 	</view>
 </template>
 
 <script>
 import customerApi from '@/api/customer.js';
-import { dictMaps, getLabelByValue, customerType, customerStatus, dealStatus } from '@/utils/dict.js';
+import { dictMaps, getLabelByValue, customerType, customerStatus, dealStatus, customerProgress } from '@/utils/dict.js';
+import { department } from '@/api/organization.js';
+import tabbarUtils from '../../utils/tabbarUtils.js';
 
 export default {
 	data() {
+		// 基于字典构建选项数组
+		const buildOptions = (dictArray) => {
+			return ['全部', ...dictArray.map(item => item.label)];
+		};
+		
 		return {
 			searchKey: '',
 			phone: '',
 			statusFilter: 'all',
 			customerList: [],
 			showFilterForm: false,
-			departmentOptions: ['全部', '消费信贷部', '小微信贷部'],
+			departmentOptions: ['全部'], // 初始化为包含"全部"选项的数组
+			departmentData: [], // 存储完整的部门数据
 			currentDepartment: 0,
-			statusOptions: ['全部', '未联系', '电话联系', '客户到访', '提交材料', '完成'],
+			statusOptions: buildOptions(customerStatus), // 使用customerStatus字典构建
 			currentStatus: 0,
-			approvalOptions: ['全部', '未审批', '审批中', '已通过', '已拒绝'],
+			approvalOptions: buildOptions(customerProgress), // 使用customerProgress字典构建
 			currentApproval: 0,
 			customerGroupOptions: ['全部', '消费', '经营', '消费经营'],
 			currentCustomerGroup: 0,
+			// 存储原始字典数据以便后续使用
+			statusDict: customerStatus,
+			approvalDict: customerProgress,
 			filterParams: {
 				department: '',
+				branchId: '',
 				status: '',
 				approvalStatus: '',
 				customerGroup: ''
@@ -168,9 +180,11 @@ export default {
 		}
 	},
 	onLoad() {
+		
 		// 检查登录状态
 		this.checkLogin();
-		
+		this.getDeptTree()
+
 		// 监听刷新列表事件
 		uni.$on('refreshCustomerList', this.refreshCustomerList);
 	},
@@ -178,6 +192,24 @@ export default {
 		// 在页面显示时也检查登录状态
 		if(this.checkLogin()) {
 			this.loadCustomerList(true);
+		}
+
+		// 检查权限
+		const permissions = uni.getStorageSync('permissions');
+		if (!permissions || !permissions.customer) {
+			uni.showToast({
+				title: '您没有权限访问客户管理',
+				icon: 'none',
+				duration: 2000
+			});
+			
+			// 延迟后跳转到首页
+			setTimeout(() => {
+				uni.switchTab({
+					url: '/pages/dashboard/dashboard'
+				});
+			}, 1000);
+			return;
 		}
 	},
 	onReachBottom() {
@@ -194,7 +226,30 @@ export default {
 		refreshCustomerList() {
 			this.loadCustomerList(true);
 		},
-		
+
+		async getDeptTree() {
+			try {
+				const res = await department.getTreeList()
+				console.log(res, 'res')
+
+				if (res.success && res.retCode === 200 && res.data && res.data.length > 0) {
+					// 提取部门数据
+					const deptData = res.data[0].children || [];
+					// 保存完整部门数据以供后续使用
+					this.departmentData = deptData;
+					// 设置部门选项列表，"全部"已在初始化时添加
+					this.departmentOptions = ['全部', ...deptData.map(item => item.branch_name)];
+				} else {
+					this.departmentOptions = ['全部'];
+					this.departmentData = [];
+				}
+			} catch (error) {
+				console.error('获取部门数据失败', error);
+				this.departmentOptions = ['全部'];
+				this.departmentData = [];
+			}
+		},
+
 		// 加载更多数据
 		loadMore() {
 			if (this.hasMore && !this.isLoading) {
@@ -202,27 +257,27 @@ export default {
 				this.loadCustomerList(false);
 			}
 		},
-		
+
 		// 检查登录状态
 		checkLogin() {
 			const isLoggedIn = uni.getStorageSync('isLoggedIn');
 			const token = uni.getStorageSync('token');
 			const userInfo = uni.getStorageSync('userInfo');
-			
+
 			if (!isLoggedIn || !token || !userInfo) {
 				console.log('customer页面检测到未登录，准备跳转到登录页');
-				
+
 				uni.showToast({
 					title: '请先登录',
 					icon: 'none',
 					duration: 2000
 				});
-				
+
 				// 直接跳转到登录页
 				uni.redirectTo({
 					url: '/pages/login/login'
 				});
-				
+
 				return false;
 			}
 			return true;
@@ -234,15 +289,15 @@ export default {
 				this.customerList = [];
 				this.hasMore = true;
 			}
-			
+
 			// 已无更多数据时不再请求
 			if (!this.hasMore) {
 				return;
 			}
-			
+
 			// 设置加载状态
 			this.isLoading = true;
-			
+
 			// 仅在重置时显示加载提示
 			if (isReset) {
 				uni.showLoading({
@@ -258,9 +313,26 @@ export default {
 				name: this.searchKey || ''
 			};
 
-			// 如果有筛选条件，添加到请求参数中
-			if (this.filterParams.department) {
-				params.branch_id = this.getDepartmentId(this.filterParams.department);
+			// 如果有部门筛选条件，添加到请求参数中
+			if (this.filterParams.branchId) {
+				params.branch_id = this.filterParams.branchId;
+			} else {
+				params.branch_id = '';
+			}
+			
+			console.log(this.filterParams.status, 'this.filterParams.status')
+			// 添加客户状态筛选条件
+			if (this.filterParams.status) {
+				params.status = this.filterParams.status;
+			} else {
+				params.status = '';
+			}
+			
+			// 添加审批状态筛选条件
+			if (this.filterParams.approvalStatus) {
+				params.deal_status = this.filterParams.approvalStatus;
+			} else {
+				params.deal_status = '';
 			}
 
 			// 调用API获取客户列表
@@ -270,24 +342,24 @@ export default {
 					if (isReset) {
 						uni.hideLoading();
 					}
-					
+
 					if (res.success && res.retCode === 200 && res.data) {
 						// 获取新数据
 						const newList = res.data.list || [];
-						
+
 						// 更新总数量
 						this.totalCount = res.data.total || 0;
-						
+
 						// 追加或替换数据
 						if (isReset) {
 							this.customerList = newList;
 						} else {
 							this.customerList = [...this.customerList, ...newList];
 						}
-						
+
 						// 判断是否还有更多数据
 						this.hasMore = newList.length >= this.pageSize && this.customerList.length < this.totalCount;
-						
+
 						// 列表为空时显示提示
 						if (isReset && this.customerList.length === 0) {
 							uni.showToast({
@@ -302,7 +374,7 @@ export default {
 							icon: 'none'
 						});
 					}
-					
+
 					// 设置加载状态为false
 					this.isLoading = false;
 				})
@@ -311,28 +383,21 @@ export default {
 					if (isReset) {
 						uni.hideLoading();
 					}
-					
+
 					// 显示错误信息
 					uni.showToast({
 						title: '获取客户列表失败',
 						icon: 'none'
 					});
-					
+
 					console.error('获取客户列表失败', err);
-					
+
 					// 设置加载状态为false
 					this.isLoading = false;
 				});
 		},
-		
-		// 获取部门ID
-		getDepartmentId(departmentName) {
-			const departmentMap = {
-				'消费信贷部': '1',
-				'小微信贷部': '2'
-			};
-			return departmentMap[departmentName] || '';
-		},
+
+			// 不再需要映射，直接使用API返回的部门ID
 		handleSearch() {
 			this.loadCustomerList(true);
 		},
@@ -439,19 +504,46 @@ export default {
 		},
 		departmentChange(e) {
 			this.currentDepartment = e.detail.value;
-			this.filterParams.department = this.currentDepartment === 0 ? '' : this.departmentOptions[this.currentDepartment];
+			
+			if (this.currentDepartment === 0) {
+				// 选择"全部"时，不设置部门筛选
+				this.filterParams.department = '';
+				this.filterParams.branchId = '';
+			} else {
+				// 选择具体部门时，获取部门信息
+				const selectedIndex = this.currentDepartment - 1; // 因为第一个是"全部"
+				if (selectedIndex >= 0 && selectedIndex < this.departmentData.length) {
+					const dept = this.departmentData[selectedIndex];
+					this.filterParams.department = dept.branch_name;
+					this.filterParams.branchId = dept.id;
+				}
+			}
 		},
 		statusChange(e) {
 			this.currentStatus = e.detail.value;
-			this.filterParams.status = this.currentStatus === 0 ? '' : this.statusOptions[this.currentStatus];
+			if (e.detail.value == 0) {
+				// 选择"全部"时，不设置状态筛选
+				this.filterParams.status = '';
+			} else {
+				// 选择具体状态时，使用对应的value值
+				const selectedIndex = e.detail.value - 1; // 因为第一个是"全部"
+				if (selectedIndex >= 0 && selectedIndex < this.statusDict.length) {
+					this.filterParams.status = this.statusDict[selectedIndex].value;
+				}
+			}
 		},
 		approvalChange(e) {
 			this.currentApproval = e.detail.value;
-			this.filterParams.approvalStatus = this.currentApproval === 0 ? '' : this.approvalOptions[this.currentApproval];
-		},
-		customerGroupChange(e) {
-			this.currentCustomerGroup = e.detail.value;
-			this.filterParams.customerGroup = this.currentCustomerGroup === 0 ? '' : this.customerGroupOptions[this.currentCustomerGroup];
+			if (e.detail.value == 0) {
+				// 选择"全部"时，不设置审批状态筛选
+				this.filterParams.approvalStatus = '';
+			} else {
+				// 选择具体审批状态时，使用对应的value值
+				const selectedIndex = e.detail.value - 1; // 因为第一个是"全部"
+				if (selectedIndex >= 0 && selectedIndex < this.approvalDict.length) {
+					this.filterParams.approvalStatus = this.approvalDict[selectedIndex].value;
+				}
+			}
 		},
 		resetFilters() {
 			this.currentDepartment = 0;
@@ -460,6 +552,7 @@ export default {
 			this.currentCustomerGroup = 0;
 			this.filterParams = {
 				department: '',
+				branchId: '',
 				status: '',
 				approvalStatus: '',
 				customerGroup: ''
@@ -468,6 +561,10 @@ export default {
 				title: '筛选已重置',
 				icon: 'none'
 			});
+		},
+		customerGroupChange(e) {
+			this.currentCustomerGroup = e.detail.value;
+			this.filterParams.customerGroup = this.currentCustomerGroup === 0 ? '' : this.currentCustomerGroup;
 		},
 		applyFilters() {
 			this.loadCustomerList(true);
@@ -794,6 +891,8 @@ export default {
 	justify-content: center;
 	align-items: center;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-size: 30px;
 }
 
 .add-fab .iconfont {

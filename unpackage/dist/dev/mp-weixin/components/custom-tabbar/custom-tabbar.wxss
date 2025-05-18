@@ -1,0 +1,46 @@
+
+.custom-tabbar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	background-color: #FFFFFF;
+	box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+	z-index: 999;
+	display: flex;
+	flex-direction: column;
+}
+.custom-tabbar-ios {
+	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar-content {
+	display: flex;
+	height: 50px;
+}
+.tabbar-item {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 5px 0;
+}
+.tabbar-icon {
+	width: 24px;
+	height: 24px;
+	margin-bottom: 2px;
+}
+.tabbar-text {
+	font-size: 10px;
+	color: #909399;
+}
+.active-text {
+	color: #409EFF;
+}
+.safe-area-inset {
+	height: constant(safe-area-inset-bottom);
+	height: env(safe-area-inset-bottom);
+}
+

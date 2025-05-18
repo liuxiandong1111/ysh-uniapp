@@ -21,7 +21,12 @@ export default {
   updateLoanStatus(data) {
     return request.post('/finance/update-loan-status', data);
   },
-  
+
+  // 更新贷款状态
+  financeSaveLoan(data) {
+    return request.post('/finance/save-loan', data)
+  },
+
   // 处理逾期贷款
   processOverdueLoan(data) {
     return request.post('/finance/handle-overdue', data);
@@ -33,10 +38,10 @@ export default {
   },
   
   // 获取贷款的还款计划
-  getRepaymentSchedule(loanId) {
-    return request.get(`/finance/get-repayment-schedule?loanId=${loanId}`);
+  getRepaymentSchedule(data) {
+    return request.post(`/finance/get-loan-plan-list`, data);
   },
-  
+
   // 获取贷款操作历史
   getOperationHistory(loanId) {
     return request.get(`/finance/get-operation-history?loanId=${loanId}`);

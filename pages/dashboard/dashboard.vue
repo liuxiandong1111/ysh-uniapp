@@ -2,82 +2,42 @@
 	<view class="container">
 		<view class="header">
 			<text class="header-title">数据仪表盘</text>
-			<view class="user-info">
+			<!-- <view class="user-info">
 				<text>张经理</text>
 				<view class="avatar">张</view>
-			</view>
+			</view> -->
 		</view>
 		
 		<view class="main">
 			<view class="stat-cards">
 				<view class="stat-card">
-					<text class="label">待处理贷款</text>
-					<text class="number">12</text>
-					<text class="trend up">↑ 2.5%</text>
+					<text class="label">总客户数</text>
+					<text class="number">{{ clientCountNum }}</text>
 				</view>
 				<view class="stat-card">
-					<text class="label">本月新增客户</text>
-					<text class="number">48</text>
-					<text class="trend up">↑ 12.8%</text>
+					<text class="label">本月新增</text>
+					<text class="number">{{ monthNewAddClientNum }}</text>
 				</view>
-				<view class="stat-card">
-					<text class="label">本月放款总额</text>
-					<text class="number">¥1.68M</text>
-					<text class="trend down">↓ 5.3%</text>
-				</view>
-				<view class="stat-card">
-					<text class="label">逾期率</text>
-					<text class="number">1.2%</text>
-					<text class="trend up">↑ 0.3%</text>
-				</view>
-			</view>
-			
-			<view class="chart-container">
-				<view class="chart-header">
-					<text class="section-title">业务趋势</text>
-					<view class="chart-actions">
-						<text class="chart-action active">周</text>
-						<text class="chart-action">月</text>
-						<text class="chart-action">年</text>
-					</view>
-				</view>
-				<view class="chart">
-					<text>图表区域</text>
+				<view class="stat-card" style="width: 100%;">
+					<text class="label">本月放款</text>
+					<text class="number">¥{{ monthLoanMoney }}</text>
 				</view>
 			</view>
 			
 			<view class="activity-list">
 				<text class="section-title">最近活动</text>
 				
-				<view class="activity-item">
-					<view class="activity-icon primary">📝</view>
-					<view class="activity-content">
-						<text class="activity-title">李四提交了新的贷款申请</text>
-						<text class="activity-time">2小时前</text>
-					</view>
+				<view v-if="followUpLogList.length === 0" style="text-align: center; padding: 20px;">
+					<text style="color: #909399;">暂无活动数据</text>
 				</view>
 				
-				<view class="activity-item">
-					<view class="activity-icon success">✅</view>
-					<view class="activity-content">
-						<text class="activity-title">王五的贷款申请已审批通过</text>
-						<text class="activity-time">4小时前</text>
-					</view>
-				</view>
-				
-				<view class="activity-item">
-					<view class="activity-icon warning">⚠️</view>
-					<view class="activity-content">
-						<text class="activity-title">赵六的贷款即将到期</text>
-						<text class="activity-time">昨天</text>
-					</view>
-				</view>
-				
-				<view class="activity-item">
-					<view class="activity-icon info">ℹ️</view>
-					<view class="activity-content">
-						<text class="activity-title">系统更新了新的贷款产品</text>
-						<text class="activity-time">2天前</text>
+				<view v-else>
+					<view class="activity-item" v-for="(item, index) in followUpLogList" :key="index">
+						<view class="activity-icon primary">📝</view>
+						<view class="activity-content">
+							<text class="activity-title">{{ item.info }}</text>
+							<text class="activity-time">{{ item.ctime }}</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -86,17 +46,59 @@
 </template>
 
 <script>
+	import { getStatisticData } from '../../api/dashboard.js';
+	import tabbarUtils from '../../utils/tabbarUtils.js';
+	
 	export default {
 		data() {
 			return {
+				// 统计数据
+				clientCountNum: 0,
+				monthNewAddClientNum: 0,
+				monthLoanMoney: 0,
 				
+				// 活动列表
+				followUpLogList: []
 			}
 		},
 		onLoad() {
-			
+			this.getStatisticDataFn();
+		},
+		onShow() {
+			// App.vue 中已经处理了 tabbar 相关逻辑，这里不再需要单独处理
 		},
 		methods: {
-			
+			// 获取统计数据
+			async getStatisticDataFn() {
+				try {
+					uni.showLoading({
+						title: '加载中...'
+					});
+					
+					const res = await getStatisticData();
+					console.log('统计数据:', res);
+					
+					if (res.success && res.retCode === 200 && res.data) {
+						this.clientCountNum = res.data.client_count_num || 0;
+						this.monthNewAddClientNum = res.data.month_new_add_client_num || 0;
+						this.monthLoanMoney = res.data.month_loan_money || 0;
+						this.followUpLogList = res.data.follow_up_log_list || [];
+					} else {
+						uni.showToast({
+							title: res.message || '获取统计数据失败',
+							icon: 'none'
+						});
+					}
+				} catch (error) {
+					console.error('获取统计数据失败', error);
+					uni.showToast({
+						title: '获取统计数据失败',
+						icon: 'none'
+					});
+				} finally {
+					uni.hideLoading();
+				}
+			}
 		}
 	}
 </script>
@@ -147,13 +149,14 @@
 	}
 	
 	.stat-cards {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
+		display: flex;
 		gap: 15px;
+		flex-wrap: wrap;
 		margin-bottom: 20px;
 	}
 	
 	.stat-card {
+		width: calc(50% - 40px);
 		background-color: #fff;
 		padding: 15px;
 		border-radius: 8px;
@@ -193,48 +196,6 @@
 		color: #303133;
 		font-weight: 500;
 		display: block;
-	}
-	
-	.chart-container {
-		background-color: #fff;
-		padding: 15px;
-		border-radius: 8px;
-		box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
-		margin-bottom: 20px;
-	}
-	
-	.chart-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 15px;
-	}
-	
-	.chart-actions {
-		display: flex;
-	}
-	
-	.chart-action {
-		padding: 4px 8px;
-		background-color: #f5f7fa;
-		color: #606266;
-		border-radius: 4px;
-		font-size: 12px;
-		margin-left: 5px;
-	}
-	
-	.chart-action.active {
-		background-color: #409EFF;
-		color: white;
-	}
-	
-	.chart {
-		height: 200px;
-		background-color: #f5f7fa;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 4px;
 	}
 	
 	.activity-list {

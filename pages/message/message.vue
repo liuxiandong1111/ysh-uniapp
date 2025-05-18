@@ -8,10 +8,10 @@
 			<view class="action-btn-small" @click="handleDeleteSelected">
 				<text>删除</text>
 			</view>
-			<view class="action-btn-small" @click="handleMarkAllRead">
+			<view class="action-btn-small" @click="handleMarkAllAsRead">
 				<text>全部已读</text>
 			</view>
-			<view class="action-btn-small" @click="handleDeleteSelected">
+			<view class="action-btn-small" @click="handleDeleteAll">
 				<text>全部删除</text>
 			</view>
 		</view>
@@ -22,7 +22,7 @@
 			</view>
 			
 			<view v-else>
-				<view class="message-item" v-for="(item, index) in messageList" :key="index" :class="{ 'message-unread': !item.read }">
+				<view class="message-item" v-for="(item, index) in messageList" :key="index" :class="{ 'message-unread': item.status === 0 }">
 					<view class="checkbox">
 						<view class="checkbox-inner" :class="{ checked: selectedMessages.includes(item.id) }" @click="toggleSelect(item.id)"></view>
 					</view>
@@ -30,23 +30,21 @@
 					<view class="message-content" @click="showMessageDetail(item)">
 						<view class="message-header">
 							<view class="message-names">
-								<text class="name-tag">客户: {{ item.name1 }}</text>
-								<text class="name-tag">产品员: {{ item.name2 }}</text>
-								<text class="name-tag">业务员: {{ item.name3 }}</text>
+								<text class="name-tag" v-if="item.client_name">客户: {{ item.client_name }}</text>
 							</view>
-							<text class="message-time">{{ item.time }}</text>
+							<text class="message-time">{{ item.ctime || '' }}</text>
 						</view>
 						
 						<view class="message-body">
-							<text class="message-text">{{ item.content }}</text>
+							<text class="message-text">{{ item.info || '' }}</text>
 						</view>
 						
 						<view class="message-actions">
 							<view class="action-btn" @click.stop="handleDelete(item.id)">
 								<text>删除</text>
 							</view>
-							<view class="action-btn" @click.stop="handleMarkRead(item.id)">
-								<text>{{ item.read ? '标为未读' : '标为已读' }}</text>
+							<view class="action-btn" @click.stop="handleMarkRead(item.id)" v-if="item.status === 0">
+								<text>标为已读</text>
 							</view>
 							<view class="action-btn" @click.stop="handleSendSMS(item)">
 								<text>发送短信</text>
@@ -65,6 +63,10 @@
 </template>
 
 <script>
+	// import { getUserMsgList, handleUserMsg, getUserNoReadMsgList } from '@/api/msg.js';
+	import msgApi from '@/api/msg.js';
+	import tabbarUtils from '../../utils/tabbarUtils.js';
+    
 	export default {
 		data() {
 			return {
@@ -74,67 +76,102 @@
 				messageList: [],
 				page: 1,
 				pageSize: 10,
-				hasMoreData: true
+				total: 0,
+				messageListTimer: null // 轮询定时器
+			}
+		},
+		computed: {
+			hasMoreData() {
+				return this.messageList.length < this.total;
 			}
 		},
 		onLoad() {
 			this.loadMessageList();
+			// 创建定时器，每分钟刷新一次消息列表
+			this.startMessageListPolling();
+		},
+		onShow() {
+			// App.vue 中已经处理了 tabbar 相关逻辑，这里不再需要单独处理
+			// 每次页面显示时更新tabbar角标
+			tabbarUtils.updateMessageBadge(1);
+			
+			// 如果没有定时器，重新启动
+			if (!this.messageListTimer) {
+				this.startMessageListPolling();
+			}
+		},
+		onHide() {
+			// 页面隐藏时清除定时器
+			this.clearMessageListPolling();
+		},
+		onUnload() {
+			// 页面卸载时清除定时器
+			this.clearMessageListPolling();
 		},
 		methods: {
+			// 启动消息列表轮询
+			startMessageListPolling() {
+				// 如果已经存在定时器，先清除
+				this.clearMessageListPolling();
+				
+				// 创建新的定时器，60秒查询一次
+				this.messageListTimer = setInterval(() => {
+					console.log('轮询刷新消息列表');
+					this.loadMessageList();
+				}, 60000); // 60000毫秒 = 1分钟
+			},
+			
+			// 清除消息列表轮询
+			clearMessageListPolling() {
+				if (this.messageListTimer) {
+					clearInterval(this.messageListTimer);
+					this.messageListTimer = null;
+				}
+			},
 			// 加载消息列表
-			loadMessageList() {
-				// 模拟消息数据
-				// 实际项目中应该调用API获取
-				const newMessages = [];
+			async loadMessageList(isReset = true) {
+				if (isReset) {
+					this.page = 1;
+					this.messageList = [];
+				}
 				
-				// 模拟数据
-				for (let i = 1; i <= 10; i++) {
-					const id = (this.page - 1) * 10 + i;
-					newMessages.push({
-						id: id,
-						name1: `客户${id}`,
-						name2: `产品员${id % 3 + 1}`,
-						name3: `业务员${id % 5 + 1}`,
-						content: `这是一条测试消息，内容为客户资料变更通知，请及时处理。消息ID: ${id}`,
-						time: this.generateRandomDate(),
-						read: id % 3 === 0 // 模拟部分已读
+				try {
+					uni.showLoading({
+						title: '加载中...'
 					});
+					
+					const params = {
+						page: this.page,
+						page_size: this.pageSize
+					};
+					
+					const res = await msgApi.getUserMsgList(params);
+					console.log(res, 'res')
+					
+					if (res.retCode === 200 && res.data) {
+						const newMessages = res.data.list || [];
+						this.total = res.data.total || 0;
+						
+						if (isReset) {
+							this.messageList = newMessages;
+						} else {
+							this.messageList = [...this.messageList, ...newMessages];
+						}
+					} else {
+						uni.showToast({
+							title: res.message || '获取消息失败',
+							icon: 'none'
+						});
+					}
+				} catch (error) {
+					console.error('获取消息列表失败', error);
+					uni.showToast({
+						title: '获取消息列表失败',
+						icon: 'none'
+					});
+				} finally {
+					uni.hideLoading();
 				}
-				
-				// 模拟是否还有更多数据
-				this.hasMoreData = this.page < 3;
-				
-				if (this.page === 1) {
-					this.messageList = newMessages;
-				} else {
-					this.messageList = [...this.messageList, ...newMessages];
-				}
-			},
-			
-			// 生成随机日期
-			generateRandomDate() {
-				const now = new Date();
-				const days = Math.floor(Math.random() * 7);
-				const hours = Math.floor(Math.random() * 24);
-				const minutes = Math.floor(Math.random() * 60);
-				
-				const date = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000));
-				
-				const year = date.getFullYear();
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const day = String(date.getDate()).padStart(2, '0');
-				const hour = String(date.getHours()).padStart(2, '0');
-				const minute = String(date.getMinutes()).padStart(2, '0');
-				
-				return `${year}-${month}-${day} ${hour}:${minute}`;
-			},
-			
-			// 选择筛选条件
-			selectFilter(filter) {
-				this.currentFilter = filter;
-				this.showFilterOption = false;
-				this.page = 1;
-				this.loadMessageList();
 			},
 			
 			// 切换选中状态
@@ -148,56 +185,186 @@
 			},
 			
 			// 显示消息详情
-			showMessageDetail(item) {
-				// 标记为已读
-				if (!item.read) {
-					const index = this.messageList.findIndex(msg => msg.id === item.id);
-					if (index !== -1) {
-						this.messageList[index].read = true;
-					}
+			async showMessageDetail(item) {
+				// 如果消息未读，则标记为已读
+				if (item.status === 0) {
+					await this.markRead(item.id);
 				}
 				
-				// 可以跳转到详情页或者弹出详情对话框
+				// 弹出消息详情
 				uni.showModal({
 					title: '消息详情',
-					content: item.content,
+					content: item.info || '',
 					showCancel: false
 				});
 			},
 			
-			// 处理删除
-			handleDelete(id) {
+			// 处理删除单个消息
+			async handleDelete(id) {
 				uni.showModal({
 					title: '提示',
 					content: '确定要删除此消息吗？',
-					success: res => {
+					success: async (res) => {
 						if (res.confirm) {
-							// 模拟删除操作
-							this.messageList = this.messageList.filter(item => item.id !== id);
-							this.selectedMessages = this.selectedMessages.filter(item => item !== id);
-							uni.showToast({
-								title: '删除成功',
-								icon: 'success'
-							});
+							await this.deleteMessage(id);
 						}
 					}
 				});
 			},
 			
-			// 标记已读/未读
-			handleMarkRead(id) {
-				const index = this.messageList.findIndex(item => item.id === id);
-				if (index !== -1) {
-					this.messageList[index].read = !this.messageList[index].read;
-					uni.showToast({
-						title: this.messageList[index].read ? '已标记为已读' : '已标记为未读',
-						icon: 'success'
+			// 调用API删除消息
+			async deleteMessage(id) {
+				try {
+					uni.showLoading({
+						title: '删除中...'
 					});
+					
+					const res = await msgApi.handleUserMsg({
+						id,
+						type: 'del'
+					});
+					
+					if (res.success && res.retCode === 200) {
+						// 从列表中删除
+						this.messageList = this.messageList.filter(item => item.id !== id);
+						this.selectedMessages = this.selectedMessages.filter(item => item !== id);
+						
+						uni.showToast({
+							title: '删除成功',
+							icon: 'success'
+						});
+					} else {
+						uni.showToast({
+							title: res.message || '删除失败',
+							icon: 'none'
+						});
+					}
+				} catch (error) {
+					console.error('删除消息失败', error);
+					uni.showToast({
+						title: '删除消息失败',
+						icon: 'none'
+					});
+				} finally {
+					uni.hideLoading();
 				}
 			},
 			
-			// 全部标记已读
-			handleMarkAllRead() {
+			// 标记消息为已读
+			async handleMarkRead(id) {
+				await this.markRead(id);
+			},
+			
+			// 调用API标记消息为已读
+			async markRead(id) {
+				try {
+					const res = await msgApi.handleUserMsg({
+						id,
+						type: 'update'
+					});
+					
+					if (res.success && res.retCode === 200) {
+						// 更新本地消息状态
+						const index = this.messageList.findIndex(item => item.id === id);
+						if (index !== -1) {
+							this.messageList[index].status = 1; // 标记为已读
+						}
+						
+						// 更新tabbar角标
+						tabbarUtils.updateMessageBadge(1);
+						
+						uni.showToast({
+							title: '已标记为已读',
+							icon: 'success'
+						});
+						
+						return true;
+					} else {
+						uni.showToast({
+							title: res.message || '操作失败',
+							icon: 'none'
+						});
+						return false;
+					}
+				} catch (error) {
+					console.error('标记已读失败', error);
+					uni.showToast({
+						title: '标记已读失败',
+						icon: 'none'
+					});
+					return false;
+				}
+			},
+			
+			// 标记选中消息为已读
+			async handleMarkAllRead() {
+				if (this.selectedMessages.length === 0) {
+					uni.showToast({
+						title: '请先选择消息',
+						icon: 'none'
+					});
+					return;
+				}
+				
+				uni.showModal({
+					title: '提示',
+					content: `确定要将已选中的 ${this.selectedMessages.length} 条消息标记为已读吗？`,
+					success: async (res) => {
+						if (res.confirm) {
+							try {
+								uni.showLoading({
+									title: '处理中...'
+								});
+								
+								// 将id数组转为逗号分隔的字符串
+								const messageIds = this.selectedMessages.join(',');
+								
+								// 批量标记为已读
+								const result = await msgApi.handleUserMsg({
+									id: messageIds,
+									type: 'update'
+								});
+								
+								if(result.success && result.retCode === 200) {
+									// 更新选中消息的状态
+									for (const id of this.selectedMessages) {
+										const index = this.messageList.findIndex(item => item.id === id);
+										if (index !== -1) {
+											this.messageList[index].status = 1;
+										}
+									}
+									
+									// 更新tabbar角标
+									tabbarUtils.updateMessageBadge(1);
+									
+									this.selectedMessages = [];
+									
+									uni.showToast({
+										title: '操作成功',
+										icon: 'success'
+									});
+								} else {
+									uni.showToast({
+										title: result.message || '操作失败',
+										icon: 'none'
+									});
+								}
+							} catch (error) {
+								console.error('批量标记已读失败', error);
+								uni.showToast({
+									title: '操作失败',
+									icon: 'none'
+								});
+							} finally {
+								uni.hideLoading();
+							}
+						}
+					}
+				});
+			},
+			
+			// 标记所有消息为已读
+			async handleMarkAllAsRead() {
 				if (this.messageList.length === 0) {
 					uni.showToast({
 						title: '暂无消息',
@@ -209,22 +376,54 @@
 				uni.showModal({
 					title: '提示',
 					content: '确定要将所有消息标记为已读吗？',
-					success: res => {
+					success: async (res) => {
 						if (res.confirm) {
-							this.messageList.forEach(item => {
-								item.read = true;
-							});
-							uni.showToast({
-								title: '已全部标记为已读',
-								icon: 'success'
-							});
+							try {
+								uni.showLoading({
+									title: '处理中...'
+								});
+								
+								// 使用all参数标记全部已读
+								const result = await msgApi.handleUserMsg({
+									all: 1,
+									type: 'update'
+								});
+								
+								if(result.success && result.retCode === 200) {
+									// 更新所有消息状态为已读
+									this.messageList.forEach(item => {
+										item.status = 1;
+									});
+									
+									// 更新tabbar角标
+									tabbarUtils.updateMessageBadge(1);
+									
+									uni.showToast({
+										title: '已全部标记为已读',
+										icon: 'success'
+									});
+								} else {
+									uni.showToast({
+										title: result.message || '操作失败',
+										icon: 'none'
+									});
+								}
+							} catch (error) {
+								console.error('全部标记已读失败', error);
+								uni.showToast({
+									title: '操作失败',
+									icon: 'none'
+								});
+							} finally {
+								uni.hideLoading();
+							}
 						}
 					}
 				});
 			},
 			
-			// 删除选中
-			handleDeleteSelected() {
+			// 删除选中消息
+			async handleDeleteSelected() {
 				if (this.selectedMessages.length === 0) {
 					uni.showToast({
 						title: '请先选择消息',
@@ -236,15 +435,95 @@
 				uni.showModal({
 					title: '提示',
 					content: `确定要删除已选中的 ${this.selectedMessages.length} 条消息吗？`,
-					success: res => {
+					success: async (res) => {
 						if (res.confirm) {
-							// 模拟删除操作
-							this.messageList = this.messageList.filter(item => !this.selectedMessages.includes(item.id));
-							this.selectedMessages = [];
-							uni.showToast({
-								title: '删除成功',
-								icon: 'success'
-							});
+							try {
+								uni.showLoading({
+									title: '删除中...'
+								});
+								
+								// 将id数组转为逗号分隔的字符串
+								const messageIds = this.selectedMessages.join(',');
+								
+								// 批量删除
+								const result = await msgApi.handleUserMsg({
+									id: messageIds,
+									type: 'del'
+								});
+								
+								if(result.success && result.retCode === 200) {
+									// 从列表中移除被删除的消息
+									this.messageList = this.messageList.filter(
+										item => !this.selectedMessages.includes(item.id)
+									);
+									
+									this.selectedMessages = [];
+									
+									uni.showToast({
+										title: '删除成功',
+										icon: 'success'
+									});
+								} else {
+									uni.showToast({
+										title: result.message || '删除失败',
+										icon: 'none'
+									});
+								}
+							} catch (error) {
+								console.error('批量删除失败', error);
+								uni.showToast({
+									title: '删除失败',
+									icon: 'none'
+								});
+							} finally {
+								uni.hideLoading();
+							}
+						}
+					}
+				});
+			},
+			
+			// 删除所有消息
+			async handleDeleteAll() {
+				if (this.messageList.length === 0) {
+					uni.showToast({
+						title: '暂无消息',
+						icon: 'none'
+					});
+					return;
+				}
+				
+				uni.showModal({
+					title: '提示',
+					content: '确定要删除所有消息吗？',
+					success: async (res) => {
+						if (res.confirm) {
+							try {
+								uni.showLoading({
+									title: '删除中...'
+								});
+								
+								// 循环删除每条消息
+								for (const item of this.messageList) {
+									await this.deleteMessage(item.id);
+								}
+								
+								this.messageList = [];
+								this.selectedMessages = [];
+								
+								uni.showToast({
+									title: '已全部删除',
+									icon: 'success'
+								});
+							} catch (error) {
+								console.error('全部删除失败', error);
+								uni.showToast({
+									title: '删除失败',
+									icon: 'none'
+								});
+							} finally {
+								uni.hideLoading();
+							}
 						}
 					}
 				});
@@ -254,8 +533,8 @@
 			handleSendSMS(item) {
 				uni.showModal({
 					title: '发送短信',
-					content: `确定要给${item.name1}发送短信吗？`,
-					success: res => {
+					content: `确定要给${item.client_name || '客户'}发送短信吗？`,
+					success: (res) => {
 						if (res.confirm) {
 							uni.showToast({
 								title: '短信发送成功',
@@ -271,7 +550,7 @@
 				if (!this.hasMoreData) return;
 				
 				this.page++;
-				this.loadMessageList();
+				this.loadMessageList(false);
 			}
 		}
 	}

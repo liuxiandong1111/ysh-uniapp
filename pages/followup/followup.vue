@@ -3,9 +3,9 @@
     <view class="customer-info-card">
       <view class="customer-name">{{customerInfo.name}}</view>
       <view class="customer-phone">{{customerInfo.phone}}</view>
-      <view class="customer-status" :class="'statusClass-' + customerInfo.status">
+      <!-- <view class="customer-status" :class="'statusClass-' + customerInfo.status">
         <text>{{getStatusText(customerInfo.status)}}</text>
-      </view>
+      </view> -->
     </view>
     
     <!-- 跟进记录列表 -->

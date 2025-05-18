@@ -31,6 +31,7 @@
 
 <script>
 	import userApi from '@/api/user.js';
+	import tabbarUtils from '@/utils/tabbarUtils.js';
 	
 	export default {
 		data() {
@@ -81,10 +82,8 @@
 							uni.setStorageSync('token', res.data.token);
 							uni.setStorageSync('userInfo', res.data);
 							
-							// 登录成功后跳转到主页
-							uni.switchTab({
-								url: '/pages/dashboard/dashboard'
-							});
+							// 获取权限菜单
+							this.fetchMenuPermissions();
 						} else {
 							uni.showToast({
 								title: res.message || '登录失败',
@@ -101,6 +100,59 @@
 						});
 					});
 				}
+			},
+			// 获取菜单权限并配置tabBar
+			fetchMenuPermissions() {
+				uni.showLoading({
+					title: '加载权限...',
+					mask: true
+				});
+				
+				userApi.getMenuTree().then(res => {
+					console.log('获取权限菜单成功', res);
+					
+					if (res.retCode === 200 && res.data) {
+						// 解析权限数据
+						const permissions = this.parseMenuPermissions(res.data);
+						console.log('权限配置:', permissions);
+						
+						// 保存权限
+						uni.setStorageSync('permissions', permissions);
+						
+						// 登录成功后跳转到首页
+						uni.switchTab({
+							url: '/pages/dashboard/dashboard'
+						});
+					}
+				}).catch(err => {
+					console.error('获取权限失败', err);
+					
+					uni.showToast({
+						title: err.message,
+						icon: 'none',
+						duration: 2000
+					});
+				}).finally(() => {
+					uni.hideLoading();
+				});
+			},
+			// 解析权限数据
+			parseMenuPermissions(menuTree) {
+				// 创建权限映射表
+				const permissions = {
+					dashboard: true,
+					customer: false,
+					loan: false,
+					message: true
+				};
+				
+				// 遍历权限树
+				if (Array.isArray(menuTree)) {
+					if (menuTree.findIndex(item => item.name == 'customer') != -1) permissions.customer = true
+					if (menuTree.findIndex(item => item.name == 'loan-applicatio') != -1) permissions.loan = true
+				}
+				
+				return permissions;
 			}
 		}
 	}

@@ -38,12 +38,13 @@
 	padding: 15px;
 }
 .stat-cards {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	display: flex;
 	gap: 15px;
+	flex-wrap: wrap;
 	margin-bottom: 20px;
 }
 .stat-card {
+	width: calc(50% - 40px);
 	background-color: #fff;
 	padding: 15px;
 	border-radius: 8px;
@@ -77,42 +78,6 @@
 	color: #303133;
 	font-weight: 500;
 	display: block;
-}
-.chart-container {
-	background-color: #fff;
-	padding: 15px;
-	border-radius: 8px;
-	box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
-	margin-bottom: 20px;
-}
-.chart-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 15px;
-}
-.chart-actions {
-	display: flex;
-}
-.chart-action {
-	padding: 4px 8px;
-	background-color: #f5f7fa;
-	color: #606266;
-	border-radius: 4px;
-	font-size: 12px;
-	margin-left: 5px;
-}
-.chart-action.active {
-	background-color: #409EFF;
-	color: white;
-}
-.chart {
-	height: 200px;
-	background-color: #f5f7fa;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 4px;
 }
 .activity-list {
 	background-color: #fff;

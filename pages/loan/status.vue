@@ -11,16 +11,16 @@
 				</view>
 			</view>
 			
-			<view class="form-group" v-if="updateStatusForm.statusLabel === '拒绝'">
+			<view class="form-group" v-if="updateStatusForm.status == '3'">
 				<view class="form-label">拒绝原因</view>
-				<input class="form-input" type="text" v-model="updateStatusForm.rejectReason" placeholder="请输入拒绝原因" />
+				<input class="form-input" type="text" v-model="updateStatusForm.cause" placeholder="请输入拒绝原因" />
 			</view>
 			
-			<view class="form-group" v-if="updateStatusForm.statusLabel === '放款'">
+			<view class="form-group" v-if="updateStatusForm.status == '2'">
 				<view class="form-label">放款时间</view>
-				<picker mode="date" :value="updateStatusForm.disbursementDate" @change="onDateChange" class="date-input">
+				<picker mode="date" :value="updateStatusForm.loan_date" @change="onDateChange" class="date-input">
 					<view class="date-display">
-						<text class="picker-value">{{ updateStatusForm.disbursementDate || '请选择放款时间' }}</text>
+						<text class="picker-value">{{ updateStatusForm.loan_date || '请选择放款时间' }}</text>
 						<text class="picker-arrow">▼</text>
 					</view>
 				</picker>
@@ -53,22 +53,20 @@
 </template>
 
 <script>
+	import { approvalStatus } from '@/utils/dict.js';
+  import financeApi from '@/api/finance.js';
 	export default {
 		data() {
 			return {
 				loanId: null,
 				loanInfo: null,
 				showStatusPicker: false,
-				statusOptions: [
-					{ label: '批款', value: '1' },
-					{ label: '放款', value: '2' },
-					{ label: '拒绝', value: '3' }
-				],
+				statusOptions: approvalStatus,
 				updateStatusForm: {
 					status: '',
 					statusLabel: '',
-					rejectReason: '',
-					disbursementDate: ''
+					cause: '',
+					loan_date: ''
 				}
 			}
 		},
@@ -100,7 +98,7 @@
 			
 			// 日期变更
 			onDateChange(e) {
-				this.updateStatusForm.disbursementDate = e.detail.value;
+				this.updateStatusForm.loan_date = e.detail.value;
 			},
 			
 			// 取消操作
@@ -119,7 +117,7 @@
 					return;
 				}
 				
-				if (this.updateStatusForm.statusLabel === '拒绝' && !this.updateStatusForm.rejectReason) {
+				if (this.updateStatusForm.status == '3' && !this.updateStatusForm.cause) {
 					uni.showToast({
 						title: '请输入拒绝原因',
 						icon: 'none'
@@ -127,7 +125,7 @@
 					return;
 				}
 				
-				if (this.updateStatusForm.statusLabel === '放款' && !this.updateStatusForm.disbursementDate) {
+				if (this.updateStatusForm.status == '2' && !this.updateStatusForm.loan_date) {
 					uni.showToast({
 						title: '请选择放款时间',
 						icon: 'none'
@@ -140,19 +138,39 @@
 				uni.showLoading({
 					title: '提交中...'
 				});
-				
-				setTimeout(() => {
-					uni.hideLoading();
-					uni.showToast({
-						title: '提交成功',
-						icon: 'success'
-					});
-					
-					// 提交成功后返回上一页
-					setTimeout(() => {
-						uni.navigateBack();
-					}, 1500);
-				}, 1000);
+
+        const params = {
+          id: this.loanId,
+          status: this.updateStatusForm.status
+        }
+
+        if (this.updateStatusForm.status == 2) {
+          params.loan_date = this.updateStatusForm.loan_date || new Date().toISOString().split('T')[0]
+        } else if (this.updateStatusForm.status == 3) {
+          params.cause = this.updateStatusForm.cause
+        }
+        financeApi.financeSaveLoan(params).then(res => {
+          if (res.retCode == 200) {
+            uni.showToast({
+              title: res.message,
+              icon: 'success',
+              duration: 1500
+            });
+
+            // 提交成功后返回上一页
+            setTimeout(() => {
+              uni.navigateBack();
+            }, 1500);
+          } else {
+            uni.showToast({
+              title: res.message,
+              icon: 'none',
+              duration: 1500
+            });
+          }
+        }).finally(() => {
+          uni.hideLoading();
+        })
 			}
 		}
 	}

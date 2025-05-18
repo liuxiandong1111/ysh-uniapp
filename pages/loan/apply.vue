@@ -38,7 +38,7 @@
 					</view>
 					<view class="info-row">
 						<text class="info-label">放款时间:</text>
-						<text class="info-value">{{ item.loan_date }}</text>
+						<text class="info-value">{{ item.loan_date || '-' }}</text>
 					</view>
 					<view class="info-row">
 						<text class="info-label">渠道:</text>
@@ -64,10 +64,10 @@
 					<view class="action-btn" @click="handleView(item)">
 						<text class="btn-text">详情</text>
 					</view>
-					<view class="action-btn" @click="handleOverdue(item)">
+					<view class="action-btn" @click="handleOverdue(item)" v-if="item.status == 2">
 						<text class="btn-text">逾期处理</text>
 					</view>
-					<view class="action-btn" @click="updateLoanStatus(item)">
+					<view class="action-btn" @click="updateLoanStatus(item)" v-if="item.status == 1">
 						<text class="btn-text">更新进度</text>
 					</view>
 				</view>
@@ -78,7 +78,7 @@
 
 <script>
 	import financeApi from '@/api/finance.js';
-	
+	import { approvalStatus } from '@/utils/dict.js';
 	export default {
 		data() {
 			return {
@@ -98,6 +98,10 @@
 				this.customerData = customerData;
 				this.loadLoanList();
 			}
+		},
+		onShow() {
+			// 每次页面显示时刷新贷款列表
+			this.loadLoanList();
 		},
 		methods: {
 			// 加载贷款列表
@@ -164,25 +168,15 @@
 			// 获取状态样式类
 			getStatusClass(status) {
 				const statusMap = {
-					'待审批': 'pending',
-					'审批中': 'processing',
-					'已通过': 'approved',
-					'已拒绝': 'rejected',
 					'1': 'pending',
-					'2': 'processing',
-					'3': 'approved',
-					'4': 'rejected'
+					'2': 'approved',
+					'3': 'rejected'
 				};
 				return statusMap[status] || 'pending';
 			},
 
 			getLoanStatus (status) {
-				switch (Number(status)) {
-					case 0: return '审批中'
-					case 1: return '已批准'
-					case 2: return '已拒绝'
-					default: return '未知'
-				}
+				return approvalStatus.find(item => item.value == status)?.label || '';
 			},
 			
 			// 获取还款状态样式类
@@ -205,8 +199,9 @@
 			
 			// 查看贷款详情
 			handleView(item) {
+        const loanData = encodeURIComponent(JSON.stringify(item));
 				uni.navigateTo({
-					url: `/pages/loan/detail?id=${item.id}`
+					url: `/pages/loan/detail?id=${item.id}&loanData=${loanData}`
 				});
 			},
 			

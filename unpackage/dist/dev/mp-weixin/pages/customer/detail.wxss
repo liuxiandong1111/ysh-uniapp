@@ -44,8 +44,7 @@
 	padding: 55px 15px 0;
 	box-sizing: border-box;
 }
-.tab-content {
-}
+.tab-content {}
 .info-section {
 	background-color: #fff;
 	border-radius: 8px;
@@ -101,8 +100,7 @@
 	color: #999;
 	font-size: 14px;
 }
-.loan-list {
-}
+.loan-list {}
 .loan-item {
 	background-color: #fff;
 	border-radius: 8px;
@@ -129,16 +127,16 @@
 	border-radius: 10px;
 	color: white;
 }
-.status-pending {
+.status-1 {
 	background-color: #909399;
 }
 .status-processing {
 	background-color: #E6A23C;
 }
-.status-approved {
+.status-2 {
 	background-color: #67C23A;
 }
-.status-rejected {
+.status-3 {
 	background-color: #F56C6C;
 }
 .loan-info {
@@ -146,7 +144,7 @@
 	flex-wrap: wrap;
 }
 .loan-info-item {
-	width: 50%;
+	width: 100%;
 	margin-bottom: 10px;
 }
 .loan-info-label {

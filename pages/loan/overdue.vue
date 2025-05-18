@@ -6,20 +6,20 @@
 			<view class="form-group">
 				<view class="form-label">处理结果</view>
 				<view class="radio-group">
-					<view class="radio-item" :class="{ active: overdueForm.action === '正常' }" @click="selectAction('正常')">
-						<view class="radio-dot" :class="{ checked: overdueForm.action === '正常' }"></view>
+					<view class="radio-item" :class="{ active: overdueForm.action == 0 }" @click="selectAction(0)">
+						<view class="radio-dot" :class="{ checked: overdueForm.action == 0 }"></view>
 						<text class="radio-text">正常</text>
 					</view>
-					<view class="radio-item" :class="{ active: overdueForm.action === '延期' }" @click="selectAction('延期')">
-						<view class="radio-dot" :class="{ checked: overdueForm.action === '延期' }"></view>
-						<text class="radio-text">延期</text>
+					<view class="radio-item" :class="{ active: overdueForm.action == 1 }" @click="selectAction(1)">
+						<view class="radio-dot" :class="{ checked: overdueForm.action == 1 }"></view>
+						<text class="radio-text">逾期</text>
 					</view>
 				</view>
 			</view>
 			
-			<view class="form-group">
+			<view class="form-group" v-if="overdueForm.action == 1">
 				<view class="form-label">处理说明</view>
-				<textarea class="form-textarea" v-model="overdueForm.remark" placeholder="请输入处理说明" />
+				<textarea class="form-textarea" v-model="overdueForm.desc" placeholder="请输入处理说明" />
 			</view>
 			
 			<view class="form-buttons">
@@ -31,14 +31,15 @@
 </template>
 
 <script>
+import financeApi from '@/api/finance.js';
 	export default {
 		data() {
 			return {
 				loanId: null,
 				loanInfo: null,
 				overdueForm: {
-					action: '正常',
-					remark: ''
+					action: 0,
+          desc: ''
 				}
 			}
 		},
@@ -74,7 +75,7 @@
 			
 			// 提交处理结果
 			submit() {
-				if (!this.overdueForm.remark) {
+				if (this.overdueForm.action == 1 && !this.overdueForm.desc) {
 					uni.showToast({
 						title: '请输入处理说明',
 						icon: 'none'
@@ -87,19 +88,35 @@
 				uni.showLoading({
 					title: '提交中...'
 				});
-				
-				setTimeout(() => {
-					uni.hideLoading();
-					uni.showToast({
-						title: '提交成功',
-						icon: 'success'
-					});
-					
-					// 提交成功后返回上一页
-					setTimeout(() => {
-						uni.navigateBack();
-					}, 1500);
-				}, 1000);
+
+        const params = {
+          id: this.loanId,
+          is_yu: this.overdueForm.action,
+          yu_desc: this.overdueForm.desc
+        }
+
+        financeApi.financeSaveLoan(params).then(res => {
+          if (res.retCode == 200) {
+            uni.showToast({
+              title: res.message,
+              icon: 'success',
+              duration: 1500
+            });
+
+            // 提交成功后返回上一页
+            setTimeout(() => {
+              uni.navigateBack();
+            }, 1500);
+          } else {
+            uni.showToast({
+              title: res.message,
+              icon: 'none',
+              duration: 1500
+            });
+          }
+        }).finally(() => {
+          uni.hideLoading();
+        })
 			}
 		}
 	}

@@ -209,383 +209,6 @@ module.exports = _isNativeReflectConstruct, module.exports.__esModule = true, mo
 
 /***/ }),
 
-/***/ 174:
-/*!************************************************************************************************!*\
-  !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/@babel/runtime/regenerator/index.js ***!
-  \************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// TODO(Babel 8): Remove this file.
-
-var runtime = __webpack_require__(/*! @babel/runtime/helpers/regeneratorRuntime */ 175)();
-module.exports = runtime;
-
-/***/ }),
-
-/***/ 175:
-/*!*******************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/regeneratorRuntime.js ***!
-  \*******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _typeof = __webpack_require__(/*! ./typeof.js */ 13)["default"];
-function _regeneratorRuntime() {
-  "use strict";
-
-  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-  module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
-    return e;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
-  var t,
-    e = {},
-    r = Object.prototype,
-    n = r.hasOwnProperty,
-    o = Object.defineProperty || function (t, e, r) {
-      t[e] = r.value;
-    },
-    i = "function" == typeof Symbol ? Symbol : {},
-    a = i.iterator || "@@iterator",
-    c = i.asyncIterator || "@@asyncIterator",
-    u = i.toStringTag || "@@toStringTag";
-  function define(t, e, r) {
-    return Object.defineProperty(t, e, {
-      value: r,
-      enumerable: !0,
-      configurable: !0,
-      writable: !0
-    }), t[e];
-  }
-  try {
-    define({}, "");
-  } catch (t) {
-    define = function define(t, e, r) {
-      return t[e] = r;
-    };
-  }
-  function wrap(t, e, r, n) {
-    var i = e && e.prototype instanceof Generator ? e : Generator,
-      a = Object.create(i.prototype),
-      c = new Context(n || []);
-    return o(a, "_invoke", {
-      value: makeInvokeMethod(t, r, c)
-    }), a;
-  }
-  function tryCatch(t, e, r) {
-    try {
-      return {
-        type: "normal",
-        arg: t.call(e, r)
-      };
-    } catch (t) {
-      return {
-        type: "throw",
-        arg: t
-      };
-    }
-  }
-  e.wrap = wrap;
-  var h = "suspendedStart",
-    l = "suspendedYield",
-    f = "executing",
-    s = "completed",
-    y = {};
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-  var p = {};
-  define(p, a, function () {
-    return this;
-  });
-  var d = Object.getPrototypeOf,
-    v = d && d(d(values([])));
-  v && v !== r && n.call(v, a) && (p = v);
-  var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p);
-  function defineIteratorMethods(t) {
-    ["next", "throw", "return"].forEach(function (e) {
-      define(t, e, function (t) {
-        return this._invoke(e, t);
-      });
-    });
-  }
-  function AsyncIterator(t, e) {
-    function invoke(r, o, i, a) {
-      var c = tryCatch(t[r], t, o);
-      if ("throw" !== c.type) {
-        var u = c.arg,
-          h = u.value;
-        return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) {
-          invoke("next", t, i, a);
-        }, function (t) {
-          invoke("throw", t, i, a);
-        }) : e.resolve(h).then(function (t) {
-          u.value = t, i(u);
-        }, function (t) {
-          return invoke("throw", t, i, a);
-        });
-      }
-      a(c.arg);
-    }
-    var r;
-    o(this, "_invoke", {
-      value: function value(t, n) {
-        function callInvokeWithMethodAndArg() {
-          return new e(function (e, r) {
-            invoke(t, n, e, r);
-          });
-        }
-        return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-      }
-    });
-  }
-  function makeInvokeMethod(e, r, n) {
-    var o = h;
-    return function (i, a) {
-      if (o === f) throw Error("Generator is already running");
-      if (o === s) {
-        if ("throw" === i) throw a;
-        return {
-          value: t,
-          done: !0
-        };
-      }
-      for (n.method = i, n.arg = a;;) {
-        var c = n.delegate;
-        if (c) {
-          var u = maybeInvokeDelegate(c, n);
-          if (u) {
-            if (u === y) continue;
-            return u;
-          }
-        }
-        if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) {
-          if (o === h) throw o = s, n.arg;
-          n.dispatchException(n.arg);
-        } else "return" === n.method && n.abrupt("return", n.arg);
-        o = f;
-        var p = tryCatch(e, r, n);
-        if ("normal" === p.type) {
-          if (o = n.done ? s : l, p.arg === y) continue;
-          return {
-            value: p.arg,
-            done: n.done
-          };
-        }
-        "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg);
-      }
-    };
-  }
-  function maybeInvokeDelegate(e, r) {
-    var n = r.method,
-      o = e.iterator[n];
-    if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y;
-    var i = tryCatch(o, e.iterator, r.arg);
-    if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y;
-    var a = i.arg;
-    return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y);
-  }
-  function pushTryEntry(t) {
-    var e = {
-      tryLoc: t[0]
-    };
-    1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e);
-  }
-  function resetTryEntry(t) {
-    var e = t.completion || {};
-    e.type = "normal", delete e.arg, t.completion = e;
-  }
-  function Context(t) {
-    this.tryEntries = [{
-      tryLoc: "root"
-    }], t.forEach(pushTryEntry, this), this.reset(!0);
-  }
-  function values(e) {
-    if (e || "" === e) {
-      var r = e[a];
-      if (r) return r.call(e);
-      if ("function" == typeof e.next) return e;
-      if (!isNaN(e.length)) {
-        var o = -1,
-          i = function next() {
-            for (; ++o < e.length;) {
-              if (n.call(e, o)) return next.value = e[o], next.done = !1, next;
-            }
-            return next.value = t, next.done = !0, next;
-          };
-        return i.next = i;
-      }
-    }
-    throw new TypeError(_typeof(e) + " is not iterable");
-  }
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", {
-    value: GeneratorFunctionPrototype,
-    configurable: !0
-  }), o(GeneratorFunctionPrototype, "constructor", {
-    value: GeneratorFunction,
-    configurable: !0
-  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) {
-    var e = "function" == typeof t && t.constructor;
-    return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name));
-  }, e.mark = function (t) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t;
-  }, e.awrap = function (t) {
-    return {
-      __await: t
-    };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () {
-    return this;
-  }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) {
-    void 0 === i && (i = Promise);
-    var a = new AsyncIterator(wrap(t, r, n, o), i);
-    return e.isGeneratorFunction(r) ? a : a.next().then(function (t) {
-      return t.done ? t.value : a.next();
-    });
-  }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () {
-    return this;
-  }), define(g, "toString", function () {
-    return "[object Generator]";
-  }), e.keys = function (t) {
-    var e = Object(t),
-      r = [];
-    for (var n in e) {
-      r.push(n);
-    }
-    return r.reverse(), function next() {
-      for (; r.length;) {
-        var t = r.pop();
-        if (t in e) return next.value = t, next.done = !1, next;
-      }
-      return next.done = !0, next;
-    };
-  }, e.values = values, Context.prototype = {
-    constructor: Context,
-    reset: function reset(e) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) {
-        "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t);
-      }
-    },
-    stop: function stop() {
-      this.done = !0;
-      var t = this.tryEntries[0].completion;
-      if ("throw" === t.type) throw t.arg;
-      return this.rval;
-    },
-    dispatchException: function dispatchException(e) {
-      if (this.done) throw e;
-      var r = this;
-      function handle(n, o) {
-        return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o;
-      }
-      for (var o = this.tryEntries.length - 1; o >= 0; --o) {
-        var i = this.tryEntries[o],
-          a = i.completion;
-        if ("root" === i.tryLoc) return handle("end");
-        if (i.tryLoc <= this.prev) {
-          var c = n.call(i, "catchLoc"),
-            u = n.call(i, "finallyLoc");
-          if (c && u) {
-            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
-            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
-          } else if (c) {
-            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
-          } else {
-            if (!u) throw Error("try statement without catch or finally");
-            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
-          }
-        }
-      }
-    },
-    abrupt: function abrupt(t, e) {
-      for (var r = this.tryEntries.length - 1; r >= 0; --r) {
-        var o = this.tryEntries[r];
-        if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) {
-          var i = o;
-          break;
-        }
-      }
-      i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null);
-      var a = i ? i.completion : {};
-      return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a);
-    },
-    complete: function complete(t, e) {
-      if ("throw" === t.type) throw t.arg;
-      return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y;
-    },
-    finish: function finish(t) {
-      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
-        var r = this.tryEntries[e];
-        if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y;
-      }
-    },
-    "catch": function _catch(t) {
-      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
-        var r = this.tryEntries[e];
-        if (r.tryLoc === t) {
-          var n = r.completion;
-          if ("throw" === n.type) {
-            var o = n.arg;
-            resetTryEntry(r);
-          }
-          return o;
-        }
-      }
-      throw Error("illegal catch attempt");
-    },
-    delegateYield: function delegateYield(e, r, n) {
-      return this.delegate = {
-        iterator: values(e),
-        resultName: r,
-        nextLoc: n
-      }, "next" === this.method && (this.arg = t), y;
-    }
-  }, e;
-}
-module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 176:
-/*!*****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/asyncToGenerator.js ***!
-  \*****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-      args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-      _next(undefined);
-    });
-  };
-}
-module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
 /***/ 18:
 /*!******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/toConsumableArray.js ***!
@@ -604,95 +227,10 @@ module.exports = _toConsumableArray, module.exports.__esModule = true, module.ex
 
 /***/ }),
 
-/***/ 186:
-/*!*********************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/api/organization.js ***!
-  \*********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.position = exports.employee = exports.department = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 49));
-// 部门相关API
-var department = {
-  // 获取部门树列表
-  getTreeList: function getTreeList() {
-    return _request.default.post('/branch/get-branch-tree-list');
-  },
-  // 获取部门列表
-  getList: function getList() {
-    return _request.default.post('/branch/get-branch-list');
-  },
-  // 添加部门
-  add: function add(data) {
-    return _request.default.post('/branch/add-branch-info', data);
-  },
-  // 更新部门
-  update: function update(data) {
-    return _request.default.post('/branch/save-branch-info', data);
-  },
-  // 删除部门
-  delete: function _delete(id) {
-    return _request.default.post('/branch/del-branch-info', {
-      id: id
-    });
-  },
-  // 设置部门权限
-  setPermission: function setPermission(data) {
-    return _request.default.post('/branch/set-branch-power', data);
-  }
-};
-
-// 员工相关API
-exports.department = department;
-var employee = {
-  // 获取员工列表
-  getList: function getList(data) {
-    return _request.default.post('/user/get-user-list', data);
-  },
-  // 添加员工
-  add: function add(data) {
-    return _request.default.post('/user/register', data);
-  },
-  // 更新员工
-  update: function update(data) {
-    return _request.default.post('/user/save-user-info', data);
-  },
-  // 删除员工
-  delete: function _delete(id) {
-    return _request.default.post('/user/del-user', {
-      id: id
-    });
-  },
-  // 重置密码
-  resetPassword: function resetPassword(data) {
-    return _request.default.post('/user/change-password', data);
-  }
-};
-
-// 职位相关API
-exports.employee = employee;
-var position = {
-  // 获取职位列表
-  getList: function getList() {
-    return _request.default.post('/doc/get-rule-list');
-  }
-};
-exports.position = position;
-
-/***/ }),
-
-/***/ 187:
-/*!****************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/api/finance.js ***!
-  \****************************************************************/
+/***/ 188:
+/*!************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/msg.js ***!
+  \************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -704,41 +242,55 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 49));
-// 贷款相关API
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+// 获取用户消息列表
+function getUserMsgList(params) {
+  return _request.default.post('/msg/get-user-msg-list', params);
+}
+
+// 处理消息（删除/标记已读）
+function handleUserMsg(data) {
+  return _request.default.post('/msg/save-user-msg', data);
+}
+
+// 获取未读消息
+function getUserNoReadMsgList() {
+  return _request.default.post('/msg/get-user-no-read-msg-list');
+}
+
+// 统一默认导出
 var _default = {
-  // 获取贷款申请列表
-  getFinanceList: function getFinanceList(data) {
-    return _request.default.post('/finance/get-finance-list', data);
-  },
-  // 获取贷款信息
-  getLoanList: function getLoanList(data) {
-    return _request.default.post('/finance/get-loan-list', data);
-  },
-  // 添加客户贷款
-  addLoan: function addLoan(data) {
-    return _request.default.post('/finance/add-loan', data);
-  },
-  // 更新贷款状态
-  updateLoanStatus: function updateLoanStatus(data) {
-    return _request.default.post('/finance/update-loan-status', data);
-  },
-  // 处理逾期贷款
-  processOverdueLoan: function processOverdueLoan(data) {
-    return _request.default.post('/finance/handle-overdue', data);
-  },
-  // 获取贷款详情
-  getLoanDetail: function getLoanDetail(id) {
-    return _request.default.get("/finance/get-loan-detail?id=".concat(id));
-  },
-  // 获取贷款的还款计划
-  getRepaymentSchedule: function getRepaymentSchedule(loanId) {
-    return _request.default.get("/finance/get-repayment-schedule?loanId=".concat(loanId));
-  },
-  // 获取贷款操作历史
-  getOperationHistory: function getOperationHistory(loanId) {
-    return _request.default.get("/finance/get-operation-history?loanId=".concat(loanId));
-  }
+  getUserMsgList: getUserMsgList,
+  handleUserMsg: handleUserMsg,
+  getUserNoReadMsgList: getUserNoReadMsgList
+};
+exports.default = _default;
+
+/***/ }),
+
+/***/ 189:
+/*!******************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/dashboard.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+exports.getStatisticData = getStatisticData;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+// 获取统计数据
+function getStatisticData(data) {
+  return _request.default.post('/home/get-statistic-data', data);
+}
+var _default = {
+  getStatisticData: getStatisticData
 };
 exports.default = _default;
 
@@ -756,6 +308,115 @@ function _arrayWithoutHoles(arr) {
   if (Array.isArray(arr)) return arrayLikeToArray(arr);
 }
 module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 190:
+/*!**********************************************!*\
+  !*** E:/ysh/ysh-uniapp/utils/tabbarUtils.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ 13));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || (0, _typeof2.default)(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+/**
+ * 动态tabbar工具类 - 简化版
+ * 主要功能已移到 custom-tabbar 组件
+ */
+/**
+ * tabbar工具类
+ */
+var _default = {
+  /**
+   * 根据权限获取tabbar类型
+   * @param {Object} permissions 权限配置
+   * @return {String} tabbar类型名称
+   */
+  getTabBarTypeByPermissions: function getTabBarTypeByPermissions(permissions) {
+    // 根据权限判断用户角色
+    if (permissions.customer && !permissions.loan) {
+      return 'manager'; // 只有客户权限，是客户经理
+    } else if (!permissions.customer && permissions.loan) {
+      return 'loanOfficer'; // 只有贷款权限，是贷款专员
+    } else {
+      return 'default'; // 默认配置
+    }
+  },
+  /**
+   * 检查用户是否有权限访问指定的tabbar页面
+   * @param {String} path 页面路径
+   * @param {Object} permissions 权限配置
+   * @return {Boolean} 是否有权限
+   */
+  hasPermission: function hasPermission(path, permissions) {
+    // 首页和消息中心一般都有权限
+    if (path.indexOf('dashboard') !== -1 || path.indexOf('message') !== -1) {
+      return true;
+    }
+
+    // 客户页面
+    if (path.indexOf('customer') !== -1) {
+      return permissions.customer === true;
+    }
+
+    // 贷款页面
+    if (path.indexOf('loan') !== -1) {
+      return permissions.loan === true;
+    }
+    return false;
+  },
+  /**
+   * 初始化tabbar配置
+   * 这个方法只是为了保持接口兼容，实际功能由custom-tabbar实现
+   */
+  initTabBar: function initTabBar() {
+    console.log('tabbar将由custom-tabbar组件控制');
+    return true;
+  },
+  /**
+   * 更新消息角标
+   * @param {Number} index tabbar的索引，默认为1（一般消息页在第二个位置）
+   */
+  updateMessageBadge: function updateMessageBadge() {
+    var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+    // 导入消息API
+    Promise.resolve().then(function () {
+      return _interopRequireWildcard(__webpack_require__(/*! @/api/msg.js */ 188));
+    }).then(function (msgModule) {
+      msgModule.default.getUserNoReadMsgList().then(function (res) {
+        if (res && res.retCode === 200 && res.data) {
+          var count = res.data.total || 0;
+          if (count > 0) {
+            // 设置角标
+            uni.setTabBarBadge({
+              index: index,
+              text: count.toString()
+            });
+          } else {
+            // 移除角标
+            uni.removeTabBarBadge({
+              index: index
+            });
+          }
+        }
+      }).catch(function (err) {
+        console.error('获取未读消息数失败', err);
+      });
+    });
+  }
+};
+exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
 
 /***/ }),
 
@@ -1153,14 +814,13 @@ var isIOS = false;
 var deviceWidth = 0;
 var deviceDPR = 0;
 function checkDeviceWidth() {
-  var windowWidth, pixelRatio, platform;
-  {
-    var windowInfo = typeof wx.getWindowInfo === 'function' && wx.getWindowInfo() ? wx.getWindowInfo() : wx.getSystemInfoSync();
-    var deviceInfo = typeof wx.getDeviceInfo === 'function' && wx.getDeviceInfo() ? wx.getDeviceInfo() : wx.getSystemInfoSync();
-    windowWidth = windowInfo.windowWidth;
-    pixelRatio = windowInfo.pixelRatio;
-    platform = deviceInfo.platform;
-  }
+  var _Object$assign = Object.assign({}, wx.getWindowInfo(), {
+      platform: wx.getDeviceInfo().platform
+    }),
+    windowWidth = _Object$assign.windowWidth,
+    pixelRatio = _Object$assign.pixelRatio,
+    platform = _Object$assign.platform; // uni=>wx runtime 编译目标是 uni 对象，内部不允许直接使用 uni
+
   deviceWidth = windowWidth;
   deviceDPR = pixelRatio;
   isIOS = platform === 'ios';
@@ -1196,7 +856,7 @@ var messages = {};
 function getLocaleLanguage() {
   var localeLanguage = '';
   {
-    var appBaseInfo = typeof wx.getAppBaseInfo === 'function' && wx.getAppBaseInfo() ? wx.getAppBaseInfo() : wx.getSystemInfoSync();
+    var appBaseInfo = wx.getAppBaseInfo();
     var language = appBaseInfo && appBaseInfo.language ? appBaseInfo.language : LOCALE_EN;
     localeLanguage = normalizeLocale(language) || LOCALE_EN;
   }
@@ -1455,43 +1115,6 @@ function addSafeAreaInsets(result) {
     };
   }
 }
-function getOSInfo(system, platform) {
-  var osName = '';
-  var osVersion = '';
-  if (platform && "mp-weixin" === 'mp-baidu') {
-    osName = platform;
-    osVersion = system;
-  } else {
-    osName = system.split(' ')[0] || platform;
-    osVersion = system.split(' ')[1] || '';
-  }
-  osName = osName.toLocaleLowerCase();
-  switch (osName) {
-    case 'harmony': // alipay
-    case 'ohos': // weixin
-    case 'openharmony':
-      // feishu
-      osName = 'harmonyos';
-      break;
-    case 'iphone os':
-      // alipay
-      osName = 'ios';
-      break;
-    case 'mac': // weixin qq
-    case 'darwin':
-      // feishu
-      osName = 'macos';
-      break;
-    case 'windows_nt':
-      // feishu
-      osName = 'windows';
-      break;
-  }
-  return {
-    osName: osName,
-    osVersion: osVersion
-  };
-}
 function populateParameters(result) {
   var _result$brand = result.brand,
     brand = _result$brand === void 0 ? '' : _result$brand,
@@ -1513,9 +1136,12 @@ function populateParameters(result) {
   var extraParam = {};
 
   // osName osVersion
-  var _getOSInfo = getOSInfo(system, platform),
-    osName = _getOSInfo.osName,
-    osVersion = _getOSInfo.osVersion;
+  var osName = '';
+  var osVersion = '';
+  {
+    osName = system.split(' ')[0] || '';
+    osVersion = system.split(' ')[1] || '';
+  }
   var hostVersion = version;
 
   // deviceType
@@ -1547,9 +1173,9 @@ function populateParameters(result) {
     appVersion: "1.0.0",
     appVersionCode: "100",
     appLanguage: getAppLanguage(hostLanguage),
-    uniCompileVersion: "4.64",
-    uniCompilerVersion: "4.64",
-    uniRuntimeVersion: "4.64",
+    uniCompileVersion: "4.56",
+    uniCompilerVersion: "4.56",
+    uniRuntimeVersion: "4.56",
     uniPlatform: undefined || "mp-weixin",
     deviceBrand: deviceBrand,
     deviceModel: model,
@@ -1655,9 +1281,9 @@ var getAppBaseInfo = {
       hostTheme: theme,
       isUniAppX: false,
       uniPlatform: undefined || "mp-weixin",
-      uniCompileVersion: "4.64",
-      uniCompilerVersion: "4.64",
-      uniRuntimeVersion: "4.64"
+      uniCompileVersion: "4.56",
+      uniCompilerVersion: "4.56",
+      uniRuntimeVersion: "4.56"
     }));
   }
 };
@@ -1665,23 +1291,14 @@ var getDeviceInfo = {
   returnValue: function returnValue(result) {
     var _result2 = result,
       brand = _result2.brand,
-      model = _result2.model,
-      _result2$system = _result2.system,
-      system = _result2$system === void 0 ? '' : _result2$system,
-      _result2$platform = _result2.platform,
-      platform = _result2$platform === void 0 ? '' : _result2$platform;
+      model = _result2.model;
     var deviceType = getGetDeviceType(result, model);
     var deviceBrand = getDeviceBrand(brand);
     useDeviceId(result);
-    var _getOSInfo2 = getOSInfo(system, platform),
-      osName = _getOSInfo2.osName,
-      osVersion = _getOSInfo2.osVersion;
     result = sortObject(Object.assign(result, {
       deviceType: deviceType,
       deviceBrand: deviceBrand,
-      deviceModel: model,
-      osName: osName,
-      osVersion: osVersion
+      deviceModel: model
     }));
   }
 };
@@ -9943,9 +9560,9 @@ internalMixin(Vue);
 /***/ }),
 
 /***/ 26:
-/*!************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/pages.json ***!
-  \************************************************************/
+/*!************************************!*\
+  !*** E:/ysh/ysh-uniapp/pages.json ***!
+  \************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -10117,9 +9734,9 @@ function normalizeComponent (
 /***/ }),
 
 /***/ 33:
-/*!**************************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/uni.promisify.adaptor.js ***!
-  \**************************************************************************/
+/*!**************************************************!*\
+  !*** E:/ysh/ysh-uniapp/uni.promisify.adaptor.js ***!
+  \**************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10157,10 +9774,387 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 
 /***/ }),
 
-/***/ 48:
-/*!*************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/api/user.js ***!
-  \*************************************************************/
+/***/ 40:
+/*!************************************************************************************************!*\
+  !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/@babel/runtime/regenerator/index.js ***!
+  \************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// TODO(Babel 8): Remove this file.
+
+var runtime = __webpack_require__(/*! @babel/runtime/helpers/regeneratorRuntime */ 41)();
+module.exports = runtime;
+
+/***/ }),
+
+/***/ 41:
+/*!*******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/regeneratorRuntime.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__(/*! ./typeof.js */ 13)["default"];
+function _regeneratorRuntime() {
+  "use strict";
+
+  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+  module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
+    return e;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
+  var t,
+    e = {},
+    r = Object.prototype,
+    n = r.hasOwnProperty,
+    o = Object.defineProperty || function (t, e, r) {
+      t[e] = r.value;
+    },
+    i = "function" == typeof Symbol ? Symbol : {},
+    a = i.iterator || "@@iterator",
+    c = i.asyncIterator || "@@asyncIterator",
+    u = i.toStringTag || "@@toStringTag";
+  function define(t, e, r) {
+    return Object.defineProperty(t, e, {
+      value: r,
+      enumerable: !0,
+      configurable: !0,
+      writable: !0
+    }), t[e];
+  }
+  try {
+    define({}, "");
+  } catch (t) {
+    define = function define(t, e, r) {
+      return t[e] = r;
+    };
+  }
+  function wrap(t, e, r, n) {
+    var i = e && e.prototype instanceof Generator ? e : Generator,
+      a = Object.create(i.prototype),
+      c = new Context(n || []);
+    return o(a, "_invoke", {
+      value: makeInvokeMethod(t, r, c)
+    }), a;
+  }
+  function tryCatch(t, e, r) {
+    try {
+      return {
+        type: "normal",
+        arg: t.call(e, r)
+      };
+    } catch (t) {
+      return {
+        type: "throw",
+        arg: t
+      };
+    }
+  }
+  e.wrap = wrap;
+  var h = "suspendedStart",
+    l = "suspendedYield",
+    f = "executing",
+    s = "completed",
+    y = {};
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+  var p = {};
+  define(p, a, function () {
+    return this;
+  });
+  var d = Object.getPrototypeOf,
+    v = d && d(d(values([])));
+  v && v !== r && n.call(v, a) && (p = v);
+  var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p);
+  function defineIteratorMethods(t) {
+    ["next", "throw", "return"].forEach(function (e) {
+      define(t, e, function (t) {
+        return this._invoke(e, t);
+      });
+    });
+  }
+  function AsyncIterator(t, e) {
+    function invoke(r, o, i, a) {
+      var c = tryCatch(t[r], t, o);
+      if ("throw" !== c.type) {
+        var u = c.arg,
+          h = u.value;
+        return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) {
+          invoke("next", t, i, a);
+        }, function (t) {
+          invoke("throw", t, i, a);
+        }) : e.resolve(h).then(function (t) {
+          u.value = t, i(u);
+        }, function (t) {
+          return invoke("throw", t, i, a);
+        });
+      }
+      a(c.arg);
+    }
+    var r;
+    o(this, "_invoke", {
+      value: function value(t, n) {
+        function callInvokeWithMethodAndArg() {
+          return new e(function (e, r) {
+            invoke(t, n, e, r);
+          });
+        }
+        return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+      }
+    });
+  }
+  function makeInvokeMethod(e, r, n) {
+    var o = h;
+    return function (i, a) {
+      if (o === f) throw Error("Generator is already running");
+      if (o === s) {
+        if ("throw" === i) throw a;
+        return {
+          value: t,
+          done: !0
+        };
+      }
+      for (n.method = i, n.arg = a;;) {
+        var c = n.delegate;
+        if (c) {
+          var u = maybeInvokeDelegate(c, n);
+          if (u) {
+            if (u === y) continue;
+            return u;
+          }
+        }
+        if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) {
+          if (o === h) throw o = s, n.arg;
+          n.dispatchException(n.arg);
+        } else "return" === n.method && n.abrupt("return", n.arg);
+        o = f;
+        var p = tryCatch(e, r, n);
+        if ("normal" === p.type) {
+          if (o = n.done ? s : l, p.arg === y) continue;
+          return {
+            value: p.arg,
+            done: n.done
+          };
+        }
+        "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg);
+      }
+    };
+  }
+  function maybeInvokeDelegate(e, r) {
+    var n = r.method,
+      o = e.iterator[n];
+    if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y;
+    var i = tryCatch(o, e.iterator, r.arg);
+    if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y;
+    var a = i.arg;
+    return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y);
+  }
+  function pushTryEntry(t) {
+    var e = {
+      tryLoc: t[0]
+    };
+    1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e);
+  }
+  function resetTryEntry(t) {
+    var e = t.completion || {};
+    e.type = "normal", delete e.arg, t.completion = e;
+  }
+  function Context(t) {
+    this.tryEntries = [{
+      tryLoc: "root"
+    }], t.forEach(pushTryEntry, this), this.reset(!0);
+  }
+  function values(e) {
+    if (e || "" === e) {
+      var r = e[a];
+      if (r) return r.call(e);
+      if ("function" == typeof e.next) return e;
+      if (!isNaN(e.length)) {
+        var o = -1,
+          i = function next() {
+            for (; ++o < e.length;) {
+              if (n.call(e, o)) return next.value = e[o], next.done = !1, next;
+            }
+            return next.value = t, next.done = !0, next;
+          };
+        return i.next = i;
+      }
+    }
+    throw new TypeError(_typeof(e) + " is not iterable");
+  }
+  return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", {
+    value: GeneratorFunctionPrototype,
+    configurable: !0
+  }), o(GeneratorFunctionPrototype, "constructor", {
+    value: GeneratorFunction,
+    configurable: !0
+  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) {
+    var e = "function" == typeof t && t.constructor;
+    return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name));
+  }, e.mark = function (t) {
+    return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t;
+  }, e.awrap = function (t) {
+    return {
+      __await: t
+    };
+  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () {
+    return this;
+  }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) {
+    void 0 === i && (i = Promise);
+    var a = new AsyncIterator(wrap(t, r, n, o), i);
+    return e.isGeneratorFunction(r) ? a : a.next().then(function (t) {
+      return t.done ? t.value : a.next();
+    });
+  }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () {
+    return this;
+  }), define(g, "toString", function () {
+    return "[object Generator]";
+  }), e.keys = function (t) {
+    var e = Object(t),
+      r = [];
+    for (var n in e) {
+      r.push(n);
+    }
+    return r.reverse(), function next() {
+      for (; r.length;) {
+        var t = r.pop();
+        if (t in e) return next.value = t, next.done = !1, next;
+      }
+      return next.done = !0, next;
+    };
+  }, e.values = values, Context.prototype = {
+    constructor: Context,
+    reset: function reset(e) {
+      if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) {
+        "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t);
+      }
+    },
+    stop: function stop() {
+      this.done = !0;
+      var t = this.tryEntries[0].completion;
+      if ("throw" === t.type) throw t.arg;
+      return this.rval;
+    },
+    dispatchException: function dispatchException(e) {
+      if (this.done) throw e;
+      var r = this;
+      function handle(n, o) {
+        return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o;
+      }
+      for (var o = this.tryEntries.length - 1; o >= 0; --o) {
+        var i = this.tryEntries[o],
+          a = i.completion;
+        if ("root" === i.tryLoc) return handle("end");
+        if (i.tryLoc <= this.prev) {
+          var c = n.call(i, "catchLoc"),
+            u = n.call(i, "finallyLoc");
+          if (c && u) {
+            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
+            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
+          } else if (c) {
+            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
+          } else {
+            if (!u) throw Error("try statement without catch or finally");
+            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
+          }
+        }
+      }
+    },
+    abrupt: function abrupt(t, e) {
+      for (var r = this.tryEntries.length - 1; r >= 0; --r) {
+        var o = this.tryEntries[r];
+        if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) {
+          var i = o;
+          break;
+        }
+      }
+      i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null);
+      var a = i ? i.completion : {};
+      return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a);
+    },
+    complete: function complete(t, e) {
+      if ("throw" === t.type) throw t.arg;
+      return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y;
+    },
+    finish: function finish(t) {
+      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
+        var r = this.tryEntries[e];
+        if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y;
+      }
+    },
+    "catch": function _catch(t) {
+      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
+        var r = this.tryEntries[e];
+        if (r.tryLoc === t) {
+          var n = r.completion;
+          if ("throw" === n.type) {
+            var o = n.arg;
+            resetTryEntry(r);
+          }
+          return o;
+        }
+      }
+      throw Error("illegal catch attempt");
+    },
+    delegateYield: function delegateYield(e, r, n) {
+      return this.delegate = {
+        iterator: values(e),
+        resultName: r,
+        nextLoc: n
+      }, "next" === this.method && (this.arg = t), y;
+    }
+  }, e;
+}
+module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 42:
+/*!*****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/asyncToGenerator.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+      args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+      _next(undefined);
+    });
+  };
+}
+module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 43:
+/*!****************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/finance.js ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10172,26 +10166,54 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 49));
-// 用户相关API
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+// 贷款相关API
 var _default = {
-  // 用户登录
-  login: function login(data) {
-    return _request.default.post('/user/login', data);
-  } // 如果有其他用户相关API，可以在这里添加
-  // 例如：获取用户信息
-  // getUserInfo() {
-  //   return request.get('/user/info');
-  // }
+  // 获取贷款申请列表
+  getFinanceList: function getFinanceList(data) {
+    return _request.default.post('/finance/get-finance-list', data);
+  },
+  // 获取贷款信息
+  getLoanList: function getLoanList(data) {
+    return _request.default.post('/finance/get-loan-list', data);
+  },
+  // 添加客户贷款
+  addLoan: function addLoan(data) {
+    return _request.default.post('/finance/add-loan', data);
+  },
+  // 更新贷款状态
+  updateLoanStatus: function updateLoanStatus(data) {
+    return _request.default.post('/finance/update-loan-status', data);
+  },
+  // 更新贷款状态
+  financeSaveLoan: function financeSaveLoan(data) {
+    return _request.default.post('/finance/save-loan', data);
+  },
+  // 处理逾期贷款
+  processOverdueLoan: function processOverdueLoan(data) {
+    return _request.default.post('/finance/handle-overdue', data);
+  },
+  // 获取贷款详情
+  getLoanDetail: function getLoanDetail(id) {
+    return _request.default.get("/finance/get-loan-detail?id=".concat(id));
+  },
+  // 获取贷款的还款计划
+  getRepaymentSchedule: function getRepaymentSchedule(data) {
+    return _request.default.post("/finance/get-loan-plan-list", data);
+  },
+  // 获取贷款操作历史
+  getOperationHistory: function getOperationHistory(loanId) {
+    return _request.default.get("/finance/get-operation-history?loanId=".concat(loanId));
+  }
 };
 exports.default = _default;
 
 /***/ }),
 
-/***/ 49:
-/*!******************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/utils/request.js ***!
-  \******************************************************************/
+/***/ 44:
+/*!******************************************!*\
+  !*** E:/ysh/ysh-uniapp/utils/request.js ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10318,10 +10340,10 @@ module.exports = _slicedToArray, module.exports.__esModule = true, module.export
 
 /***/ }),
 
-/***/ 58:
-/*!*****************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/api/customer.js ***!
-  \*****************************************************************/
+/***/ 53:
+/*!*************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/user.js ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10333,7 +10355,56 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 49));
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+// 用户相关API
+var _default = {
+  // 用户登录
+  login: function login(data) {
+    return _request.default.post('/user/login', data);
+  },
+  // 获取用户菜单权限树
+  getMenuTree: function getMenuTree() {
+    return _request.default.post('/user/get-menu-tree-list');
+  } // 如果有其他用户相关API，可以在这里添加
+  // 例如：获取用户信息
+  // getUserInfo() {
+  //   return request.get('/user/info');
+  // }
+};
+exports.default = _default;
+
+/***/ }),
+
+/***/ 6:
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayWithHoles.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+module.exports = _arrayWithHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 62:
+/*!*****************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/customer.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
 // 客户相关API
 var _default = {
   // 获取客户列表
@@ -10387,10 +10458,10 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ 59:
-/*!***************************************************************!*\
-  !*** /Users/liuxiandong/Desktop/ysh/ysh-uniapp/utils/dict.js ***!
-  \***************************************************************/
+/***/ 63:
+/*!***************************************!*\
+  !*** E:/ysh/ysh-uniapp/utils/dict.js ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10520,27 +10591,12 @@ var dictMaps = {
   },
   // 审批状态字典
   dealStatus: {
-    1: '未审批',
-    2: '审批中',
-    3: '已通过',
-    4: '已拒绝'
+    1: '待处理',
+    2: '已处理',
+    3: '已完成'
   }
 };
 exports.dictMaps = dictMaps;
-
-/***/ }),
-
-/***/ 6:
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/arrayWithHoles.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-module.exports = _arrayWithHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -10601,6 +10657,91 @@ function _unsupportedIterableToArray(o, minLen) {
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
 }
 module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ 88:
+/*!*********************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/organization.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.position = exports.employee = exports.department = void 0;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+// 部门相关API
+var department = {
+  // 获取部门树列表
+  getTreeList: function getTreeList() {
+    return _request.default.post('/branch/get-branch-tree-list');
+  },
+  // 获取部门列表
+  getList: function getList() {
+    return _request.default.post('/branch/get-branch-list');
+  },
+  // 添加部门
+  add: function add(data) {
+    return _request.default.post('/branch/add-branch-info', data);
+  },
+  // 更新部门
+  update: function update(data) {
+    return _request.default.post('/branch/save-branch-info', data);
+  },
+  // 删除部门
+  delete: function _delete(id) {
+    return _request.default.post('/branch/del-branch-info', {
+      id: id
+    });
+  },
+  // 设置部门权限
+  setPermission: function setPermission(data) {
+    return _request.default.post('/branch/set-branch-power', data);
+  }
+};
+
+// 员工相关API
+exports.department = department;
+var employee = {
+  // 获取员工列表
+  getList: function getList(data) {
+    return _request.default.post('/user/get-user-list', data);
+  },
+  // 添加员工
+  add: function add(data) {
+    return _request.default.post('/user/register', data);
+  },
+  // 更新员工
+  update: function update(data) {
+    return _request.default.post('/user/save-user-info', data);
+  },
+  // 删除员工
+  delete: function _delete(id) {
+    return _request.default.post('/user/del-user', {
+      id: id
+    });
+  },
+  // 重置密码
+  resetPassword: function resetPassword(data) {
+    return _request.default.post('/user/change-password', data);
+  }
+};
+
+// 职位相关API
+exports.employee = employee;
+var position = {
+  // 获取职位列表
+  getList: function getList() {
+    return _request.default.post('/doc/get-rule-list');
+  }
+};
+exports.position = position;
 
 /***/ }),
 

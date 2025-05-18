@@ -1,0 +1,1 @@
+<view class="tabbar-container"><view class="page-content"><view class="welcome-content"><view class="welcome-logo">元</view><view class="welcome-title">欢迎使用元圣行管理系统</view><view class="welcome-subtitle">请点击下方导航栏选择功能</view></view></view><custom-tabbar vue-id="2527b9c0-1" active="{{currentTab}}" bind:__l="__l"></custom-tabbar></view>

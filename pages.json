@@ -1,16 +1,22 @@
 {
 	"pages": [
 		{
-			"path": "pages/loan/loan",
-			"style": {
-				"navigationBarTitleText": "贷款申请"
-			}
-		},
-		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "登录",
 				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/tabbar/tabbar",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/dashboard/dashboard",
+			"style": {
+				"navigationBarTitleText": "数据仪表盘"
 			}
 		},
 		{
@@ -57,9 +63,9 @@
 			}
 		},
 		{
-			"path": "pages/dashboard/dashboard",
+			"path": "pages/loan/loan",
 			"style": {
-				"navigationBarTitleText": "数据仪表盘"
+				"navigationBarTitleText": "贷款申请"
 			}
 		},
 		{
@@ -106,6 +112,7 @@
 		"backgroundColor": "#F5F7FA"
 	},
 	"tabBar": {
+		"custom": false,
 		"color": "#909399",
 		"selectedColor": "#409EFF",
 		"backgroundColor": "#FFFFFF",

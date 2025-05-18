@@ -1,7 +1,8 @@
 {
   "pages": [
-    "pages/loan/loan",
     "pages/login/login",
+    "pages/tabbar/tabbar",
+    "pages/dashboard/dashboard",
     "pages/customer/customer",
     "pages/customer/detail",
     "pages/customer/add",
@@ -9,7 +10,7 @@
     "pages/customer/status",
     "pages/followup/followup",
     "pages/followup/list",
-    "pages/dashboard/dashboard",
+    "pages/loan/loan",
     "pages/loan/detail",
     "pages/loan/apply",
     "pages/loan/overdue",
@@ -25,6 +26,7 @@
     "backgroundColor": "#F5F7FA"
   },
   "tabBar": {
+    "custom": false,
     "color": "#909399",
     "selectedColor": "#409EFF",
     "backgroundColor": "#FFFFFF",

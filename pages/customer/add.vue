@@ -91,7 +91,7 @@
 
 <script>
 	import customerApi from '@/api/customer.js';
-	import { dictMaps } from '@/utils/dict.js';
+	import { dictMaps, belongingCustomerGroup, maritalStatus } from '@/utils/dict.js';
 	
 	export default {
 		data() {
@@ -115,9 +115,8 @@
 					status: 1
 				},
 				dictMaps: dictMaps,
-				maritalStatusOptions: [],
-				departmentOptions: ['消费信贷部', '小微信贷部'],
-				customerGroupOptions: [],
+				maritalStatusOptions: maritalStatus,
+				customerGroupOptions: belongingCustomerGroup,
 				licenseImg: []
 			}
 		},
@@ -185,13 +184,6 @@
 					return {
 						value: parseInt(key),
 						label: this.dictMaps.maritalStatus[key]
-					};
-				});
-				
-				this.customerGroupOptions = Object.keys(this.dictMaps.customerType).map(key => {
-					return {
-						value: parseInt(key),
-						label: this.dictMaps.customerType[key]
 					};
 				});
 			},
@@ -263,10 +255,6 @@
 				const status = this.customerForm.matrimony;
 				const found = this.maritalStatusOptions.find(item => item.value === status);
 				return found ? found.label : '请选择婚姻状态';
-			},
-			handleDepartmentChange(e) {
-				const index = e.detail.value;
-				this.customerForm.department = this.departmentOptions[index];
 			},
 			handleCustomerGroupChange(e) {
 				const index = e.detail.value;

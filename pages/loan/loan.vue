@@ -6,7 +6,7 @@
 					<view class="search-icon">
 						<text class="iconfont">🔍</text>
 					</view>
-					<input class="search-input" type="text" v-model="searchKey" placeholder="搜索客户姓名或手机号" @confirm="searchCustomers" />
+					<input class="search-input" type="text" v-model="searchKey" placeholder="搜索客户姓名" @confirm="searchCustomers" />
 				</view>
 				<view class="search-btn" @click="searchCustomers">搜索</view>
 			</view>
@@ -62,6 +62,7 @@
 
 <script>
 import financeApi from '@/api/finance.js';
+import tabbarUtils from '../../utils/tabbarUtils.js';
 
 export default {
 	data() {
@@ -82,10 +83,6 @@ export default {
 				purpose: null,
 				monthlyIncome: ''
 			},
-			marriageOptions: ['未婚', '已婚', '离异', '丧偶'],
-			loanProducts: ['个人消费贷', '经营贷', '房屋抵押贷', '汽车抵押贷', '信用贷'],
-			loanTerms: ['3个月', '6个月', '12个月', '24个月', '36个月', '48个月', '60个月'],
-			loanPurposes: ['消费', '经营', '装修', '教育', '医疗', '旅游', '其他'],
 			uploadList: [
 				{
 					label: '身份证正面',
@@ -114,6 +111,7 @@ export default {
 		}
 	},
 	onLoad(option) {
+		
 		// 如果从客户页面跳转过来，会带上客户名称
 		if (option.customer) {
 			this.customerForm.name = option.customer;
@@ -121,6 +119,26 @@ export default {
 
 		// 加载待处理客户列表
 		this.loadPendingCustomers(true);
+	},
+	onShow() {
+		// App.vue 中已经处理了 tabbar 相关逻辑，这里不再需要单独处理
+		// 检查权限
+		const permissions = uni.getStorageSync('permissions');
+		if (!permissions || !permissions.loan) {
+			uni.showToast({
+				title: '您没有权限访问贷款管理',
+				icon: 'none',
+				duration: 2000
+			});
+			
+			// 延迟后跳转到首页
+			setTimeout(() => {
+				uni.switchTab({
+					url: '/pages/dashboard/dashboard'
+				});
+			}, 1000);
+			return;
+		}
 	},
 	// 上拉触底事件
 	onReachBottom() {
