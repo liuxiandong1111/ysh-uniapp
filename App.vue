@@ -17,7 +17,11 @@
 			this.startBadgePolling();
 		},
 		onShow: function() {
-			console.log('App Show');
+			let isChoosingImage = uni.getStorageSync('isChoosingImage');
+			if (isChoosingImage) {
+				uni.setStorageSync('isChoosingImage', false);
+				return
+			}
 			// 在应用进入前台时检查配置
 			this.checkLoginState();
 			

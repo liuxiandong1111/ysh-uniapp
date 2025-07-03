@@ -99,6 +99,18 @@
 			}
 		},
 		{
+			"path": "pages/loan/progress",
+			"style": {
+				"navigationBarTitleText": "详细进度"
+			}
+		},
+		{
+			"path": "pages/user/reset-password",
+			"style": {
+				"navigationBarTitleText": "重置密码"
+			}
+		},
+		{
 			"path": "pages/message/message",
 			"style": {
 				"navigationBarTitleText": "消息中心"

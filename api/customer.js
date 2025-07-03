@@ -55,5 +55,10 @@ export default {
   // 获取贷款信息
   getloanList(data) {
     return request.post('/finance/get-loan-list', data)
-  }
+  },
+
+  // 上传 文件
+  docUpload(data) {
+    return request.post('/doc/upload', data)
+  } 
 }; 

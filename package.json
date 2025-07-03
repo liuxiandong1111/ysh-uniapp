@@ -1,0 +1,21 @@
+{
+  "name": "ysh-uniapp",
+  "version": "1.0.0",
+  "description": "YSH CRM UniApp",
+  "main": "main.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development uni",
+    "dev:h5": "cross-env NODE_ENV=development uni serve --mode development",
+    "build:h5": "cross-env NODE_ENV=production uni build --mode production",
+    "dev:app": "cross-env NODE_ENV=development uni build -p app --mode development",
+    "build:app": "cross-env NODE_ENV=production uni build -p app --mode production",
+    "dev:mp-weixin": "cross-env NODE_ENV=development uni build -p mp-weixin --mode development",
+    "build:mp-weixin": "cross-env NODE_ENV=production uni build -p mp-weixin --mode production"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  },
+  "author": "",
+  "license": "ISC"
+}

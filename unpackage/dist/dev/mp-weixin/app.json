@@ -16,6 +16,8 @@
     "pages/loan/overdue",
     "pages/loan/status",
     "pages/loan/create",
+    "pages/loan/progress",
+    "pages/user/reset-password",
     "pages/message/message"
   ],
   "subPackages": [],

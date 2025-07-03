@@ -2,8 +2,9 @@
 	<view class="container">
 		<view class="login-container">
 			<view class="header">
-				<view class="logo">元</view>
-				<text class="title">元圣行管理系统</text>
+				<!-- <view class="logo">元</view>
+				<text class="title">元圣行管理系统</text> -->
+				<img src="https://cdn.yshcrm.com/logo1.jpg" alt="">
 			</view>
 			
 			<view class="form">
@@ -15,7 +16,7 @@
 				
 				<view class="form-group">
 					<view class="form-icon">🔒</view>
-					<input type="password" class="form-control" placeholder="请输入密码" v-model="password" />
+					<input type="password" class="form-control" placeholder="请输入密码" v-model="password" password="true" />
 					<text v-if="errors.password" class="error-message">请输入密码</text>
 				</view>
 				
@@ -23,9 +24,9 @@
 			</view>
 		</view>
 		
-		<view class="footer">
+		<!-- <view class="footer">
 			© 2024 元圣行管理系统
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -76,12 +77,11 @@
 						console.log('登录成功', res);
 						
 						// 根据实际返回结构处理登录结果
-						if (res.success && res.retCode === 200 && res.data) {
+						if (res.retCode === 200 && res.data) {
 							// 存储登录状态和token
 							uni.setStorageSync('isLoggedIn', true);
 							uni.setStorageSync('token', res.data.token);
 							uni.setStorageSync('userInfo', res.data);
-							
 							// 获取权限菜单
 							this.fetchMenuPermissions();
 						} else {
@@ -148,8 +148,8 @@
 				
 				// 遍历权限树
 				if (Array.isArray(menuTree)) {
-					if (menuTree.findIndex(item => item.name == 'customer') != -1) permissions.customer = true
-					if (menuTree.findIndex(item => item.name == 'loan-applicatio') != -1) permissions.loan = true
+					permissions.customer = menuTree.findIndex(item => item.name == 'customer') != -1
+					permissions.loan = menuTree.findIndex(item => item.name == 'loan-application') != -1
 				}
 				
 				return permissions;
@@ -169,19 +169,24 @@
 	}
 	
 	.login-container {
-		width: 90%;
-		max-width: 350px;
+		width: 100%;
+		height: 100vh;
+		/* max-width: 350px; */
 		margin: 0 auto;
-		padding: 30px 20px;
+		padding: 230px 20px 30px;
 		background-color: rgba(255, 255, 255, 0.9);
 		border-radius: 10px;
-		margin-top: 80px;
 		box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+		box-sizing: border-box;
 	}
 	
 	.header {
 		text-align: center;
 		margin-bottom: 40px;
+	}
+	.header img{
+		width: 100%;
+		height: 120px;
 	}
 	
 	.logo {
@@ -252,4 +257,4 @@
 		color: #909399;
 		padding: 20px 0;
 	}
-</style> 
+</style>

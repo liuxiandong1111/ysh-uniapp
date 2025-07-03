@@ -12,9 +12,8 @@ export default {
     return request.post('/user/get-menu-tree-list');
   },
   
-  // 如果有其他用户相关API，可以在这里添加
-  // 例如：获取用户信息
-  // getUserInfo() {
-  //   return request.get('/user/info');
-  // }
-}; 
+  // 重置密码
+  resetPassword(data) {
+    return request.post('/user/change-password', data);
+  }
+};

@@ -55,7 +55,12 @@
 
 				<view class="form-group">
 					<view class="form-label">额度</view>
-					<input class="form-input" type="text" v-model="loanForm.quota" placeholder="请输入额度" />
+					<input class="form-input" type="number" v-model="loanForm.quota" placeholder="请输入额度" />
+				</view>
+
+				<view class="form-group">
+					<view class="form-label">利率</view>
+					<input class="form-input" type="number" v-model="loanForm.rate" placeholder="请输入利率" />
 				</view>
 				
 				<view class="form-group" v-if="hasPermission">
@@ -219,6 +224,20 @@
 				if (!this.loanForm.due_type) {
 					uni.showToast({
 						title: '请选择还款方式',
+						icon: 'none'
+					});
+					return;
+				}
+				if (!this.loanForm.quota) {
+					uni.showToast({
+						title: '请输入额度',
+						icon: 'none'	
+					})	
+				}
+
+				if (!this.loanForm.rate) {
+					uni.showToast({
+						title: '请输入利率',
 						icon: 'none'
 					});
 					return;

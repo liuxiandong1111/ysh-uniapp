@@ -1,6 +1,6 @@
 // 请求工具封装
-const BASE_URL = 'http://59.110.82.209:9501/api';
-
+const BASE_URL = 'http://test.yshcrm.com/api';
+// const BASE_URL = 'https://yshcrm.com/api';
 // 请求封装
 const request = (url, method, data, showLoading = true) => {
   return new Promise((resolve, reject) => {

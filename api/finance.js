@@ -45,5 +45,14 @@ export default {
   // 获取贷款操作历史
   getOperationHistory(loanId) {
     return request.get(`/finance/get-operation-history?loanId=${loanId}`);
+  },
+
+  // 获取贷款详细进度
+  getLoanDealLog(data) {
+    return request.post('/finance/get-loan-deal-log', data)
+  },
+  // 新增贷款详细进度
+  addLoanDealLog(data) {
+    return request.post('/finance/add-loan-deal-log', data)
   }
 }; 

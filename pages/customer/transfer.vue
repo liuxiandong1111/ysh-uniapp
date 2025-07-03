@@ -119,7 +119,7 @@
 				this.isLoading = true;
 				try {
 					const res = await employee.getList({
-						rule_id: 2,
+						rule_id: '2,3',
 						page: 1,
 						pageSize: 100
 					});
@@ -167,7 +167,7 @@
 				// 准备提交的数据
 				const formData = {
 					id: this.customerId,
-					deal_id: this.selectedManagerId.toString(),
+					deal_id: this.selectedManagerId,
 					descr: this.remark
 				};
 				

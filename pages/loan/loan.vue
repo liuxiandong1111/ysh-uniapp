@@ -18,10 +18,10 @@
 							<text class="customer-name">{{ item.name }}</text>
 							<text class="customer-status" :class="'status-' + getStatusClass(item.deal_status)">{{ getDealStatus(item.deal_status) }}</text>
 						</view>
-						<view class="info-row">
+						<!-- <view class="info-row">
 							<text class="info-label">手机号:</text>
 							<text class="info-value">{{ item.phone }}</text>
-						</view>
+						</view> -->
 						<view class="info-row">
 							<text class="info-label">所属客群:</text>
 							<text class="info-value">{{ getClientType(item.client_type) }}</text>
@@ -29,6 +29,10 @@
 						<view class="info-row">
 							<text class="info-label">业务员:</text>
 							<text class="info-value">{{ item.service_name }}</text>
+						</view>
+						<view class="info-row">
+							<text class="info-label">部门:</text>
+							<text class="info-value">{{ item.branch_name }}</text>
 						</view>
 						<view class="info-row">
 							<text class="info-label">产品员:</text>
@@ -62,7 +66,6 @@
 
 <script>
 import financeApi from '@/api/finance.js';
-import tabbarUtils from '../../utils/tabbarUtils.js';
 
 export default {
 	data() {
@@ -303,6 +306,7 @@ export default {
 			this.loanForm.purpose = e.detail.value;
 		},
 		chooseImage(index) {
+			uni.setStorageSync('isChoosingImage', true);
 			uni.chooseImage({
 				count: 1,
 				sizeType: ['compressed'],

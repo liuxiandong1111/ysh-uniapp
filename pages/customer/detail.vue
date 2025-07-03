@@ -18,7 +18,7 @@
 							<text class="info-label">姓名</text>
 							<text class="info-value">{{ customerInfo.name }}</text>
 						</view>
-						<view class="info-item">
+						<view class="info-item" v-if="type != 'loan'">
 							<text class="info-label">手机号</text>
 							<text class="info-value">{{ customerInfo.phone }}</text>
 						</view>
@@ -97,6 +97,10 @@
 								<text class="loan-info-value">{{ loan.type == 1 ? '消费' : '经营' }}</text>
 							</view>
 							<view class="loan-info-item">
+								<text class="loan-info-label">详细进度</text>
+								<text class="loan-info-value" style="color: #409EFF;" @click="viewProgress(loan)">查看</text>
+							</view>
+							<view class="loan-info-item">
 								<text class="loan-info-label">期限(年):</text>
 								<text class="loan-info-value">{{ loan.age_limit }}</text>
 							</view>
@@ -112,6 +116,10 @@
 							<view class="loan-info-item">
 								<text class="loan-info-label">额度:</text>
 								<text class="loan-info-value">{{ loan.quota }}</text>
+							</view>
+							<view class="loan-info-item">
+								<text class="loan-info-label">利率:</text>
+								<text class="loan-info-value">{{ loan.rate }}</text>
 							</view>
 							<view class="loan-info-item" v-if="loan.status == 2">
 								<text class="loan-info-label">还款状态:</text>
@@ -216,6 +224,7 @@ export default {
 			return map[status] || status;
 		},
 		previewImage(img) {
+			uni.setStorageSync('isChoosingImage', true);
 			uni.previewImage({
 				urls: this.licenseImgList,
 				current: img
@@ -224,7 +233,7 @@ export default {
 		viewLoanDetail(loan) {
 			const loanData = encodeURIComponent(JSON.stringify(loan));
 			uni.navigateTo({
-				url: `/pages/loan/detail?id=${loan.id}&loanData=${loanData}`
+				url: `/pages/loan/detail?id=${loan.id}&loanData=${loanData}&type=customer`
 			});
 		},
 		goBack() {
@@ -302,6 +311,14 @@ export default {
 				'3': 'rejected'
 			};
 			return statusMap[status] || 'pending';
+		},
+
+		viewProgress (row) {
+			const loanData = encodeURIComponent(JSON.stringify(row));
+			console.log(loanData, 'loanData')
+			uni.navigateTo({
+				url: `/pages/loan/progress?loanData=${loanData}&type=customer`
+			});
 		}
 	},
 	computed: {

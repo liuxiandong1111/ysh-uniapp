@@ -14,10 +14,10 @@
 						<text class="info-label">贷款类型</text>
 						<text class="info-value">{{ loanDetail.type == 1 ? '消费' : loanDetail.type == 2 ? '经营' : loanDetail.type == 3 ? '消费经营' : '' }}</text>
 					</view>
-          <view class="info-item">
-            <text class="info-label">贷款期限</text>
-            <text class="info-value">{{ loanDetail.age_limit }}年</text>
-          </view>
+					<view class="info-item">
+						<text class="info-label">贷款期限</text>
+						<text class="info-value">{{ loanDetail.age_limit }}年</text>
+					</view>
 					<view class="info-item">
 						<text class="info-label">还款方式</text>
 						<text class="info-value">{{ getDueType(loanDetail.due_type) }}</text>
@@ -25,6 +25,10 @@
 					<view class="info-item">
 						<text class="info-label">贷款额度</text>
 						<text class="info-value">{{ loanDetail.quota || '-' }}</text>
+					</view>
+					<view class="info-item">
+						<text class="info-label">利率</text>
+						<text class="info-value">{{ loanDetail.rate || '' }}</text>
 					</view>
 					<view class="info-item" v-if="loanDetail.status == '2'">
 						<text class="info-label">贷款状态</text>
@@ -47,18 +51,18 @@
 							{{  loanDetail.is_yu == 0 ? '正常' : '逾期' }}
 						</view>
 					</view>
-          <view class="info-item" v-if="loanDetail.is_yu == 1 && loanDetail.yu_desc">
-            <text class="info-label">逾期说明</text>
-            <text class="info-value">{{ loanDetail.yu_desc }}</text>
-          </view>
-          <view class="info-item">
-            <text class="info-label">渠道</text>
-            <text class="info-value">{{ loanDetail.channel }}</text>
-          </view>
-          <view class="info-item">
-            <text class="info-label">创建时间</text>
-            <text class="info-value">{{ loanDetail.ctime }}</text>
-          </view>
+					<view class="info-item" v-if="loanDetail.is_yu == 1 && loanDetail.yu_desc">
+						<text class="info-label">逾期说明</text>
+						<text class="info-value">{{ loanDetail.yu_desc }}</text>
+					</view>
+					<view class="info-item" v-if="type == 'loan'">
+						<text class="info-label">渠道</text>
+						<text class="info-value">{{ loanDetail.channel }}</text>
+					</view>
+					<view class="info-item">
+						<text class="info-label">创建时间</text>
+						<text class="info-value">{{ loanDetail.ctime }}</text>
+					</view>
 				</view>
 			</view>
 			
@@ -100,13 +104,15 @@ export default {
 			loanId: '',
 			loanDetail: {},
 			repaymentSchedule: [],
-      approvalStatus
+      		approvalStatus,
+			type: ''
 		}
 	},
 	onLoad(options) {
 		if (options.id) {
 			this.loanId = options.id;
 			this.loanDetail = JSON.parse(decodeURIComponent(options.loanData))
+			this.type = options.type
 			console.log(this.loanDetail, 'this.loanDetail')
 			if (this.loanDetail.status == '2') {
 				this.loadLoanDetail();

@@ -1,6 +1,6 @@
-(global["webpackJsonp"] = global["webpackJsonp"] || []).push([["common/vendor"],{
-
-/***/ 1:
+(global["webpackJsonp"] = global["webpackJsonp"] || []).push([["common/vendor"],[
+/* 0 */,
+/* 1 */
 /*!*********************************************************!*\
   !*** ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js ***!
   \*********************************************************/
@@ -52,375 +52,7 @@ var _default = target[key];
 exports.default = _default;
 
 /***/ }),
-
-/***/ 10:
-/*!****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/nonIterableRest.js ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-module.exports = _nonIterableRest, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 11:
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var toPropertyKey = __webpack_require__(/*! ./toPropertyKey.js */ 12);
-function _defineProperty(obj, key, value) {
-  key = toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 12:
-/*!**************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/toPropertyKey.js ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _typeof = __webpack_require__(/*! ./typeof.js */ 13)["default"];
-var toPrimitive = __webpack_require__(/*! ./toPrimitive.js */ 14);
-function toPropertyKey(t) {
-  var i = toPrimitive(t, "string");
-  return "symbol" == _typeof(i) ? i : i + "";
-}
-module.exports = toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 13:
-/*!*******************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/typeof.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _typeof(o) {
-  "@babel/helpers - typeof";
-
-  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
-}
-module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 14:
-/*!************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/toPrimitive.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _typeof = __webpack_require__(/*! ./typeof.js */ 13)["default"];
-function toPrimitive(t, r) {
-  if ("object" != _typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || "default");
-    if ("object" != _typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return ("string" === r ? String : Number)(t);
-}
-module.exports = toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 15:
-/*!**********************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/construct.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf.js */ 16);
-var isNativeReflectConstruct = __webpack_require__(/*! ./isNativeReflectConstruct.js */ 17);
-function _construct(t, e, r) {
-  if (isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments);
-  var o = [null];
-  o.push.apply(o, e);
-  var p = new (t.bind.apply(t, o))();
-  return r && setPrototypeOf(p, r.prototype), p;
-}
-module.exports = _construct, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 16:
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/setPrototypeOf.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _setPrototypeOf(o, p) {
-  module.exports = _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
-  return _setPrototypeOf(o, p);
-}
-module.exports = _setPrototypeOf, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 17:
-/*!*************************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/isNativeReflectConstruct.js ***!
-  \*************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _isNativeReflectConstruct() {
-  try {
-    var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-  } catch (t) {}
-  return (module.exports = _isNativeReflectConstruct = function _isNativeReflectConstruct() {
-    return !!t;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports)();
-}
-module.exports = _isNativeReflectConstruct, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 18:
-/*!******************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/toConsumableArray.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithoutHoles = __webpack_require__(/*! ./arrayWithoutHoles.js */ 19);
-var iterableToArray = __webpack_require__(/*! ./iterableToArray.js */ 20);
-var unsupportedIterableToArray = __webpack_require__(/*! ./unsupportedIterableToArray.js */ 8);
-var nonIterableSpread = __webpack_require__(/*! ./nonIterableSpread.js */ 21);
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
-}
-module.exports = _toConsumableArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 188:
-/*!************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/msg.js ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
-// 获取用户消息列表
-function getUserMsgList(params) {
-  return _request.default.post('/msg/get-user-msg-list', params);
-}
-
-// 处理消息（删除/标记已读）
-function handleUserMsg(data) {
-  return _request.default.post('/msg/save-user-msg', data);
-}
-
-// 获取未读消息
-function getUserNoReadMsgList() {
-  return _request.default.post('/msg/get-user-no-read-msg-list');
-}
-
-// 统一默认导出
-var _default = {
-  getUserMsgList: getUserMsgList,
-  handleUserMsg: handleUserMsg,
-  getUserNoReadMsgList: getUserNoReadMsgList
-};
-exports.default = _default;
-
-/***/ }),
-
-/***/ 189:
-/*!******************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/dashboard.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-exports.getStatisticData = getStatisticData;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
-// 获取统计数据
-function getStatisticData(data) {
-  return _request.default.post('/home/get-statistic-data', data);
-}
-var _default = {
-  getStatisticData: getStatisticData
-};
-exports.default = _default;
-
-/***/ }),
-
-/***/ 19:
-/*!******************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/arrayWithoutHoles.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray.js */ 9);
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return arrayLikeToArray(arr);
-}
-module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 190:
-/*!**********************************************!*\
-  !*** E:/ysh/ysh-uniapp/utils/tabbarUtils.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ 13));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || (0, _typeof2.default)(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-/**
- * 动态tabbar工具类 - 简化版
- * 主要功能已移到 custom-tabbar 组件
- */
-/**
- * tabbar工具类
- */
-var _default = {
-  /**
-   * 根据权限获取tabbar类型
-   * @param {Object} permissions 权限配置
-   * @return {String} tabbar类型名称
-   */
-  getTabBarTypeByPermissions: function getTabBarTypeByPermissions(permissions) {
-    // 根据权限判断用户角色
-    if (permissions.customer && !permissions.loan) {
-      return 'manager'; // 只有客户权限，是客户经理
-    } else if (!permissions.customer && permissions.loan) {
-      return 'loanOfficer'; // 只有贷款权限，是贷款专员
-    } else {
-      return 'default'; // 默认配置
-    }
-  },
-  /**
-   * 检查用户是否有权限访问指定的tabbar页面
-   * @param {String} path 页面路径
-   * @param {Object} permissions 权限配置
-   * @return {Boolean} 是否有权限
-   */
-  hasPermission: function hasPermission(path, permissions) {
-    // 首页和消息中心一般都有权限
-    if (path.indexOf('dashboard') !== -1 || path.indexOf('message') !== -1) {
-      return true;
-    }
-
-    // 客户页面
-    if (path.indexOf('customer') !== -1) {
-      return permissions.customer === true;
-    }
-
-    // 贷款页面
-    if (path.indexOf('loan') !== -1) {
-      return permissions.loan === true;
-    }
-    return false;
-  },
-  /**
-   * 初始化tabbar配置
-   * 这个方法只是为了保持接口兼容，实际功能由custom-tabbar实现
-   */
-  initTabBar: function initTabBar() {
-    console.log('tabbar将由custom-tabbar组件控制');
-    return true;
-  },
-  /**
-   * 更新消息角标
-   * @param {Number} index tabbar的索引，默认为1（一般消息页在第二个位置）
-   */
-  updateMessageBadge: function updateMessageBadge() {
-    var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-    // 导入消息API
-    Promise.resolve().then(function () {
-      return _interopRequireWildcard(__webpack_require__(/*! @/api/msg.js */ 188));
-    }).then(function (msgModule) {
-      msgModule.default.getUserNoReadMsgList().then(function (res) {
-        if (res && res.retCode === 200 && res.data) {
-          var count = res.data.total || 0;
-          if (count > 0) {
-            // 设置角标
-            uni.setTabBarBadge({
-              index: index,
-              text: count.toString()
-            });
-          } else {
-            // 移除角标
-            uni.removeTabBarBadge({
-              index: index
-            });
-          }
-        }
-      }).catch(function (err) {
-        console.error('获取未读消息数失败', err);
-      });
-    });
-  }
-};
-exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
-
-/***/ }),
-
-/***/ 2:
+/* 2 */
 /*!************************************************************!*\
   !*** ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js ***!
   \************************************************************/
@@ -2866,8 +2498,336 @@ exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/wx.js */ 1)["default"], __webpack_require__(/*! ./../../../webpack/buildin/global.js */ 3)))
 
 /***/ }),
+/* 3 */
+/*!***********************************!*\
+  !*** (webpack)/buildin/global.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-/***/ 20:
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 4 */
+/*!**********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 5 */
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/slicedToArray.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithHoles = __webpack_require__(/*! ./arrayWithHoles.js */ 6);
+var iterableToArrayLimit = __webpack_require__(/*! ./iterableToArrayLimit.js */ 7);
+var unsupportedIterableToArray = __webpack_require__(/*! ./unsupportedIterableToArray.js */ 8);
+var nonIterableRest = __webpack_require__(/*! ./nonIterableRest.js */ 10);
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
+}
+module.exports = _slicedToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 6 */
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayWithHoles.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+module.exports = _arrayWithHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 7 */
+/*!*********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/iterableToArrayLimit.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _iterableToArrayLimit(r, l) {
+  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+  if (null != t) {
+    var e,
+      n,
+      i,
+      u,
+      a = [],
+      f = !0,
+      o = !1;
+    try {
+      if (i = (t = t.call(r)).next, 0 === l) {
+        if (Object(t) !== t) return;
+        f = !1;
+      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0) {
+        ;
+      }
+    } catch (r) {
+      o = !0, n = r;
+    } finally {
+      try {
+        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+      } finally {
+        if (o) throw n;
+      }
+    }
+    return a;
+  }
+}
+module.exports = _iterableToArrayLimit, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 8 */
+/*!***************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray.js */ 9);
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+}
+module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 9 */
+/*!*****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayLikeToArray.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+  return arr2;
+}
+module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 10 */
+/*!****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/nonIterableRest.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+module.exports = _nonIterableRest, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 11 */
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toPropertyKey = __webpack_require__(/*! ./toPropertyKey.js */ 12);
+function _defineProperty(obj, key, value) {
+  key = toPropertyKey(key);
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+module.exports = _defineProperty, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 12 */
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/toPropertyKey.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__(/*! ./typeof.js */ 13)["default"];
+var toPrimitive = __webpack_require__(/*! ./toPrimitive.js */ 14);
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : i + "";
+}
+module.exports = toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 13 */
+/*!*******************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/typeof.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _typeof(o) {
+  "@babel/helpers - typeof";
+
+  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
+}
+module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 14 */
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/toPrimitive.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__(/*! ./typeof.js */ 13)["default"];
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r ? String : Number)(t);
+}
+module.exports = toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 15 */
+/*!**********************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/construct.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf.js */ 16);
+var isNativeReflectConstruct = __webpack_require__(/*! ./isNativeReflectConstruct.js */ 17);
+function _construct(t, e, r) {
+  if (isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments);
+  var o = [null];
+  o.push.apply(o, e);
+  var p = new (t.bind.apply(t, o))();
+  return r && setPrototypeOf(p, r.prototype), p;
+}
+module.exports = _construct, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 16 */
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/setPrototypeOf.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _setPrototypeOf(o, p) {
+  module.exports = _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
+  return _setPrototypeOf(o, p);
+}
+module.exports = _setPrototypeOf, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 17 */
+/*!*************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/isNativeReflectConstruct.js ***!
+  \*************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _isNativeReflectConstruct() {
+  try {
+    var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+  } catch (t) {}
+  return (module.exports = _isNativeReflectConstruct = function _isNativeReflectConstruct() {
+    return !!t;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports)();
+}
+module.exports = _isNativeReflectConstruct, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 18 */
+/*!******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/toConsumableArray.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithoutHoles = __webpack_require__(/*! ./arrayWithoutHoles.js */ 19);
+var iterableToArray = __webpack_require__(/*! ./iterableToArray.js */ 20);
+var unsupportedIterableToArray = __webpack_require__(/*! ./unsupportedIterableToArray.js */ 8);
+var nonIterableSpread = __webpack_require__(/*! ./nonIterableSpread.js */ 21);
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
+}
+module.exports = _toConsumableArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 19 */
+/*!******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayWithoutHoles.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray.js */ 9);
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return arrayLikeToArray(arr);
+}
+module.exports = _arrayWithoutHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+/* 20 */
 /*!****************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/iterableToArray.js ***!
   \****************************************************************/
@@ -2880,8 +2840,7 @@ function _iterableToArray(iter) {
 module.exports = _iterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-
-/***/ 21:
+/* 21 */
 /*!******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/nonIterableSpread.js ***!
   \******************************************************************/
@@ -2894,8 +2853,7 @@ function _nonIterableSpread() {
 module.exports = _nonIterableSpread, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-
-/***/ 22:
+/* 22 */
 /*!*************************************************************!*\
   !*** ./node_modules/@dcloudio/uni-i18n/dist/uni-i18n.es.js ***!
   \*************************************************************/
@@ -3431,8 +3389,7 @@ function resolveLocaleChain(locale) {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"], __webpack_require__(/*! ./../../../webpack/buildin/global.js */ 3)))
 
 /***/ }),
-
-/***/ 23:
+/* 23 */
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/classCallCheck.js ***!
   \***************************************************************/
@@ -3447,8 +3404,7 @@ function _classCallCheck(instance, Constructor) {
 module.exports = _classCallCheck, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-
-/***/ 24:
+/* 24 */
 /*!************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/createClass.js ***!
   \************************************************************/
@@ -3476,8 +3432,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 module.exports = _createClass, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-
-/***/ 25:
+/* 25 */
 /*!******************************************************************************************!*\
   !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js ***!
   \******************************************************************************************/
@@ -9558,8 +9513,7 @@ internalMixin(Vue);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../webpack/buildin/global.js */ 3)))
 
 /***/ }),
-
-/***/ 26:
+/* 26 */
 /*!************************************!*\
   !*** E:/ysh/ysh-uniapp/pages.json ***!
   \************************************/
@@ -9569,39 +9523,271 @@ internalMixin(Vue);
 
 
 /***/ }),
-
-/***/ 3:
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */
+/*!**********************************************!*\
+  !*** E:/ysh/ysh-uniapp/utils/tabbarUtils.js ***!
+  \**********************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-var g;
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {
 
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ 13));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || (0, _typeof2.default)(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+/**
+ * 动态tabbar工具类 - 简化版
+ * 主要功能已移到 custom-tabbar 组件
+ */
+/**
+ * tabbar工具类
+ */
+var _default = {
+  /**
+   * 根据权限获取tabbar类型
+   * @param {Object} permissions 权限配置
+   * @return {String} tabbar类型名称
+   */
+  getTabBarTypeByPermissions: function getTabBarTypeByPermissions(permissions) {
+    // 根据权限判断用户角色
+    if (permissions.customer && !permissions.loan) {
+      return 'manager'; // 只有客户权限，是客户经理
+    } else if (!permissions.customer && permissions.loan) {
+      return 'loanOfficer'; // 只有贷款权限，是贷款专员
+    } else {
+      return 'default'; // 默认配置
+    }
+  },
+  /**
+   * 检查用户是否有权限访问指定的tabbar页面
+   * @param {String} path 页面路径
+   * @param {Object} permissions 权限配置
+   * @return {Boolean} 是否有权限
+   */
+  hasPermission: function hasPermission(path, permissions) {
+    // 首页和消息中心一般都有权限
+    if (path.indexOf('dashboard') !== -1 || path.indexOf('message') !== -1) {
+      return true;
+    }
 
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
+    // 客户页面
+    if (path.indexOf('customer') !== -1) {
+      return permissions.customer === true;
+    }
 
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
+    // 贷款页面
+    if (path.indexOf('loan') !== -1) {
+      return permissions.loan === true;
+    }
+    return false;
+  },
+  /**
+   * 初始化tabbar配置
+   * 这个方法只是为了保持接口兼容，实际功能由custom-tabbar实现
+   */
+  initTabBar: function initTabBar() {
+    console.log('tabbar将由custom-tabbar组件控制');
+    return true;
+  },
+  /**
+   * 更新消息角标
+   * @param {Number} index tabbar的索引，默认为1（一般消息页在第二个位置）
+   */
+  updateMessageBadge: function updateMessageBadge() {
+    var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+    // 导入消息API
+    Promise.resolve().then(function () {
+      return _interopRequireWildcard(__webpack_require__(/*! @/api/msg.js */ 31));
+    }).then(function (msgModule) {
+      msgModule.default.getUserNoReadMsgList().then(function (res) {
+        if (res && res.retCode === 200 && res.data) {
+          var count = res.data.total || 0;
+          if (count > 0) {
+            // 设置角标
+            uni.setTabBarBadge({
+              index: index,
+              text: count.toString()
+            });
+          } else {
+            // 移除角标
+            uni.removeTabBarBadge({
+              index: index
+            });
+          }
+        }
+      }).catch(function (err) {
+        console.error('获取未读消息数失败', err);
+      });
+    });
+  }
+};
+exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
 
 /***/ }),
+/* 31 */
+/*!************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/msg.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 32:
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 32));
+// 获取用户消息列表
+function getUserMsgList(params) {
+  return _request.default.post('/msg/get-user-msg-list', params);
+}
+
+// 处理消息（删除/标记已读）
+function handleUserMsg(data) {
+  return _request.default.post('/msg/save-user-msg', data);
+}
+
+// 获取未读消息
+function getUserNoReadMsgList() {
+  return _request.default.post('/msg/get-user-no-read-msg-list');
+}
+
+// 统一默认导出
+var _default = {
+  getUserMsgList: getUserMsgList,
+  handleUserMsg: handleUserMsg,
+  getUserNoReadMsgList: getUserNoReadMsgList
+};
+exports.default = _default;
+
+/***/ }),
+/* 32 */
+/*!******************************************!*\
+  !*** E:/ysh/ysh-uniapp/utils/request.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+// 请求工具封装
+var BASE_URL = 'http://test.yshcrm.com/api';
+// const BASE_URL = 'https://yshcrm.com/api';
+// 请求封装
+var request = function request(url, method, data) {
+  var showLoading = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+  return new Promise(function (resolve, reject) {
+    if (showLoading) {
+      uni.showLoading({
+        title: '加载中...'
+      });
+    }
+
+    // 获取存储的token
+    var token = uni.getStorageSync('token') || '';
+    uni.request({
+      url: BASE_URL + url,
+      method: method,
+      data: data,
+      header: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      success: function success(res) {
+        // 先判断状态码，处理特殊情况
+        if (res.data.retCode === 401 || res.data.retCode == 4001) {
+          // token过期或无效，跳转到登录页
+          console.log('登录已过期，准备跳转到登录页');
+
+          // 清除登录信息
+          uni.removeStorageSync('token');
+          uni.removeStorageSync('isLoggedIn');
+          uni.removeStorageSync('userInfo');
+
+          // 显示提示信息
+          uni.showToast({
+            title: '登录已过期，请重新登录',
+            icon: 'none',
+            duration: 2000
+          });
+
+          // 直接跳转到登录页，不使用setTimeout
+          uni.redirectTo({
+            url: '/pages/login/login'
+          });
+          reject({
+            message: '登录已过期，请重新登录'
+          });
+          return; // 确保不会继续执行下面的代码
+        }
+
+        // 正常情况下直接返回整个res.data，让业务代码判断success和处理数据
+        resolve(res.data);
+      },
+      fail: function fail(err) {
+        uni.showToast({
+          title: '网络异常',
+          icon: 'none'
+        });
+        reject(err);
+      },
+      complete: function complete() {
+        if (showLoading) {
+          uni.hideLoading();
+        }
+      }
+    });
+  });
+};
+
+// 封装常用请求方法
+var _default = {
+  get: function get(url) {
+    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    return request(url, 'GET', data, showLoading);
+  },
+  post: function post(url) {
+    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    return request(url, 'POST', data, showLoading);
+  },
+  put: function put(url) {
+    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    return request(url, 'PUT', data, showLoading);
+  },
+  delete: function _delete(url) {
+    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    return request(url, 'DELETE', data, showLoading);
+  }
+};
+exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
+
+/***/ }),
+/* 33 */,
+/* 34 */,
+/* 35 */
 /*!**********************************************************************************************************!*\
   !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/runtime/componentNormalizer.js ***!
   \**********************************************************************************************************/
@@ -9732,8 +9918,7 @@ function normalizeComponent (
 
 
 /***/ }),
-
-/***/ 33:
+/* 36 */
 /*!**************************************************!*\
   !*** E:/ysh/ysh-uniapp/uni.promisify.adaptor.js ***!
   \**************************************************/
@@ -9757,24 +9942,63 @@ uni.addInterceptor({
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
 
 /***/ }),
-
-/***/ 4:
-/*!**********************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
-  \**********************************************************************/
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */
+/*!*************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/user.js ***!
+  \*************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    "default": obj
-  };
-}
-module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 32));
+// 用户相关API
+var _default = {
+  // 用户登录
+  login: function login(data) {
+    return _request.default.post('/user/login', data);
+  },
+  // 获取用户菜单权限树
+  getMenuTree: function getMenuTree() {
+    return _request.default.post('/user/get-menu-tree-list');
+  },
+  // 重置密码
+  resetPassword: function resetPassword(data) {
+    return _request.default.post('/user/change-password', data);
+  }
+};
+exports.default = _default;
 
 /***/ }),
-
-/***/ 40:
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */
 /*!************************************************************************************************!*\
   !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/@babel/runtime/regenerator/index.js ***!
   \************************************************************************************************/
@@ -9783,12 +10007,11 @@ module.exports = _interopRequireDefault, module.exports.__esModule = true, modul
 
 // TODO(Babel 8): Remove this file.
 
-var runtime = __webpack_require__(/*! @babel/runtime/helpers/regeneratorRuntime */ 41)();
+var runtime = __webpack_require__(/*! @babel/runtime/helpers/regeneratorRuntime */ 61)();
 module.exports = runtime;
 
 /***/ }),
-
-/***/ 41:
+/* 61 */
 /*!*******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/regeneratorRuntime.js ***!
   \*******************************************************************/
@@ -10109,8 +10332,7 @@ function _regeneratorRuntime() {
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-
-/***/ 42:
+/* 62 */
 /*!*****************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/asyncToGenerator.js ***!
   \*****************************************************************/
@@ -10150,204 +10372,14 @@ function _asyncToGenerator(fn) {
 module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-
-/***/ 43:
-/*!****************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/finance.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
-// 贷款相关API
-var _default = {
-  // 获取贷款申请列表
-  getFinanceList: function getFinanceList(data) {
-    return _request.default.post('/finance/get-finance-list', data);
-  },
-  // 获取贷款信息
-  getLoanList: function getLoanList(data) {
-    return _request.default.post('/finance/get-loan-list', data);
-  },
-  // 添加客户贷款
-  addLoan: function addLoan(data) {
-    return _request.default.post('/finance/add-loan', data);
-  },
-  // 更新贷款状态
-  updateLoanStatus: function updateLoanStatus(data) {
-    return _request.default.post('/finance/update-loan-status', data);
-  },
-  // 更新贷款状态
-  financeSaveLoan: function financeSaveLoan(data) {
-    return _request.default.post('/finance/save-loan', data);
-  },
-  // 处理逾期贷款
-  processOverdueLoan: function processOverdueLoan(data) {
-    return _request.default.post('/finance/handle-overdue', data);
-  },
-  // 获取贷款详情
-  getLoanDetail: function getLoanDetail(id) {
-    return _request.default.get("/finance/get-loan-detail?id=".concat(id));
-  },
-  // 获取贷款的还款计划
-  getRepaymentSchedule: function getRepaymentSchedule(data) {
-    return _request.default.post("/finance/get-loan-plan-list", data);
-  },
-  // 获取贷款操作历史
-  getOperationHistory: function getOperationHistory(loanId) {
-    return _request.default.get("/finance/get-operation-history?loanId=".concat(loanId));
-  }
-};
-exports.default = _default;
-
-/***/ }),
-
-/***/ 44:
+/* 63 */
 /*!******************************************!*\
-  !*** E:/ysh/ysh-uniapp/utils/request.js ***!
+  !*** E:/ysh/ysh-uniapp/api/dashboard.js ***!
   \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-// 请求工具封装
-var BASE_URL = 'http://59.110.82.209:9501/api';
-
-// 请求封装
-var request = function request(url, method, data) {
-  var showLoading = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  return new Promise(function (resolve, reject) {
-    if (showLoading) {
-      uni.showLoading({
-        title: '加载中...'
-      });
-    }
-
-    // 获取存储的token
-    var token = uni.getStorageSync('token') || '';
-    uni.request({
-      url: BASE_URL + url,
-      method: method,
-      data: data,
-      header: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      success: function success(res) {
-        // 先判断状态码，处理特殊情况
-        if (res.data.retCode === 401 || res.data.retCode == 4001) {
-          // token过期或无效，跳转到登录页
-          console.log('登录已过期，准备跳转到登录页');
-
-          // 清除登录信息
-          uni.removeStorageSync('token');
-          uni.removeStorageSync('isLoggedIn');
-          uni.removeStorageSync('userInfo');
-
-          // 显示提示信息
-          uni.showToast({
-            title: '登录已过期，请重新登录',
-            icon: 'none',
-            duration: 2000
-          });
-
-          // 直接跳转到登录页，不使用setTimeout
-          uni.redirectTo({
-            url: '/pages/login/login'
-          });
-          reject({
-            message: '登录已过期，请重新登录'
-          });
-          return; // 确保不会继续执行下面的代码
-        }
-
-        // 正常情况下直接返回整个res.data，让业务代码判断success和处理数据
-        resolve(res.data);
-      },
-      fail: function fail(err) {
-        uni.showToast({
-          title: '网络异常',
-          icon: 'none'
-        });
-        reject(err);
-      },
-      complete: function complete() {
-        if (showLoading) {
-          uni.hideLoading();
-        }
-      }
-    });
-  });
-};
-
-// 封装常用请求方法
-var _default = {
-  get: function get(url) {
-    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-    return request(url, 'GET', data, showLoading);
-  },
-  post: function post(url) {
-    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-    return request(url, 'POST', data, showLoading);
-  },
-  put: function put(url) {
-    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-    return request(url, 'PUT', data, showLoading);
-  },
-  delete: function _delete(url) {
-    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var showLoading = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-    return request(url, 'DELETE', data, showLoading);
-  }
-};
-exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 2)["default"]))
-
-/***/ }),
-
-/***/ 5:
-/*!**************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/slicedToArray.js ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithHoles = __webpack_require__(/*! ./arrayWithHoles.js */ 6);
-var iterableToArrayLimit = __webpack_require__(/*! ./iterableToArrayLimit.js */ 7);
-var unsupportedIterableToArray = __webpack_require__(/*! ./unsupportedIterableToArray.js */ 8);
-var nonIterableRest = __webpack_require__(/*! ./nonIterableRest.js */ 10);
-function _slicedToArray(arr, i) {
-  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
-}
-module.exports = _slicedToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 53:
-/*!*************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/user.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
@@ -10355,41 +10387,27 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
-// 用户相关API
+exports.getStatisticData = getStatisticData;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 32));
+// 获取统计数据
+function getStatisticData(data) {
+  return _request.default.post('/home/get-statistic-data', data);
+}
 var _default = {
-  // 用户登录
-  login: function login(data) {
-    return _request.default.post('/user/login', data);
-  },
-  // 获取用户菜单权限树
-  getMenuTree: function getMenuTree() {
-    return _request.default.post('/user/get-menu-tree-list');
-  } // 如果有其他用户相关API，可以在这里添加
-  // 例如：获取用户信息
-  // getUserInfo() {
-  //   return request.get('/user/info');
-  // }
+  getStatisticData: getStatisticData
 };
 exports.default = _default;
 
 /***/ }),
-
-/***/ 6:
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/arrayWithHoles.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-module.exports = _arrayWithHoles, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 62:
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */,
+/* 72 */
 /*!*****************************************!*\
   !*** E:/ysh/ysh-uniapp/api/customer.js ***!
   \*****************************************/
@@ -10404,7 +10422,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 32));
 // 客户相关API
 var _default = {
   // 获取客户列表
@@ -10452,13 +10470,16 @@ var _default = {
   // 获取贷款信息
   getloanList: function getloanList(data) {
     return _request.default.post('/finance/get-loan-list', data);
+  },
+  // 上传 文件
+  docUpload: function docUpload(data) {
+    return _request.default.post('/doc/upload', data);
   }
 };
 exports.default = _default;
 
 /***/ }),
-
-/***/ 63:
+/* 73 */
 /*!***************************************!*\
   !*** E:/ysh/ysh-uniapp/utils/dict.js ***!
   \***************************************/
@@ -10599,68 +10620,7 @@ var dictMaps = {
 exports.dictMaps = dictMaps;
 
 /***/ }),
-
-/***/ 7:
-/*!*********************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/iterableToArrayLimit.js ***!
-  \*********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _iterableToArrayLimit(r, l) {
-  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
-  if (null != t) {
-    var e,
-      n,
-      i,
-      u,
-      a = [],
-      f = !0,
-      o = !1;
-    try {
-      if (i = (t = t.call(r)).next, 0 === l) {
-        if (Object(t) !== t) return;
-        f = !1;
-      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0) {
-        ;
-      }
-    } catch (r) {
-      o = !0, n = r;
-    } finally {
-      try {
-        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
-      } finally {
-        if (o) throw n;
-      }
-    }
-    return a;
-  }
-}
-module.exports = _iterableToArrayLimit, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 8:
-/*!***************************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js ***!
-  \***************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray.js */ 9);
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
-}
-module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 88:
+/* 74 */
 /*!*********************************************!*\
   !*** E:/ysh/ysh-uniapp/api/organization.js ***!
   \*********************************************/
@@ -10675,7 +10635,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.position = exports.employee = exports.department = void 0;
-var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 44));
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 32));
 // 部门相关API
 var department = {
   // 获取部门树列表
@@ -10744,24 +10704,79 @@ var position = {
 exports.position = position;
 
 /***/ }),
-
-/***/ 9:
-/*!*****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/arrayLikeToArray.js ***!
-  \*****************************************************************/
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */
+/*!****************************************!*\
+  !*** E:/ysh/ysh-uniapp/api/finance.js ***!
+  \****************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _request = _interopRequireDefault(__webpack_require__(/*! ../utils/request.js */ 32));
+// 贷款相关API
+var _default = {
+  // 获取贷款申请列表
+  getFinanceList: function getFinanceList(data) {
+    return _request.default.post('/finance/get-finance-list', data);
+  },
+  // 获取贷款信息
+  getLoanList: function getLoanList(data) {
+    return _request.default.post('/finance/get-loan-list', data);
+  },
+  // 添加客户贷款
+  addLoan: function addLoan(data) {
+    return _request.default.post('/finance/add-loan', data);
+  },
+  // 更新贷款状态
+  updateLoanStatus: function updateLoanStatus(data) {
+    return _request.default.post('/finance/update-loan-status', data);
+  },
+  // 更新贷款状态
+  financeSaveLoan: function financeSaveLoan(data) {
+    return _request.default.post('/finance/save-loan', data);
+  },
+  // 处理逾期贷款
+  processOverdueLoan: function processOverdueLoan(data) {
+    return _request.default.post('/finance/handle-overdue', data);
+  },
+  // 获取贷款详情
+  getLoanDetail: function getLoanDetail(id) {
+    return _request.default.get("/finance/get-loan-detail?id=".concat(id));
+  },
+  // 获取贷款的还款计划
+  getRepaymentSchedule: function getRepaymentSchedule(data) {
+    return _request.default.post("/finance/get-loan-plan-list", data);
+  },
+  // 获取贷款操作历史
+  getOperationHistory: function getOperationHistory(loanId) {
+    return _request.default.get("/finance/get-operation-history?loanId=".concat(loanId));
+  },
+  // 获取贷款详细进度
+  getLoanDealLog: function getLoanDealLog(data) {
+    return _request.default.post('/finance/get-loan-deal-log', data);
+  },
+  // 新增贷款详细进度
+  addLoanDealLog: function addLoanDealLog(data) {
+    return _request.default.post('/finance/add-loan-deal-log', data);
   }
-  return arr2;
-}
-module.exports = _arrayLikeToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+};
+exports.default = _default;
 
 /***/ })
-
-}]);
+]]);
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

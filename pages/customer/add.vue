@@ -266,6 +266,7 @@
 				return found ? found.label : '请选择客群';
 			},
 			chooseImage() {
+				uni.setStorageSync('isChoosingImage', true);
 				uni.chooseImage({
 					count: 5 - this.licenseImg.length,
 					sizeType: ['compressed'],
@@ -279,6 +280,7 @@
 				this.licenseImg.splice(index, 1);
 			},
 			previewImage(current) {
+				uni.setStorageSync('isChoosingImage', true);
 				uni.previewImage({
 					urls: this.licenseImg,
 					current: current
@@ -671,4 +673,4 @@
 		background-color: #409EFF;
 		color: #fff;
 	}
-</style> 
+</style>

@@ -66,6 +66,7 @@
 	// import { getUserMsgList, handleUserMsg, getUserNoReadMsgList } from '@/api/msg.js';
 	import msgApi from '@/api/msg.js';
 	import tabbarUtils from '../../utils/tabbarUtils.js';
+	import request from '@/utils/request.js';
     
 	export default {
 		data() {
@@ -533,13 +534,40 @@
 			handleSendSMS(item) {
 				uni.showModal({
 					title: '发送短信',
-					content: `确定要给${item.client_name || '客户'}发送短信吗？`,
-					success: (res) => {
+					content: `确定要给客户发送短信吗？`,
+					success: async (res) => {
 						if (res.confirm) {
-							uni.showToast({
-								title: '短信发送成功',
-								icon: 'success'
-							});
+							try {
+								uni.showLoading({
+									title: '发送中...'
+								});
+								
+								// 调用发送短信API
+								const result = await request.post('/doc/send-sms', {
+									client_id: item.client_id,
+									message_id: item.id
+								});
+								
+								if (result.retCode === 200) {
+									uni.showToast({
+										title: result.success,
+										icon: 'success'
+									});
+								} else {
+									uni.showToast({
+										title: result.message || '发送失败',
+										icon: 'none'
+									});
+								}
+							} catch (error) {
+								console.error('发送短信失败', error);
+								uni.showToast({
+									title: error.message,
+									icon: 'none'
+								});
+							} finally {
+								uni.hideLoading();
+							}
 						}
 					}
 				});
@@ -743,4 +771,4 @@
 		font-size: 14px;
 		padding: 10px 0;
 	}
-</style> 
+</style>

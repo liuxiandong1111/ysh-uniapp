@@ -33,6 +33,10 @@
 						<text class="info-value">{{ item.age_limit }}</text>
 					</view>
 					<view class="info-row">
+						<text class="info-label">详细进度</text>
+						<text class="info-value" style="color: #409EFF;" @click="viewProgress(item)">查看</text>
+					</view>
+					<view class="info-row">
 						<text class="info-label">还款方式:</text>
 						<text class="info-value">{{ getDueType(item.due_type)}}</text>
 					</view>
@@ -41,12 +45,12 @@
 						<text class="info-value">{{ item.loan_date || '-' }}</text>
 					</view>
 					<view class="info-row">
-						<text class="info-label">渠道:</text>
-						<text class="info-value">{{ item.channel }}</text>
-					</view>
-					<view class="info-row">
 						<text class="info-label">额度:</text>
 						<text class="info-value">{{ item.quota }}</text>
+					</view>
+					<view class="info-row">
+						<text class="info-label">利率:</text>
+						<text class="info-value">{{ item.rate }}</text>
 					</view>
 					<view class="info-row">
 						<text class="info-label">还款状态:</text>
@@ -57,6 +61,10 @@
 					<view class="info-row" v-if="item.cause">
 						<text class="info-label">拒绝原因:</text>
 						<text class="info-value reject-reason">{{ item.cause }}</text>
+					</view>
+					<view class="info-row">
+						<text class="info-label">渠道:</text>
+						<text class="info-value">{{ item.channel }}</text>
 					</view>
 				</view>
 				
@@ -199,9 +207,9 @@
 			
 			// 查看贷款详情
 			handleView(item) {
-        const loanData = encodeURIComponent(JSON.stringify(item));
+				const loanData = encodeURIComponent(JSON.stringify(item));
 				uni.navigateTo({
-					url: `/pages/loan/detail?id=${item.id}&loanData=${loanData}`
+					url: `/pages/loan/detail?id=${item.id}&loanData=${loanData}&type=loan`
 				});
 			},
 			
@@ -226,6 +234,13 @@
 					case 3: return '随借随还'
 					default: return '未知'
 				}
+			},
+			viewProgress (row) {
+				const loanData = encodeURIComponent(JSON.stringify(row));
+				console.log(loanData, 'loanData')
+				uni.navigateTo({
+					url: `/pages/loan/progress?loanData=${loanData}&type=loan`
+				});
 			}
 		}
 	}

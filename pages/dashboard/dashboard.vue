@@ -2,10 +2,9 @@
 	<view class="container">
 		<view class="header">
 			<text class="header-title">数据仪表盘</text>
-			<!-- <view class="user-info">
-				<text>张经理</text>
-				<view class="avatar">张</view>
-			</view> -->
+			<view class="user-info" @click="goToResetPassword">
+				<text>修改密码</text>
+			</view>
 		</view>
 		
 		<view class="main">
@@ -68,6 +67,13 @@
 			// App.vue 中已经处理了 tabbar 相关逻辑，这里不再需要单独处理
 		},
 		methods: {
+			// 跳转到重置密码页面
+			goToResetPassword() {
+				uni.navigateTo({
+					url: '/pages/user/reset-password'
+				});
+			},
+			
 			// 获取统计数据
 			async getStatisticDataFn() {
 				try {
@@ -257,4 +263,4 @@
 	.activity-icon.info {
 		background-color: #909399;
 	}
-</style> 
+</style>
