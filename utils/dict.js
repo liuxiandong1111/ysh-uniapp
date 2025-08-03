@@ -81,6 +81,25 @@ export const belongingCustomerGroup = [ // 所属客群
     }
 ]
 
+export const clientTypeOptions = [
+    {
+        label: 'A',
+        value: 'A'
+    },
+    {
+        label: 'B',
+        value: 'B'
+    },
+    {
+        label: 'C',
+        value: 'C'
+    },
+    {
+        label: 'D',
+        value: 'D'
+    },
+]
+
 export const repaymentMethod = [ // 还款方式
     {
         label: '先息后本',
@@ -127,9 +146,9 @@ export const dictMaps = {
     
     // 客户类型字典
     customerType: {
-        1: '个人客户',
-        2: '企业客户',
-        3: '个体工商户'
+        1: '消费',
+        2: '经营',
+        3: '消费经营'
     },
     
     // 审批状态字典

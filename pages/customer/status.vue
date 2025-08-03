@@ -89,12 +89,8 @@
 		},
 		methods: {
 			loadCustomerInfo() {
-				uni.showLoading({
-					title: '加载中...'
-				});
 				
 				customerApi.getDetail(this.customerId).then(res => {
-					uni.hideLoading();
 					if (res.retCode === 200 && res.data) {
 						this.customerInfo = res.data;
 						this.statusForm.status = res.data.status || '';
@@ -105,9 +101,8 @@
 						});
 					}
 				}).catch(err => {
-					uni.hideLoading();
 					uni.showToast({
-						title: '获取客户信息失败',
+						title: err.message,
 						icon: 'none'
 					});
 					console.error('获取客户信息失败', err);
@@ -127,17 +122,11 @@
 					return;
 				}
 				
-				// 显示加载提示
-				uni.showLoading({
-					title: '更新中...'
-				});
-				
 				// 调用API更新客户状态
 				customerApi.clientSaveClientStatus({
 					id: this.statusForm.id,
 					status: this.statusForm.status
 				}).then(res => {
-					uni.hideLoading();
 					
 					if (res.success && res.retCode === 200) {
 						uni.showToast({
@@ -162,10 +151,9 @@
 						});
 					}
 				}).catch(err => {
-					uni.hideLoading();
 					
 					uni.showToast({
-						title: '状态更新失败',
+						title: err.message,
 						icon: 'none'
 					});
 					

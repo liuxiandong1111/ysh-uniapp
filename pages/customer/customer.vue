@@ -45,6 +45,30 @@
 						</picker>
 					</view>
 				</view>
+
+				<view class="form-row">
+					<view class="form-group">
+						<text class="form-label">年龄</text>
+						<input class="form-select" type="text" v-model="age" placeholder="请输入年龄"
+							style="height: 30px;font-size: 14px;" />
+					</view>
+					<view class="form-group">
+						<text class="form-label">所属客群</text>
+						<picker :range="belongingCustomerGroup" range-key="label" @change="handleCustomerGroupChange" class="form-select">
+							<view class="picker-value">{{ getCustomerGroupText() }}</view>
+						</picker>
+					</view>
+				</view>
+
+				<view class="form-row">
+					<view class="form-group">
+						<text class="form-label">业务负责人</text>
+						<picker :range="productManagers" range-key="name" @change="handleManagerChange" class="form-select">
+							<view class="picker-value" v-if="!isLoading">{{ selectedManager ? selectedManager.name : '请选择产品经理' }}</view>
+							<view class="picker-value" v-else>加载中...</view>
+						</picker>
+					</view>
+				</view>
 			</view>
 		</view>
 
@@ -66,8 +90,12 @@
 								<text>{{ item.branch_name || '未分配' }}</text>
 							</view>
 							<view class="dept">
-								<text class="label">客户类型:</text>
-								<text>{{ dictMaps.customerType[item.client_type] || '未知类型' }}</text>
+								<text class="label">客户分类:</text>
+								<text>{{ item.client_level || '' }}</text>
+							</view>
+							<view class="dept">
+								<text class="label">所属客群:</text>
+								<text>{{ dictMaps.customerType[item.client_type] || '' }}</text>
 							</view>
 							<view class="manager">
 								<text class="label">业务员:</text>
@@ -135,7 +163,8 @@
 
 <script>
 import customerApi from '@/api/customer.js';
-import { dictMaps, getLabelByValue, customerType, customerStatus, dealStatus, customerProgress } from '@/utils/dict.js';
+import { employee } from '@/api/organization.js';
+import { dictMaps, getLabelByValue, customerType, customerStatus, dealStatus, customerProgress, belongingCustomerGroup } from '@/utils/dict.js';
 import { department } from '@/api/organization.js';
 import tabbarUtils from '../../utils/tabbarUtils.js';
 
@@ -149,6 +178,7 @@ export default {
 		return {
 			searchKey: '',
 			phone: '',
+			age: '',
 			statusFilter: 'all',
 			customerList: [],
 			showFilterForm: false,
@@ -160,6 +190,7 @@ export default {
 			approvalOptions: buildOptions(customerProgress), // 使用customerProgress字典构建
 			currentApproval: 0,
 			customerGroupOptions: ['全部', '消费', '经营', '消费经营'],
+			belongingCustomerGroup: belongingCustomerGroup,
 			currentCustomerGroup: 0,
 			// 存储原始字典数据以便后续使用
 			statusDict: customerStatus,
@@ -169,14 +200,18 @@ export default {
 				branchId: '',
 				status: '',
 				approvalStatus: '',
-				customerGroup: ''
+				customerGroup: '',
+				client_type: ''
 			},
 			page: 1,
-			pageSize: 10,
+			pageSize: 5,
 			totalCount: 0,
 			dictMaps: dictMaps,
 			isLoading: false,
-			hasMore: true
+			hasMore: true,
+			productManagers: [],
+			selectedManagerId: null,
+			selectedManager: null,
 		}
 	},
 	onLoad() {
@@ -184,6 +219,7 @@ export default {
 		// 检查登录状态
 		this.checkLogin();
 		this.getDeptTree()
+		this.loadProductManagers();
 
 		// 监听刷新列表事件
 		uni.$on('refreshCustomerList', this.refreshCustomerList);
@@ -222,6 +258,35 @@ export default {
 		uni.$off('refreshCustomerList', this.refreshCustomerList);
 	},
 	methods: {
+		async loadProductManagers() {
+			const userInfo = uni.getStorageSync('userInfo');
+			try {
+				const res = await employee.getList({
+					branch_id: userInfo.branch_id,
+					page: 1,
+					pageSize: 100
+				});
+				
+				if (res && res.data && res.data.list) {
+					this.productManagers = res.data.list;
+				} else {
+					this.productManagers = [];
+				}
+			} catch (error) {
+				this.productManagers = [];
+				uni.showToast({
+					title: error.message,
+					icon: 'none'
+				});
+			}
+		},
+
+		handleManagerChange(e) {
+			const index = e.detail.value;
+			this.selectedManager = this.productManagers[index];
+			this.selectedManagerId = this.selectedManager.id;
+		},
+		
 		// 刷新客户列表（用于事件监听）
 		refreshCustomerList() {
 			this.loadCustomerList(true);
@@ -283,12 +348,6 @@ export default {
 			return true;
 		},
 		loadCustomerList(isReset = true) {
-			// 如果是重置，则清空列表并回到第一页
-			if (isReset) {
-				this.page = 1;
-				this.customerList = [];
-				this.hasMore = true;
-			}
 
 			// 已无更多数据时不再请求
 			if (!this.hasMore) {
@@ -298,19 +357,14 @@ export default {
 			// 设置加载状态
 			this.isLoading = true;
 
-			// 仅在重置时显示加载提示
-			if (isReset) {
-				uni.showLoading({
-					title: '加载中...'
-				});
-			}
-
 			// 构建请求参数
 			const params = {
 				page: this.page,
 				page_size: this.pageSize,
 				phone: this.phone || '',
-				name: this.searchKey || ''
+				age: this.age || '',
+				name: this.searchKey || '',
+				service_id: this.selectedManagerId
 			};
 
 			// 如果有部门筛选条件，添加到请求参数中
@@ -335,14 +389,16 @@ export default {
 				params.deal_status = '';
 			}
 
+			// 添加审批状态筛选条件
+			if (this.filterParams.client_type) {
+				params.client_type = this.filterParams.client_type;
+			} else {
+				params.client_type = '';
+			}
+
 			// 调用API获取客户列表
 			customerApi.getList(params)
 				.then(res => {
-					// 只在重置时隐藏加载提示
-					if (isReset) {
-						uni.hideLoading();
-					}
-
 					if (res.success && res.retCode === 200 && res.data) {
 						// 获取新数据
 						const newList = res.data.list || [];
@@ -350,6 +406,7 @@ export default {
 						// 更新总数量
 						this.totalCount = res.data.total || 0;
 
+						
 						// 追加或替换数据
 						if (isReset) {
 							this.customerList = newList;
@@ -379,14 +436,10 @@ export default {
 					this.isLoading = false;
 				})
 				.catch(err => {
-					// 只在重置时隐藏加载提示
-					if (isReset) {
-						uni.hideLoading();
-					}
 
 					// 显示错误信息
 					uni.showToast({
-						title: '获取客户列表失败',
+						title: err.message,
 						icon: 'none'
 					});
 
@@ -455,6 +508,8 @@ export default {
 			return map[jindu] || jindu || '未知';
 		},
 		goDetail(item) {
+			uni.setStorageSync('page', this.page);
+
 			// 将客户数据编码为URL参数
 			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
@@ -462,6 +517,7 @@ export default {
 			});
 		},
 		goEdit(item) {
+			uni.setStorageSync('page', this.page);
 			// 将客户数据编码为URL参数
 			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
@@ -469,6 +525,7 @@ export default {
 			});
 		},
 		goFollowup(item) {
+			uni.setStorageSync('page', this.page);
 			// 将客户数据编码为URL参数
 			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
@@ -476,6 +533,7 @@ export default {
 			});
 		},
 		updateStatus(item) {
+			uni.setStorageSync('page', this.page);
 			// 将客户数据编码为URL参数
 			const customerData = encodeURIComponent(JSON.stringify(item));
 			console.log('updateStatus')
@@ -484,6 +542,7 @@ export default {
 			});
 		},
 		transferCustomer(item) {
+			uni.setStorageSync('page', this.page);
 			const customerData = encodeURIComponent(JSON.stringify(item));
 			uni.navigateTo({
 				url: `/pages/customer/transfer?id=${item.id}&customerData=${customerData}`
@@ -573,7 +632,16 @@ export default {
 				icon: 'none'
 			});
 			this.showFilterForm = false;
-		}
+		},
+		handleCustomerGroupChange(e) {
+			const index = e.detail.value;
+			this.filterParams.client_type = this.belongingCustomerGroup[index].value;
+		},
+		getCustomerGroupText() {
+			const group = this.filterParams.client_type;
+			const found = this.belongingCustomerGroup.find(item => item.value === group);
+			return found ? found.label : '请选择客群';
+		},
 	}
 }
 </script>

@@ -167,7 +167,7 @@
 				} catch (error) {
 					console.error('获取消息列表失败', error);
 					uni.showToast({
-						title: '获取消息列表失败',
+						title: error.message,
 						icon: 'none'
 					});
 				} finally {

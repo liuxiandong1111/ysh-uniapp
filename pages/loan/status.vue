@@ -133,44 +133,39 @@
 					return;
 				}
 				
-				// 模拟提交到服务器
-				// 实际项目中应该调用API提交
-				uni.showLoading({
-					title: '提交中...'
-				});
 
-        const params = {
-          id: this.loanId,
-          status: this.updateStatusForm.status
-        }
+				const params = {
+					id: this.loanId,
+					status: this.updateStatusForm.status
+				}
 
-        if (this.updateStatusForm.status == 2) {
-          params.loan_date = this.updateStatusForm.loan_date || new Date().toISOString().split('T')[0]
-        } else if (this.updateStatusForm.status == 3) {
-          params.cause = this.updateStatusForm.cause
-        }
-        financeApi.financeSaveLoan(params).then(res => {
-          if (res.retCode == 200) {
-            uni.showToast({
-              title: res.message,
-              icon: 'success',
-              duration: 1500
-            });
+				if (this.updateStatusForm.status == 2) {
+					params.loan_date = this.updateStatusForm.loan_date || new Date().toISOString().split('T')[0]
+				} else if (this.updateStatusForm.status == 3) {
+					params.cause = this.updateStatusForm.cause
+				}
+				financeApi.financeSaveLoan(params).then(res => {
+				if (res.retCode == 200) {
+					uni.showToast({
+					title: res.message,
+					icon: 'success',
+					duration: 1500
+					});
 
-            // 提交成功后返回上一页
-            setTimeout(() => {
-              uni.navigateBack();
-            }, 1500);
-          } else {
-            uni.showToast({
-              title: res.message,
-              icon: 'none',
-              duration: 1500
-            });
-          }
-        }).finally(() => {
-          uni.hideLoading();
-        })
+					// 提交成功后返回上一页
+					setTimeout(() => {
+					uni.navigateBack();
+					}, 1500);
+				} else {
+					uni.showToast({
+					title: res.message,
+					icon: 'none',
+					duration: 1500
+					});
+				}
+				}).finally(() => {
+					uni.hideLoading();
+				})
 			}
 		}
 	}

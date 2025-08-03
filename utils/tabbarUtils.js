@@ -75,10 +75,24 @@ export default {
               text: count.toString()
             });
           } else {
-            // 移除角标
-            uni.removeTabBarBadge({
-              index: index
-            });
+            // 移除角标前检查当前页面是否是TabBar页面
+            const pages = getCurrentPages();
+            if (pages.length > 0) {
+              const currentPage = pages[pages.length - 1];
+              const currentPath = currentPage.route;
+              
+              // 判断是否是tabbar页面
+              const isTabBarPage = currentPath === 'pages/dashboard/dashboard' || 
+                                 currentPath === 'pages/customer/customer' || 
+                                 currentPath === 'pages/loan/loan' || 
+                                 currentPath === 'pages/message/message';
+              
+              if (isTabBarPage) {
+                uni.removeTabBarBadge({
+                  index: index
+                });
+              }
+            }
           }
         }
       }).catch(err => {
@@ -86,4 +100,4 @@ export default {
       });
     });
   }
-}; 
+};

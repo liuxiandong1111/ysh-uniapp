@@ -36,6 +36,12 @@
 			<view class="form-section">
 				<view class="section-title">客户资料</view>
 				<view class="form-item">
+					<text class="form-label">客户分类</text>
+					<picker :range="clientTypeOptions" range-key="label" @change="handleClientTypeChange" class="form-picker">
+						<view class="picker-value">{{ getClientTypeText() }}</view>
+					</picker>
+				</view>
+				<view class="form-item">
 					<text class="form-label">所属客群</text>
 					<picker :range="customerGroupOptions" range-key="label" @change="handleCustomerGroupChange" class="form-picker">
 						<view class="picker-value">{{ getCustomerGroupText() }}</view>
@@ -91,7 +97,7 @@
 
 <script>
 	import customerApi from '@/api/customer.js';
-	import { dictMaps, belongingCustomerGroup, maritalStatus } from '@/utils/dict.js';
+	import { dictMaps, belongingCustomerGroup, maritalStatus, clientTypeOptions } from '@/utils/dict.js';
 	
 	export default {
 		data() {
@@ -112,11 +118,13 @@
 					income: '',
 					credit_investigation: '',
 					descr: '',
-					status: 1
+					status: 1,
+					client_level: ''
 				},
 				dictMaps: dictMaps,
 				maritalStatusOptions: maritalStatus,
 				customerGroupOptions: belongingCustomerGroup,
+				clientTypeOptions: clientTypeOptions,
 				licenseImg: []
 			}
 		},
@@ -176,6 +184,12 @@
 					// 如果没有传递客户数据，则调用API获取
 					this.loadCustomerData();
 				}
+			} else {
+				console.log('add')
+				let customerForm = uni.getStorageSync('customerForm')
+				if (customerForm) {
+					this.customerForm = JSON.parse(customerForm)
+				}
 			}
 		},
 		methods: {
@@ -188,14 +202,10 @@
 				});
 			},
 			loadCustomerData() {
-				uni.showLoading({
-					title: '加载中...'
-				});
 				
 				// 从API获取客户数据
 				customerApi.getDetail(this.customerId)
 					.then(res => {
-						uni.hideLoading();
 						
 						if (res.success && res.retCode === 200 && res.data) {
 							const customerData = res.data;
@@ -238,9 +248,8 @@
 						}
 					})
 					.catch(err => {
-						uni.hideLoading();
 						uni.showToast({
-							title: '获取客户信息失败',
+							title: err.message,
 							icon: 'none',
 							duration: 2000,
 						});
@@ -264,6 +273,16 @@
 				const group = this.customerForm.client_type;
 				const found = this.customerGroupOptions.find(item => item.value === group);
 				return found ? found.label : '请选择客群';
+			},
+
+			handleClientTypeChange (e) {
+				const index = e.detail.value;
+				this.customerForm.client_level = this.clientTypeOptions[index].value;
+			},
+			getClientTypeText () {
+				const group = this.customerForm.client_level;
+				const found = this.clientTypeOptions.find(item => item.value === group);
+				return found ? found.label : '请选择客户分类';
 			},
 			chooseImage() {
 				uni.setStorageSync('isChoosingImage', true);
@@ -318,9 +337,9 @@
 					return;
 				}
 				
-				uni.showLoading({
-					title: '提交中...'
-				});
+				// uni.showLoading({
+				// 	title: '提交中...'
+				// });
 				
 				const formData = {
 					id: this.isEdit ? this.customerId : '',
@@ -336,6 +355,7 @@
 					credit_investigation: this.customerForm.credit_investigation || '',
 					asset_info: this.customerForm.asset_info || '',
 					descr: this.customerForm.descr || '',
+					client_level: this.customerForm.client_level || '',
 					status: 1,
 				};
 				
@@ -423,7 +443,7 @@
 					customerApi.add(formData);
 					
 				apiCall.then(res => {
-					uni.hideLoading();
+					// uni.hideLoading();
 					
 					if (res.success && res.retCode === 200) {
 						uni.showToast({
@@ -431,7 +451,7 @@
 							icon: 'success',
 							duration: 2000,
 						});
-						
+						uni.removeStorageSync('customerForm')
 						setTimeout(() => {
 							uni.navigateBack();
 						}, 1500);
@@ -441,12 +461,12 @@
 							icon: 'none',
 							duration: 2000,
 						});
-						uni.hideLoading();
+						// uni.hideLoading();
 					}
 				}).catch(err => {
-					uni.hideLoading();
+					// uni.hideLoading();
 					uni.showToast({
-						title: '网络错误，请重试',
+						title: err.message,
 						icon: 'none',
 						duration: 2000,
 					});
@@ -455,6 +475,7 @@
 			},
 			
 			goBack() {
+				uni.setStorageSync('customerForm', JSON.stringify(this.customerForm))
 				uni.navigateBack();
 			}
 		}

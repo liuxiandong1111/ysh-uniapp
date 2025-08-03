@@ -268,6 +268,9 @@
 
             // 提交成功后返回上一页
             setTimeout(() => {
+              // 设置标志，表示需要刷新列表
+              uni.setStorageSync('needRefreshCustomerList', true);
+              // 返回上一页
               uni.navigateBack();
             }, 1000);
           } else {
@@ -404,4 +407,4 @@
 		border-radius: 4px;
 		font-size: 14px;
 	}
-</style> 
+</style>

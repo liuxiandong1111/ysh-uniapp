@@ -172,9 +172,6 @@
 				};
 				
 				this.isSubmitting = true;
-				uni.showLoading({
-					title: '处理中...'
-				});
 				
 				try {
 					const res = await customerApi.clientTurnOverProduct(formData);
@@ -191,17 +188,18 @@
 						}, 1500);
 					} else {
 						uni.showToast({
-							title: res.retMsg || '移交失败，请重试',
-							icon: 'none'
+							title: res.message || '移交失败，请重试',
+							icon: 'none',
+							duration: 2000,
 						});
 					}
 				} catch (error) {
 					uni.showToast({
-						title: '移交失败，请重试',
-						icon: 'none'
+						title: error.message || '移交失败，请重试',
+						icon: 'none',
+						duration: 2000,
 					});
 				} finally {
-					uni.hideLoading();
 					this.isSubmitting = false;
 				}
 			},

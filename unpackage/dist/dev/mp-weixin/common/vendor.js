@@ -446,13 +446,14 @@ var isIOS = false;
 var deviceWidth = 0;
 var deviceDPR = 0;
 function checkDeviceWidth() {
-  var _Object$assign = Object.assign({}, wx.getWindowInfo(), {
-      platform: wx.getDeviceInfo().platform
-    }),
-    windowWidth = _Object$assign.windowWidth,
-    pixelRatio = _Object$assign.pixelRatio,
-    platform = _Object$assign.platform; // uni=>wx runtime 编译目标是 uni 对象，内部不允许直接使用 uni
-
+  var windowWidth, pixelRatio, platform;
+  {
+    var windowInfo = typeof wx.getWindowInfo === 'function' && wx.getWindowInfo() ? wx.getWindowInfo() : wx.getSystemInfoSync();
+    var deviceInfo = typeof wx.getDeviceInfo === 'function' && wx.getDeviceInfo() ? wx.getDeviceInfo() : wx.getSystemInfoSync();
+    windowWidth = windowInfo.windowWidth;
+    pixelRatio = windowInfo.pixelRatio;
+    platform = deviceInfo.platform;
+  }
   deviceWidth = windowWidth;
   deviceDPR = pixelRatio;
   isIOS = platform === 'ios';
@@ -488,7 +489,7 @@ var messages = {};
 function getLocaleLanguage() {
   var localeLanguage = '';
   {
-    var appBaseInfo = wx.getAppBaseInfo();
+    var appBaseInfo = typeof wx.getAppBaseInfo === 'function' && wx.getAppBaseInfo() ? wx.getAppBaseInfo() : wx.getSystemInfoSync();
     var language = appBaseInfo && appBaseInfo.language ? appBaseInfo.language : LOCALE_EN;
     localeLanguage = normalizeLocale(language) || LOCALE_EN;
   }
@@ -747,6 +748,43 @@ function addSafeAreaInsets(result) {
     };
   }
 }
+function getOSInfo(system, platform) {
+  var osName = '';
+  var osVersion = '';
+  if (platform && "mp-weixin" === 'mp-baidu') {
+    osName = platform;
+    osVersion = system;
+  } else {
+    osName = system.split(' ')[0] || platform;
+    osVersion = system.split(' ')[1] || '';
+  }
+  osName = osName.toLocaleLowerCase();
+  switch (osName) {
+    case 'harmony': // alipay
+    case 'ohos': // weixin
+    case 'openharmony':
+      // feishu
+      osName = 'harmonyos';
+      break;
+    case 'iphone os':
+      // alipay
+      osName = 'ios';
+      break;
+    case 'mac': // weixin qq
+    case 'darwin':
+      // feishu
+      osName = 'macos';
+      break;
+    case 'windows_nt':
+      // feishu
+      osName = 'windows';
+      break;
+  }
+  return {
+    osName: osName,
+    osVersion: osVersion
+  };
+}
 function populateParameters(result) {
   var _result$brand = result.brand,
     brand = _result$brand === void 0 ? '' : _result$brand,
@@ -768,12 +806,9 @@ function populateParameters(result) {
   var extraParam = {};
 
   // osName osVersion
-  var osName = '';
-  var osVersion = '';
-  {
-    osName = system.split(' ')[0] || '';
-    osVersion = system.split(' ')[1] || '';
-  }
+  var _getOSInfo = getOSInfo(system, platform),
+    osName = _getOSInfo.osName,
+    osVersion = _getOSInfo.osVersion;
   var hostVersion = version;
 
   // deviceType
@@ -805,9 +840,9 @@ function populateParameters(result) {
     appVersion: "1.0.0",
     appVersionCode: "100",
     appLanguage: getAppLanguage(hostLanguage),
-    uniCompileVersion: "4.56",
-    uniCompilerVersion: "4.56",
-    uniRuntimeVersion: "4.56",
+    uniCompileVersion: "4.66",
+    uniCompilerVersion: "4.66",
+    uniRuntimeVersion: "4.66",
     uniPlatform: undefined || "mp-weixin",
     deviceBrand: deviceBrand,
     deviceModel: model,
@@ -913,9 +948,9 @@ var getAppBaseInfo = {
       hostTheme: theme,
       isUniAppX: false,
       uniPlatform: undefined || "mp-weixin",
-      uniCompileVersion: "4.56",
-      uniCompilerVersion: "4.56",
-      uniRuntimeVersion: "4.56"
+      uniCompileVersion: "4.66",
+      uniCompilerVersion: "4.66",
+      uniRuntimeVersion: "4.66"
     }));
   }
 };
@@ -923,14 +958,23 @@ var getDeviceInfo = {
   returnValue: function returnValue(result) {
     var _result2 = result,
       brand = _result2.brand,
-      model = _result2.model;
+      model = _result2.model,
+      _result2$system = _result2.system,
+      system = _result2$system === void 0 ? '' : _result2$system,
+      _result2$platform = _result2.platform,
+      platform = _result2$platform === void 0 ? '' : _result2$platform;
     var deviceType = getGetDeviceType(result, model);
     var deviceBrand = getDeviceBrand(brand);
     useDeviceId(result);
+    var _getOSInfo2 = getOSInfo(system, platform),
+      osName = _getOSInfo2.osName,
+      osVersion = _getOSInfo2.osVersion;
     result = sortObject(Object.assign(result, {
       deviceType: deviceType,
       deviceBrand: deviceBrand,
-      deviceModel: model
+      deviceModel: model,
+      osName: osName,
+      osVersion: osVersion
     }));
   }
 };
@@ -9514,9 +9558,9 @@ internalMixin(Vue);
 
 /***/ }),
 /* 26 */
-/*!************************************!*\
-  !*** E:/ysh/ysh-uniapp/pages.json ***!
-  \************************************/
+/*!*********************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/pages.json ***!
+  \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -9527,9 +9571,9 @@ internalMixin(Vue);
 /* 28 */,
 /* 29 */,
 /* 30 */
-/*!**********************************************!*\
-  !*** E:/ysh/ysh-uniapp/utils/tabbarUtils.js ***!
-  \**********************************************/
+/*!*******************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/utils/tabbarUtils.js ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9618,10 +9662,20 @@ var _default = {
               text: count.toString()
             });
           } else {
-            // 移除角标
-            uni.removeTabBarBadge({
-              index: index
-            });
+            // 移除角标前检查当前页面是否是TabBar页面
+            var pages = getCurrentPages();
+            if (pages.length > 0) {
+              var currentPage = pages[pages.length - 1];
+              var currentPath = currentPage.route;
+
+              // 判断是否是tabbar页面
+              var isTabBarPage = currentPath === 'pages/dashboard/dashboard' || currentPath === 'pages/customer/customer' || currentPath === 'pages/loan/loan' || currentPath === 'pages/message/message';
+              if (isTabBarPage) {
+                uni.removeTabBarBadge({
+                  index: index
+                });
+              }
+            }
           }
         }
       }).catch(function (err) {
@@ -9635,9 +9689,9 @@ exports.default = _default;
 
 /***/ }),
 /* 31 */
-/*!************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/msg.js ***!
-  \************************************/
+/*!*********************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/api/msg.js ***!
+  \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9675,9 +9729,9 @@ exports.default = _default;
 
 /***/ }),
 /* 32 */
-/*!******************************************!*\
-  !*** E:/ysh/ysh-uniapp/utils/request.js ***!
-  \******************************************/
+/*!***************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/utils/request.js ***!
+  \***************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9919,9 +9973,9 @@ function normalizeComponent (
 
 /***/ }),
 /* 36 */
-/*!**************************************************!*\
-  !*** E:/ysh/ysh-uniapp/uni.promisify.adaptor.js ***!
-  \**************************************************/
+/*!***********************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/uni.promisify.adaptor.js ***!
+  \***********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9949,9 +10003,9 @@ uni.addInterceptor({
 /* 41 */,
 /* 42 */,
 /* 43 */
-/*!*************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/user.js ***!
-  \*************************************/
+/*!**********************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/api/user.js ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10373,9 +10427,9 @@ module.exports = _asyncToGenerator, module.exports.__esModule = true, module.exp
 
 /***/ }),
 /* 63 */
-/*!******************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/dashboard.js ***!
-  \******************************************/
+/*!***************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/api/dashboard.js ***!
+  \***************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10408,9 +10462,9 @@ exports.default = _default;
 /* 70 */,
 /* 71 */,
 /* 72 */
-/*!*****************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/customer.js ***!
-  \*****************************************/
+/*!**************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/api/customer.js ***!
+  \**************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10480,150 +10534,9 @@ exports.default = _default;
 
 /***/ }),
 /* 73 */
-/*!***************************************!*\
-  !*** E:/ysh/ysh-uniapp/utils/dict.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.repaymentStatus = exports.repaymentMethod = exports.maritalStatus = exports.dictMaps = exports.customerStatus = exports.customerProgress = exports.belongingCustomerGroup = exports.approvalStatus = void 0;
-var maritalStatus = [
-// 婚姻状态
-{
-  label: '未婚',
-  value: 1
-}, {
-  label: '已婚',
-  value: 2
-}, {
-  label: '离异',
-  value: 3
-}];
-exports.maritalStatus = maritalStatus;
-var approvalStatus = [
-// 审批状态
-{
-  label: '开户中',
-  value: 1
-}, {
-  label: '批款',
-  value: 2
-}, {
-  label: '拒绝',
-  value: 3
-}];
-exports.approvalStatus = approvalStatus;
-var customerProgress = [
-// 客户进度
-{
-  label: '待处理',
-  value: 1
-}, {
-  label: '已处理',
-  value: 2
-}, {
-  label: '已完成',
-  value: 3
-}];
-exports.customerProgress = customerProgress;
-var customerStatus = [
-// 客户状态
-{
-  label: '未联系',
-  value: 1
-}, {
-  label: '电话联系',
-  value: 2
-}, {
-  label: '客户到访',
-  value: 3
-}, {
-  label: '提交材料',
-  value: 4
-}, {
-  label: '完成',
-  value: 5
-}];
-exports.customerStatus = customerStatus;
-var belongingCustomerGroup = [
-// 所属客群
-{
-  label: '消费',
-  value: 1
-}, {
-  label: '经营',
-  value: 2
-}, {
-  label: '消费经营',
-  value: 3
-}];
-exports.belongingCustomerGroup = belongingCustomerGroup;
-var repaymentMethod = [
-// 还款方式
-{
-  label: '先息后本',
-  value: 1
-}, {
-  label: '等额本息',
-  value: 2
-}, {
-  label: '随借随还',
-  value: 3
-}];
-exports.repaymentMethod = repaymentMethod;
-var repaymentStatus = [
-// 还款状态
-{
-  label: '正常',
-  value: 1
-}, {
-  label: '预期',
-  value: 2
-}];
-
-// 字典映射对象
-exports.repaymentStatus = repaymentStatus;
-var dictMaps = {
-  // 客户状态字典
-  customerStatus: {
-    1: '未联系',
-    2: '电话联系',
-    3: '客户到访',
-    4: '提交材料',
-    5: '完成'
-  },
-  // 婚姻状态字典
-  maritalStatus: {
-    1: '未婚',
-    2: '已婚',
-    3: '离异'
-  },
-  // 客户类型字典
-  customerType: {
-    1: '个人客户',
-    2: '企业客户',
-    3: '个体工商户'
-  },
-  // 审批状态字典
-  dealStatus: {
-    1: '待处理',
-    2: '已处理',
-    3: '已完成'
-  }
-};
-exports.dictMaps = dictMaps;
-
-/***/ }),
-/* 74 */
-/*!*********************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/organization.js ***!
-  \*********************************************/
+/*!******************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/api/organization.js ***!
+  \******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10704,6 +10617,161 @@ var position = {
 exports.position = position;
 
 /***/ }),
+/* 74 */
+/*!************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/utils/dict.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.repaymentStatus = exports.repaymentMethod = exports.maritalStatus = exports.dictMaps = exports.customerStatus = exports.customerProgress = exports.clientTypeOptions = exports.belongingCustomerGroup = exports.approvalStatus = void 0;
+var maritalStatus = [
+// 婚姻状态
+{
+  label: '未婚',
+  value: 1
+}, {
+  label: '已婚',
+  value: 2
+}, {
+  label: '离异',
+  value: 3
+}];
+exports.maritalStatus = maritalStatus;
+var approvalStatus = [
+// 审批状态
+{
+  label: '开户中',
+  value: 1
+}, {
+  label: '批款',
+  value: 2
+}, {
+  label: '拒绝',
+  value: 3
+}];
+exports.approvalStatus = approvalStatus;
+var customerProgress = [
+// 客户进度
+{
+  label: '待处理',
+  value: 1
+}, {
+  label: '已处理',
+  value: 2
+}, {
+  label: '已完成',
+  value: 3
+}];
+exports.customerProgress = customerProgress;
+var customerStatus = [
+// 客户状态
+{
+  label: '未联系',
+  value: 1
+}, {
+  label: '电话联系',
+  value: 2
+}, {
+  label: '客户到访',
+  value: 3
+}, {
+  label: '提交材料',
+  value: 4
+}, {
+  label: '完成',
+  value: 5
+}];
+exports.customerStatus = customerStatus;
+var belongingCustomerGroup = [
+// 所属客群
+{
+  label: '消费',
+  value: 1
+}, {
+  label: '经营',
+  value: 2
+}, {
+  label: '消费经营',
+  value: 3
+}];
+exports.belongingCustomerGroup = belongingCustomerGroup;
+var clientTypeOptions = [{
+  label: 'A',
+  value: 'A'
+}, {
+  label: 'B',
+  value: 'B'
+}, {
+  label: 'C',
+  value: 'C'
+}, {
+  label: 'D',
+  value: 'D'
+}];
+exports.clientTypeOptions = clientTypeOptions;
+var repaymentMethod = [
+// 还款方式
+{
+  label: '先息后本',
+  value: 1
+}, {
+  label: '等额本息',
+  value: 2
+}, {
+  label: '随借随还',
+  value: 3
+}];
+exports.repaymentMethod = repaymentMethod;
+var repaymentStatus = [
+// 还款状态
+{
+  label: '正常',
+  value: 1
+}, {
+  label: '预期',
+  value: 2
+}];
+
+// 字典映射对象
+exports.repaymentStatus = repaymentStatus;
+var dictMaps = {
+  // 客户状态字典
+  customerStatus: {
+    1: '未联系',
+    2: '电话联系',
+    3: '客户到访',
+    4: '提交材料',
+    5: '完成'
+  },
+  // 婚姻状态字典
+  maritalStatus: {
+    1: '未婚',
+    2: '已婚',
+    3: '离异'
+  },
+  // 客户类型字典
+  customerType: {
+    1: '消费',
+    2: '经营',
+    3: '消费经营'
+  },
+  // 审批状态字典
+  dealStatus: {
+    1: '待处理',
+    2: '已处理',
+    3: '已完成'
+  }
+};
+exports.dictMaps = dictMaps;
+
+/***/ }),
 /* 75 */,
 /* 76 */,
 /* 77 */,
@@ -10713,9 +10781,9 @@ exports.position = position;
 /* 81 */,
 /* 82 */,
 /* 83 */
-/*!****************************************!*\
-  !*** E:/ysh/ysh-uniapp/api/finance.js ***!
-  \****************************************/
+/*!*************************************************************!*\
+  !*** /Users/admin/Desktop/ysh-uniapp-master/api/finance.js ***!
+  \*************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

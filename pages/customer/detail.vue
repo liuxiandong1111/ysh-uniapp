@@ -36,7 +36,11 @@
 				<view class="info-section">
 					<view class="section-title">客户资料</view>
 					<view class="info-list">
-						<view class="info-item">
+						<view class="info-item full-width">
+							<text class="info-label">客户分类</text>
+							<text class="info-value">{{ customerInfo.client_level }}</text>
+						</view>
+						<view class="info-item full-width">
 							<text class="info-label">所属客群</text>
 							<text class="info-value">{{ customerInfo.customerGroup }}</text>
 						</view>
@@ -182,6 +186,7 @@ export default {
 						license_info: customerData.license_info || '',
 						license_img: customerData.license_img || '',
 						asset_info: customerData.asset_info || '',
+						client_level: customerData.client_level || '',
 						income: customerData.income || '未填写',
 						credit_investigation: customerData.credit_investigation || '未填写',
 						descr: customerData.descr || '',
@@ -258,11 +263,6 @@ export default {
 			return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
 		},
 		async loadLoanList() {
-			// 显示加载提示
-			uni.showLoading({
-				title: '加载中...'
-			});
-
 			try {
 				const params = {
 					client_id: this.customerId,
@@ -272,9 +272,7 @@ export default {
 
 				// 调用API获取贷款列表
 				const res = await financeApi.getLoanList(params);
-
-				// 隐藏加载提示
-				uni.hideLoading();
+;
 
 				if (res && res.retCode === 200) {
 					// 转换API返回数据为页面需要的格式
@@ -287,8 +285,6 @@ export default {
 					console.error('获取贷款列表失败:', res.retMsg || '未知错误');
 				}
 			} catch (error) {
-				// 隐藏加载提示
-				uni.hideLoading();
 				console.error('获取贷款列表失败:', error);
 			}
 		},
